@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import coclust
+from coclust.CoclustCut import cocluster
+cocluster()

@@ -1,0 +1,3 @@
+include README.rst
+include docs/*.txt
+include coclust/cstr.mat
