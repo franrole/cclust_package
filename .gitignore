@@ -1,0 +1,18 @@
+# Compiled python modules.
+*.pyc
+
+*~
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
+
+/build/
+
+INFO-setup.txt
+
+numpy-1.9.2-py2.7-linux-x86_64.egg/
+
+scipy-0.15.1-py2.7-linux-x86_64.egg/

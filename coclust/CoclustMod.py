@@ -1,23 +1,24 @@
-##import sys
-##import getopt
-##import re
-##import os,glob
-##from math import * 
-##import numpy as np
-##from numpy import *
-##from collections import *
-##import scipy.sparse as sp
-##import marshal
-##import cPickle
-##import pickle
-##import itertools
-##from scipy.io import loadmat, savemat
+import sys
+import getopt
+import re
+import os,glob
+from math import * 
+import numpy as np
+from numpy import *
+from collections import *
+import scipy.sparse as sp
+import marshal
+import cPickle
+import pickle
+import itertools
+from scipy.io import loadmat, savemat
+
+from ..utils.initialization import random_init, smart_init
 
 
-from .utils.initialization import random_init, smart_init
 
-class CoclustCut(object):
-    """ Co-clustering by approximate cut minimization
+class CoclustMod(X,k,init_method):
+    """ Co-clustering by graph modularity maximization
     Parameters
     ----------
     X : X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
@@ -35,11 +36,10 @@ class CoclustCut(object):
     -----
     To be added 
     """
-    def __init__(self, n_clusters=2, init='random', max_iter=20) :
+    def __init__(self, n_coclusters=2, init='random', max_iter=20) :
             self.n_clusters = n_clusters
             self.init = init
             self.max_iter = max_iter
-            print initialization
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
@@ -47,7 +47,5 @@ class CoclustCut(object):
         ----------
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         """
-        print "Fit"
-
-    
+        print X.todense()
 
