@@ -11,7 +11,7 @@ setup(name='coclust',
       author='XXXX',
       author_email='XXXX',
       license='BSD3',
-      packages=['coclust'],
+      packages=['coclust' ,'coclust/tests', 'coclust/utils'],
       setup_requires=["numpy","scipy"],
       install_requires=[
           'numpy',"scipy"
