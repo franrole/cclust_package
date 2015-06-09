@@ -1,7 +1,6 @@
 import coclust.CoclustCut
 import numpy as np
 
-#from coclust.utils.initialization import random_init
 
 c=coclust.CoclustCut()
 

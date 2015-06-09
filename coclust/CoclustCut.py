@@ -35,10 +35,11 @@ class CoclustCut(object):
     -----
     To be added 
     """
-    def __init__(self, n_clusters=2, init='random', max_iter=20) :
+    def __init__(self, n_clusters=2, init='random', max_iter=20,corpus='cstr') :
             self.n_clusters = n_clusters
             self.init = init
             self.max_iter = max_iter
+            self.corpus=corpus
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
@@ -46,7 +47,11 @@ class CoclustCut(object):
         ----------
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         """
-        print "fit"
+        if self.init == 'random' :
+            W = random_init(self.n_clusters, X.shape[1] )
+            
+        else :
+            pass
 
     
 
