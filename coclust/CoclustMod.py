@@ -54,6 +54,7 @@ Maximization of Graph Modularity`
             self.init = init
             self.max_iter = max_iter
             self.corpus=corpus
+            print __name__
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
