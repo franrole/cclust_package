@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
 import coclust
-from coclust.CoclustCut import cocluster
-cocluster()
+from coclust.CoclustMod import CoclustMod
+model=CoclustMod()
+print model.n_clusters
+

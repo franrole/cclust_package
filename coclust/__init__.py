@@ -1,1 +1,1 @@
-from .CoclustCut import CoclustCut
+from .CoclustCut import CoclustMod
