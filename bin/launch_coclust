@@ -1,25 +1,34 @@
-#!/usr/bin/env python
-
 import argparse
 parser = argparse.ArgumentParser()
 
-parser.add_argument("matrix_file", help="the matrix file path")
+parser.add_argument("matrix_file", help="the matrix file path",  type=argparse.FileType('r'))
 
 parser.add_argument("--n_coclusters", help="the number of co-clusters",default = 2 , type=int)
 
-parser.add_argument("--init", help="the initialization method", default = "random")
+parser.add_argument("--init", default=None , help="the path of a file containing an optional initial column index matrix. If None, random initialization is performed")
 
 parser.add_argument("--max_iter", help="max number of iterations", default= 20 , type=int)
 
+parser.add_argument("--classification", default=None, help="the path of a file containing an index vector for documents. If provided the NMI will be reported.")
+
 args = parser.parse_args()
 
-if args.matrix_file == None :
-    print "matrix file is needed"
+##if args.matrix_file == None :
+##    print "matrix file is needed"
 
 
-
+from scipy.io import loadmat
 import coclust
 from coclust.CoclustMod import CoclustMod
-model=CoclustMod(n_clusters=args.n_coclusters, init=args.init, max_iter=args.max_iter,corpus='cstr')
-print model.n_clusters
 
+model=CoclustMod(n_clusters=args.n_coclusters, init=args.init, max_iter=args.max_iter)
+# existence and accessibility has already been checked
+file_name=args.matrix_file
+matlab_dict=loadmat(file_name)
+X=matlab_dict['fea']
+model.fit(X)
+
+if args.classification :
+    print("TO DO: Perform evaluation")
+
+# launch_coclust  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --n_coclusters 4

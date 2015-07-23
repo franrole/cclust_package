@@ -43,7 +43,6 @@ class CoclustMod(object):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
-        print __name__
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
@@ -51,19 +50,23 @@ class CoclustMod(object):
         ----------
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         """
+
+        if not sp.issparse(X) :
+            X=sp.lil_matrix(X)
+
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1])
-
         else:
             W = self.init
-
         Z = np.zeros((X.shape[0], self.n_clusters))
+        Z=sp.lil_matrix(Z,dtype=float)
 
         # Compute the modularity matrix
         row_sums = sp.lil_matrix(X.sum(axis=1))
         col_sums = sp.lil_matrix(X.sum(axis=0))
         N = float(X.sum())
         indep = (row_sums * col_sums) / N
+
         B = X - indep  # lil - lil = csr ...
 
         # Loop
@@ -107,3 +110,7 @@ class CoclustMod(object):
 
     def get_submatrix(self, i):
         pass
+    
+
+    
+
