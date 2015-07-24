@@ -3,7 +3,7 @@ import numpy as np
 import scipy.sparse as sp
 
 
-from .utils.initialization import random_init, smart_init
+from .utils.initialization import random_init
 
 
 class CoclustMod(object):
@@ -57,7 +57,9 @@ class CoclustMod(object):
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1])
         else:
-            W = self.init
+            W_filename = self.init
+            W=sp.lil_matrix(np.loadtxt(W_filename),dtype=float)
+            
         Z = np.zeros((X.shape[0], self.n_clusters))
         Z=sp.lil_matrix(Z,dtype=float)
 
