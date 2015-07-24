@@ -36,5 +36,4 @@ model.fit(X)
 if args.class_file :
     print("TO DO: Perform evaluation")
 
-### launch_coclust  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --file_type matlab --n_coclusters 4
-###  --init ~frole/recherche/python_packaging/coclust/datasets/W.txt  --class_file .../classes.txt
+##   python ./launch_coclust  ........./coclust/datasets/cstr.mat --file_type matlab  --n_coclusters 4
