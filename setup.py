@@ -16,7 +16,7 @@ setup(name='coclust',
       packages=['coclust' ,'coclust/tests', 'coclust/utils'],
       setup_requires=["numpy","scipy"],
       install_requires=[
-          'numpy',"scipy"
+          'numpy',"scipy","nose"
       ],
       include_package_data=True,
       zip_safe=False,

@@ -13,8 +13,8 @@ parser.add_argument("--classification", default=None, help="the path of a file c
 
 args = parser.parse_args()
 
-##if args.matrix_file == None :
-##    print "matrix file is needed"
+##if sys.version_info[0] < 3:
+##    from __future__ import absolute_import
 
 
 from scipy.io import loadmat

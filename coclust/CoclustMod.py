@@ -2,8 +2,11 @@
 import numpy as np
 import scipy.sparse as sp
 
+# from __future__ import absolute_import
+
 
 from .utils.initialization import random_init
+print(__name__)
 
 
 class CoclustMod(object):
@@ -102,7 +105,7 @@ class CoclustMod(object):
                 m_begin = m_end
                 change = True
 
-        print "Modularity", m_end
+        print "Modularity", m_end/N
 
     def get_indices(self, i):  # Row and column indices of the i’th bicluster.
         pass
