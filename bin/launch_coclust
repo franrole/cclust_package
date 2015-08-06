@@ -21,11 +21,15 @@ from scipy.io import loadmat
 import coclust
 from coclust.CoclustMod import CoclustMod
 
-model=CoclustMod(n_clusters=args.n_coclusters, init=args.init, max_iter=args.max_iter)
+if(args.init):
+	W = sp.lil_matrix(np.loadtxt(args.init), dtype=float)
+else:
+	W = None
+model = CoclustMod(n_clusters=args.n_coclusters, init=W, max_iter=args.max_iter)
 # existence and accessibility has already been checked
-file_name=args.matrix_file
-matlab_dict=loadmat(file_name)
-X=matlab_dict['fea']
+file_name = args.matrix_file
+matlab_dict = loadmat(file_name)
+X = matlab_dict['fea']
 model.fit(X)
 
 if args.classification :

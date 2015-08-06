@@ -14,14 +14,15 @@ class CoclustMod(object):
     """ Co-clustering by approximate cut minimization
     Parameters
     ----------
-    X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
+    X : numpy array or scipy sparse matrix, shape (n_samples, n_features)
         The matrix to be analyzed
 
-    n_coclusters : int, optional, default: 2
+    n_clusters : int, optional, default: 2
         The number of co-clusters to form
 
-    init :  {'random','smart'}, , optional, default: 'random'
-        The initialization method to be used
+    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters),
+           optional, default: None
+        The initial column labels
 
     max_iter : int, optional, default: 20
         The maximum number of iterations
@@ -30,8 +31,12 @@ class CoclustMod(object):
     ----------
     row_labels_ : array-like, shape (n_rows,)
         The bicluster label of each row.
+
     column_labels_ : array-like, shape (n_cols,)
         The bicluster label of each column.
+
+    modularity : float
+        The final value of the modularity.
     References
     ----------
     * Ailem M.,  Role F., Nadif M., 2015. `Co-clustering Document-term Matrices
@@ -46,6 +51,9 @@ class CoclustMod(object):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
+        self.row_labels_ = None
+        self.column_labels_ = None
+        self.modularity = float("NaN")
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
@@ -54,17 +62,16 @@ class CoclustMod(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         """
 
-        if not sp.issparse(X) :
-            X=sp.lil_matrix(X)
+        if not sp.issparse(X):
+            X = sp.lil_matrix(X)
 
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1])
         else:
-            W_filename = self.init
-            W=sp.lil_matrix(np.loadtxt(W_filename),dtype=float)
+            W = sp.lil_matrix(self.init, dtype=float)
             
         Z = np.zeros((X.shape[0], self.n_clusters))
-        Z=sp.lil_matrix(Z,dtype=float)
+        Z = sp.lil_matrix(Z, dtype=float)
 
         # Compute the modularity matrix
         row_sums = sp.lil_matrix(X.sum(axis=1))
@@ -86,8 +93,6 @@ class CoclustMod(object):
             for idx, k in enumerate(np.argmax(BW_a, axis=1)):
                 Z[idx, :] = 0
                 Z[idx, k] = 1
-                # Z[:,:]=0
-                # Z[np.arange(nb_rows) , np.argmax(BW, axis=1)]=1
 
             # Reassign columns
             BtZ = (B.T) * Z
@@ -95,8 +100,6 @@ class CoclustMod(object):
             for idx, k in enumerate(np.argmax(BtZ_a, axis=1)):
                 W[idx, :] = 0
                 W[idx, k] = 1
-                # W[:,:]=0
-                # W[np.arange(nb_cols) , np.argmax(BtZ, axis=1)]=1
 
             k_times_k = (Z.T) * BW
             m_end = np.trace(k_times_k.todense())# pas de trace pour sp ...
@@ -105,17 +108,22 @@ class CoclustMod(object):
                 m_begin = m_end
                 change = True
 
-        print "Modularity", m_end/N
+        self.row_labels_ = [label[0] for label in Z.rows]
+        self.column_labels_ = [label[0] for label in W.rows]
+
+        print "Modularity", m_end / N
+        self.modularity = m_end / N
 
     def get_indices(self, i):  # Row and column indices of the i’th bicluster.
-        pass
+        row_indices = [index for index, label in enumerate(self.row_labels_)
+                       if label == i]
+        column_indices = [index for index, label
+                          in enumerate(self.column_labels_) if label == i]
+        return (row_indices, column_indices)
 
     def get_shape(self, i):         # Shape of the i’th bicluster.
-        pass
+        row_indices, column_indices = self.get_indices(i)
+        return (len(row_indices), len(column_indices))
 
     def get_submatrix(self, i):
         pass
-    
-
-    
-
