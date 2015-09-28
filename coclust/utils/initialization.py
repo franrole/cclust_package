@@ -2,19 +2,16 @@
 # Initialization methods
 
 import numpy as np
-from numpy import *
-import scipy.sparse as sp
 
 
-def random_init(n_clusters,n_cols):
+def random_init(n_clusters, n_cols):
     """ Random Initialization
     """
-    W_a=np.random.randint(n_clusters,size=n_cols)
-    W=np.zeros((n_cols,n_clusters))
-    W[np.arange(n_cols) , W_a]=1
-    W=sp.lil_matrix(W,dtype=float)
+    W_a = np.random.randint(n_clusters, size=n_cols)
+    W = np.zeros((n_cols, n_clusters))
+    W[np.arange(n_cols), W_a] = 1
     return W
-    
+
 
 def smart_init(X, K):
     """Initialize by ....

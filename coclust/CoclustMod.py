@@ -63,23 +63,23 @@ class CoclustMod(object):
         """
 
         if not sp.issparse(X):
-            X = sp.lil_matrix(X)
+            X = np.matrix(X)
 
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1])
         else:
-            W = sp.lil_matrix(self.init, dtype=float)
-            
+            W = np.matrix(self.init, dtype=float)
+
         Z = np.zeros((X.shape[0], self.n_clusters))
-        Z = sp.lil_matrix(Z, dtype=float)
 
         # Compute the modularity matrix
-        row_sums = sp.lil_matrix(X.sum(axis=1))
-        col_sums = sp.lil_matrix(X.sum(axis=0))
+        row_sums = np.matrix(X.sum(axis=1))
+        col_sums = np.matrix(X.sum(axis=0))
         N = float(X.sum())
-        indep = (row_sums * col_sums) / N
+        indep = (row_sums.dot(col_sums)) / N
 
-        B = X - indep  # lil - lil = csr ...
+        # B is a numpy matrix
+        B = X - indep
 
         # Loop
         m_begin = float("-inf")
@@ -88,28 +88,26 @@ class CoclustMod(object):
             change = False
 
             # Reassign rows
-            BW = B * W
-            BW_a = BW.toarray()
-            for idx, k in enumerate(np.argmax(BW_a, axis=1)):
+            BW = B.dot(W)
+            for idx, k in enumerate(np.argmax(BW, axis=1)):
                 Z[idx, :] = 0
                 Z[idx, k] = 1
 
             # Reassign columns
-            BtZ = (B.T) * Z
-            BtZ_a = BtZ.toarray()
-            for idx, k in enumerate(np.argmax(BtZ_a, axis=1)):
+            BtZ = (B.T).dot(Z)
+            for idx, k in enumerate(np.argmax(BtZ, axis=1)):
                 W[idx, :] = 0
                 W[idx, k] = 1
 
-            k_times_k = (Z.T) * BW
-            m_end = np.trace(k_times_k.todense())# pas de trace pour sp ...
+            k_times_k = (Z.T).dot(BW)
+            m_end = np.trace(k_times_k)
 
             if np.abs(m_end - m_begin) > 1e-9:
                 m_begin = m_end
                 change = True
 
-        self.row_labels_ = [label[0] for label in Z.rows]
-        self.column_labels_ = [label[0] for label in W.rows]
+        self.row_labels_ = np.argmax(Z, axis=1).tolist()
+        self.column_labels_ = np.argmax(W, axis=1).tolist()
 
         print "Modularity", m_end / N
         self.modularity = m_end / N
