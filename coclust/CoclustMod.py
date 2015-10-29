@@ -39,8 +39,7 @@ class CoclustMod(object):
         The final value of the modularity.
     References
     ----------
-    * Ailem M.,  Role F., Nadif M., 2015. `Co-clustering Document-term Matrices
-    by Direct Maximization of Graph Modularity`
+    * Ailem M.,  Role F., Nadif M., Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
 
       <http://....>`__.
     Notes
@@ -109,7 +108,7 @@ class CoclustMod(object):
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
 
-        print "Modularity", m_end / N
+        print ("Modularity", m_end / N)
         self.modularity = m_end / N
 
     def get_indices(self, i):  # Row and column indices of the i’th bicluster.
