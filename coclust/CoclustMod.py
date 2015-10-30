@@ -52,7 +52,8 @@ class CoclustMod(object):
         self.max_iter = max_iter
         self.row_labels_ = None
         self.column_labels_ = None
-        self.modularities = float("NaN")
+        self.modularity = float("NaN")
+        self.modularities = []
 
     def fit(self, X, y=None):
         """ Perform Approximate Cut co-clustering
@@ -60,8 +61,6 @@ class CoclustMod(object):
         ----------
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         """
-
-        modularities=[]
 
         if not sp.issparse(X):
             X = np.matrix(X)
@@ -104,18 +103,18 @@ class CoclustMod(object):
             m_end = np.trace(k_times_k)
 
             if np.abs(m_end - m_begin) > 1e-9:
-                self.modularities.append(m_end/N) 
-		m_begin=m_end
-		change=True
+                self.modularities.append(m_end/N)
+                m_begin = m_end
+                change = True
 
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
 
         print ("Final modularity", m_end / N)
-     
 
-       
-		
+
+
+
 
     def get_indices(self, i):  # Row and column indices of the i’th bicluster.
         row_indices = [index for index, label in enumerate(self.row_labels_)
