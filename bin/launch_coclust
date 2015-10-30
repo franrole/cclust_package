@@ -27,6 +27,22 @@ if args.input_format == 'matlab' :
     file_name = args.matrix_file
     matlab_dict = loadmat(file_name)
     X = matlab_dict['fea']
+else :
+    with open('/home/frole/recherche/python_packaging/coclust/datasets/cstr.csv','r') as f :
+        f_line=f.readline().strip()
+        t_line=f_line.split(',')
+        X=sp.lil_matrix((475,1000))
+        print(X.shape)
+        for i, l in enumerate(f):
+            l=l.strip()
+            t=l.split(',')
+            r,c,v=int(t[0]),int(t[1]),int(t[2])
+            try : 
+               X[r,c]=v
+            except Exception as e :
+                print(e)
+                print("problem with line" , i)
+                sys.exit(0)
 
 #####################################################################################
 ## 2) Initialization options
