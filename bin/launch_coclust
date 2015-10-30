@@ -10,29 +10,74 @@ parser.add_argument("--init", default=None , help="the path of a file containing
 
 parser.add_argument("--max_iter", help="max number of iterations", default= 20 , type=int)
 
-parser.add_argument("--classification", default=None, help="the path of a file containing an index vector for documents. If provided the NMI will be reported.")
+parser.add_argument("--labels_file", default=None, help="the path of a file containing an index vector for documents. If provided the NMI will be reported.")
+
+parser.add_argument("--input_format", default='matlab', help="the format of the input file.")
 
 args = parser.parse_args()
 
-##if sys.version_info[0] < 3:
-##    from __future__ import absolute_import
 
 
-from scipy.io import loadmat
-from coclust.CoclustMod import CoclustMod
+#####################################################################################
+## 1) read the provided matlab matrix or build a matrix from a file in sparse format
 
-if(args.init):
+if args.input_format == 'matlab' :
+
+    from scipy.io import loadmat
+    file_name = args.matrix_file
+    matlab_dict = loadmat(file_name)
+    X = matlab_dict['fea']
+
+#####################################################################################
+## 2) Initialization options
+
+if args.init :
 	W = sp.lil_matrix(np.loadtxt(args.init), dtype=float)
 else:
 	W = None
+
+#####################################################################################
+## 3) perform co-clustering
+
+from coclust.CoclustMod import CoclustMod
 model = CoclustMod(n_clusters=args.n_coclusters, init=W, max_iter=args.max_iter)
-# existence and accessibility has already been checked
-file_name = args.matrix_file
-matlab_dict = loadmat(file_name)
-X = matlab_dict['fea']
 model.fit(X)
 
-if args.classification :
-    print("TO DO: Perform evaluation")
+#####################################################################################
+## 4) show convergence and reorganised matrix
+
+
+plt.plot(model.modularities,marker='o')
+plt.ylabel('Lc')
+plt.xlabel('Iterations')
+plt.show()
+
+
+X=sp.csr_matrix(X)
+X_reorg= X[np.argsort(self.row_labels_)]
+X_reorg = X_reorg[:, np.argsort(self.column_labels_)]
+plt.spy(X_reorg,precision=0.8, markersize=0.9)
+plt.show()
+
+#####################################################################################
+## 5) evaluate using gold standard (if provided)
+
+if args.labels_file :
+    with open(labels_file, 'r') as f :
+        labels=f.read().split()
+
+    from sklearn.metrics import accuracy_score
+    from sklearn.metrics.cluster import normalized_mutual_info_score
+    from sklearn.metrics.cluster import adjusted_rand_score
+
+    n=normalized_mutual_info_score(labels,self.row_labels_ )
+    ari=adjusted_rand_score(labels, self.row_labels_)
+    cm=confusion_matrix(labels, self.row_labels_)
+    # accuracy=(total)/(nb_rows*1.)
+    
+    print( "nmi ==>" + str(n))
+    print( "adjusted rand index ==>" + str(ari))
+    print()
+    print(cm)
 
 # launch_coclust  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --n_coclusters 4
