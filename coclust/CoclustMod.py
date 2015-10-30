@@ -113,6 +113,7 @@ class CoclustMod(object):
 
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
+        self.modularity = m_end/N
 
         print ("Final modularity", m_end / N)
 
