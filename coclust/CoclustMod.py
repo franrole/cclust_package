@@ -37,11 +37,14 @@ class CoclustMod(object):
 
     modularity : float
         The final value of the modularity.
+
     References
     ----------
-    * Ailem M.,  Role F., Nadif M., Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
+    * Ailem M.,  Role F., Nadif M., Co-clustering Document-term Matrices by
+    Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
 
-      <http://....>`__.
+    <http://....>`__.
+
     Notes
     -----
     To be added
@@ -84,6 +87,7 @@ class CoclustMod(object):
         # Loop
         m_begin = float("-inf")
         change = True
+        iteration = 1
         while change:
             change = False
 
@@ -102,7 +106,7 @@ class CoclustMod(object):
             k_times_k = (Z.T).dot(BW)
             m_end = np.trace(k_times_k)
 
-            if np.abs(m_end - m_begin) > 1e-9:
+            if np.abs(m_end - m_begin) > 1e-9 and iteration < self.max_iter:
                 self.modularities.append(m_end/N)
                 m_begin = m_end
                 change = True
@@ -112,9 +116,16 @@ class CoclustMod(object):
 
         print ("Final modularity", m_end / N)
 
+    def get_params(self, deep=True):
+        return {"init": self.init,
+                "n_clusters": self.n_clusters,
+                "max_iter": self.max_iter
+                }
 
-
-
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            self.setattr(parameter, value)
+        return self
 
     def get_indices(self, i):  # Row and column indices of the i’th bicluster.
         row_indices = [index for index, label in enumerate(self.row_labels_)
