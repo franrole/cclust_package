@@ -11,7 +11,7 @@ print(__name__)
 
 class CoclustMod(object):
 
-    """ Co-clustering by approximate cut minimization
+    """ Co-clustering by direct maximization of graph modularity
     Parameters
     ----------
     X : numpy array or scipy sparse matrix, shape (n_samples, n_features)
@@ -26,6 +26,10 @@ class CoclustMod(object):
 
     max_iter : int, optional, default: 20
         The maximum number of iterations
+
+    modularity : float, final modularity value
+
+    modularities : Python list, recording all computed modularity values for all iterations
 
     Attributes
     ----------
@@ -118,24 +122,40 @@ class CoclustMod(object):
         print ("Final modularity", m_end / N)
 
     def get_params(self, deep=True):
+        """ Perform ...
+        ----------
+        deep : boolean
+        """
         return {"init": self.init,
                 "n_clusters": self.n_clusters,
                 "max_iter": self.max_iter
                 }
 
     def set_params(self, **parameters):
+        """ ...
+        ----------
+        parameters
+        """
         for parameter, value in parameters.items():
             self.setattr(parameter, value)
         return self
 
-    def get_indices(self, i):  # Row and column indices of the i’th bicluster.
+    def get_indices(self, i):  # R
+        """ Give the row and column indices of the i’th bicluster.
+        ----------
+        i : integer
+        """
         row_indices = [index for index, label in enumerate(self.row_labels_)
                        if label == i]
         column_indices = [index for index, label
                           in enumerate(self.column_labels_) if label == i]
         return (row_indices, column_indices)
 
-    def get_shape(self, i):         # Shape of the i’th bicluster.
+    def get_shape(self, i):         
+        """ # Give the shape of the i’th bicluster.
+        ----------
+        i : integer
+        """
         row_indices, column_indices = self.get_indices(i)
         return (len(row_indices), len(column_indices))
 
