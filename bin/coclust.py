@@ -14,24 +14,36 @@ def get_parsers():
     # create the parser for the "modularity" command
     parser_modularity = subparsers.add_parser('modularity', help='use the modularity based algorithm')
 
-    parser_modularity.add_argument('INPUT_MATRIX', help='matrix file path')
-    parser_modularity.add_argument('--output_row_labels', help='file path for the predicted row labels')
-    parser_modularity.add_argument('--output_column_labels', help='file path for the predicted column labels')
+    input_group = parser_modularity.add_argument_group('input')
 
-    parser_modularity.add_argument('-n', '--n_coclusters', help='number of co-clusters', default=2, type=int)
-    parser_modularity.add_argument('-m', '--max_iter', type=int, default=8, help='maximum number of iterations')
-    parser_modularity.add_argument('-e', '--epsilon', help='stop if the criterion (modularity) variation in an iteration is less than EPSILON')
-    #TODO --input_row_labels or --n_runs
-    parser_modularity.add_argument('-i', '--input_row_labels', default=None, help='file containing the initial row labels, if not set random initialization is performed')
-    parser_modularity.add_argument('--n_runs', type=int, default=1, help='number of runs')
+    input_group.add_argument('INPUT_MATRIX', help='matrix file path')
+    input_params_group=input_group.add_mutually_exclusive_group()
+    input_params_group.add_argument('-k', '--matlab_matrix_key', default=None, help='if not set, csv input is considered')
+    input_params_group.add_argument('-sep', '--csv_sep', default=None, help='if not set, "," is considered')
 
-    parser_modularity.add_argument('-l', '--true_row_labels', default=None, help='file containing the true row labels')
+    output_group = parser_modularity.add_argument_group('output')
+    output_group.add_argument('--output_row_labels', help='file path for the predicted row labels')
+    output_group.add_argument('--output_column_labels', help='file path for the predicted column labels')
+    output_group.add_argument('--output_fuzzy_row_labels', help='file path for the predicted fuzzy row labels')
+    output_group.add_argument('--output_fuzzy_column_labels', help='file path for the predicted fuzzy column labels')
+    output_group.add_argument('--convergence_plot', help='file path for the convergence plot')
+    output_group.add_argument('--reorganized_matrix', help='file path for the reorganized matrix')
+
+    parameters_group = parser_modularity.add_argument_group('algorithm parameters')
+    parameters_group.add_argument('-n', '--n_coclusters', help='number of co-clusters', default=2, type=int)
+    parameters_group.add_argument('-m', '--max_iter', type=int, default=8, help='maximum number of iterations')
+    parameters_group.add_argument('-e', '--epsilon', help='stop if the criterion (modularity) variation in an iteration is less than EPSILON')
+
+    init_group = parameters_group.add_mutually_exclusive_group()
+    init_group.add_argument('-i', '--init_row_labels', default=None, help='file containing the initial row labels, if not set random initialization is performed')
+    init_group.add_argument('--n_runs', type=int, default=1, help='number of runs')
+
+    evaluation_group = parser_modularity.add_argument_group('evaluation parameters')
+    evaluation_group.add_argument('-l', '--true_row_labels', default=None, help='file containing the true row labels')
+    evaluation_group.add_argument("--visu", action="store_true", help="Plot modularity values and reorganized matrix (requires numpy/scipy and matplotlib).")
 
     #parser_modularity.add_argument('-r', '--report', choices={'none', 'text', 'graphical'}, help='')
-    parser_modularity.add_argument('-k', '--matlab_matrix_key', default=None, help='')
 
-    #TODO
-    parser_modularity.add_argument("--visu", action="store_true", help="Plot modularity values and reorganized matrix (requires numpy/scipy and matplotlib).")
 
     return (parser, parser_modularity)
 
@@ -151,4 +163,4 @@ def modularity(args):
 
 #  python ./bin/launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --n_coclusters 4 --input_format csv --visu
 
-
+main()
