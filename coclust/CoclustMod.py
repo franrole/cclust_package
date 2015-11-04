@@ -10,49 +10,41 @@ print(__name__)
 
 
 class CoclustMod(object):
+    """Co-clustering by direct maximization of graph modularity.
 
-    """ Co-clustering by direct maximization of graph modularity
     Parameters
     ----------
-    X : numpy array or scipy sparse matrix, shape (n_samples, n_features)
-        The matrix to be analyzed
 
     n_clusters : int, optional, default: 2
-        The number of co-clusters to form
+        Number of co-clusters to form
 
-    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters),
-           optional, default: None
-        The initial column labels
+    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters), \
+        optional, default: None
+        Initial column labels
 
     max_iter : int, optional, default: 20
-        The maximum number of iterations
-
-    modularity : float, final modularity value
-
-    modularities : Python list, recording all computed modularity values for all iterations
+        Maximum number of iterations
 
     Attributes
     ----------
     row_labels_ : array-like, shape (n_rows,)
-        The bicluster label of each row.
+        Bicluster label of each row
 
     column_labels_ : array-like, shape (n_cols,)
-        The bicluster label of each column.
+        Bicluster label of each column
 
     modularity : float
-        The final value of the modularity.
+        Final value of the modularity
+
+    modularities : list
+        Record of all computed modularity values for all iterations
 
     References
     ----------
-    * Ailem M.,  Role F., Nadif M., Co-clustering Document-term Matrices by
+    * Ailem M., Role F., Nadif M., Co-clustering Document-term Matrices by \
     Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
-
-    <http://....>`__.
-
-    Notes
-    -----
-    To be added
     """
+
     def __init__(self, n_clusters=2, init=None, max_iter=20):
         self.n_clusters = n_clusters
         self.init = init
@@ -63,10 +55,12 @@ class CoclustMod(object):
         self.modularities = []
 
     def fit(self, X, y=None):
-        """ Perform Approximate Cut co-clustering
+        """Perform co-clustering by direct maximization of graph modularity.
+
         Parameters
         ----------
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
+            Matrix to be analyzed
         """
 
         if not sp.issparse(X):
@@ -122,9 +116,18 @@ class CoclustMod(object):
         print ("Final modularity", m_end / N)
 
     def get_params(self, deep=True):
-        """ Perform ...
+        """Get parameters for this estimator.
+
+        Parameters
         ----------
-        deep : boolean
+        deep: boolean, optional
+            If True, will return the parameters for this estimator and
+            contained subobjects that are estimators
+
+        Returns
+        -------
+        dict
+            Mapping of string to any parameter names mapped to their values
         """
         return {"init": self.init,
                 "n_clusters": self.n_clusters,
@@ -132,18 +135,34 @@ class CoclustMod(object):
                 }
 
     def set_params(self, **parameters):
-        """ ...
-        ----------
-        parameters
+        """Set the parameters of this estimator.
+
+        The method works on simple estimators as well as on nested objects
+        (such as pipelines). The former have parameters of the form
+        ``<component>__<parameter>`` so that it's possible to update each
+        component of a nested object.
+
+        Returns
+        -------
+        CoclustMod
+            self
         """
         for parameter, value in parameters.items():
-            self.setattr(parameter, value)
+            setattr(self, parameter, value)
         return self
 
-    def get_indices(self, i):  # R
-        """ Give the row and column indices of the i’th bicluster.
+    def get_indices(self, i):
+        """Give the row and column indices of the i’th co-cluster.
+
+        Parameters
         ----------
         i : integer
+            Index of the co-cluster
+
+        Returns
+        -------
+        (list, list)
+            (row indices, column indices)
         """
         row_indices = [index for index, label in enumerate(self.row_labels_)
                        if label == i]
@@ -151,13 +170,27 @@ class CoclustMod(object):
                           in enumerate(self.column_labels_) if label == i]
         return (row_indices, column_indices)
 
-    def get_shape(self, i):         
-        """ # Give the shape of the i’th bicluster.
+    def get_shape(self, i):
+        """Give the shape of the i’th co-cluster.
+
+        Parameters
         ----------
         i : integer
+            Index of the co-cluster
+
+        Returns
+        -------
+        (int, int)
+            (number of rows, number of columns)
         """
         row_indices, column_indices = self.get_indices(i)
         return (len(row_indices), len(column_indices))
 
-    def get_submatrix(self, i):
-        pass
+    def get_submatrix(self, i, data):
+        """Returns the submatrix corresponding to bicluster `i`.
+
+        Works with sparse matrices. Only works if ``rows_`` and
+        ``columns_`` attributes exist.
+        """
+        row_ind, col_ind = self.get_indices(i)
+        return data[row_ind[:, np.newaxis], col_ind]

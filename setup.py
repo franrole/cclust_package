@@ -14,12 +14,18 @@ setup(name='coclust',
       author_email='XXXX',
       license='BSD3',
       packages=['coclust' ,'coclust/tests', 'coclust/utils'],
-      setup_requires=["numpy","scipy"],
+      setup_requires=["numpy","scipy", "scikit-learn"],
       install_requires=[
-          'numpy',"scipy","nose"
+          'numpy',"scipy","nose", "scikit-learn"
       ],
+      entry_points={
+          'console_scripts': [
+              'coclust = bin.coclust:main',
+            ],
+      },
       include_package_data=True,
       zip_safe=False,
       test_suite='nose.collector',
       tests_require=['nose'],
-      scripts=['bin/launch_coclust'],)
+#      scripts=['bin/launch_coclust'],
+      )
