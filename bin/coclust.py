@@ -3,8 +3,6 @@ import numpy as np
 import scipy.sparse as sp
 import sys
 
-#TODO: implement all options
-
 def get_parsers():
 
     parser = argparse.ArgumentParser(prog='coclust')
@@ -31,8 +29,8 @@ def get_parsers():
 
     parameters_group = parser_modularity.add_argument_group('algorithm parameters')
     parameters_group.add_argument('-n', '--n_coclusters', help='number of co-clusters', default=2, type=int)
-    parameters_group.add_argument('-m', '--max_iter', type=int, default=8, help='maximum number of iterations')
-    parameters_group.add_argument('-e', '--epsilon', help='stop if the criterion (modularity) variation in an iteration is less than EPSILON')
+    parameters_group.add_argument('-m', '--max_iter', type=int, default=15, help='maximum number of iterations')
+    parameters_group.add_argument('-e', '--epsilon', type=float, default=1e-9,  help='stop if the criterion (modularity) variation in an iteration is less than EPSILON')
 
     init_group = parameters_group.add_mutually_exclusive_group()
     init_group.add_argument('-i', '--init_row_labels', default=None, help='file containing the initial row labels, if not set random initialization is performed')
@@ -49,7 +47,6 @@ def get_parsers():
 
 def get_parser():
     (parser, parser_modularity) = get_parsers()
-
     return parser
 
 
@@ -58,6 +55,8 @@ def main():
     args = parser.parse_args()
     if (args.subparser_name == "modularity"):
         modularity(args)
+    elif (args.subparser_name == "specmodularity"):
+        pass
 
 def modularity(args):
     #####################################################################################
@@ -69,7 +68,7 @@ def modularity(args):
         matlab_dict = loadmat(args.INPUT_MATRIX)
         X = matlab_dict[args.matlab_matrix_key]
     else:
-        # csv input
+        # csv file (matrix market format)
         with open(args.INPUT_MATRIX, 'r') as f:
             f_line = f.readline().strip()
             t_line = f_line.split(',')
@@ -88,8 +87,8 @@ def modularity(args):
     #####################################################################################
     ## 2) Initialization options
 
-    if args.input_row_labels:
-        W = sp.lil_matrix(np.loadtxt(args.input_row_labels), dtype=float)
+    if args.init_row_labels:
+        W = sp.lil_matrix(np.loadtxt(args.init_row_labels), dtype=float)
     else:
         W = None
 
@@ -100,7 +99,6 @@ def modularity(args):
     model = CoclustMod(n_clusters=args.n_coclusters, init=W, max_iter=args.max_iter)
     model.fit(X)
 
-#TODO:
     print("*****", "row labels",  "*****")
     print(model.row_labels_)
     print("*****", "column labels", "*****")
@@ -153,14 +151,14 @@ def modularity(args):
             print()
             print(cm)
         except Exception as e:
-            print("Exception concerning the --eval option", e)
+            print("Exception concerning the ----true_row_labels option (evaluation)", e)
             print("This option requires Numpy/Scipy, Matplotlib and scikit-learn.")
-    else :
-        print("To use the --eval option you need to specify a value for the --labels_file option.")
-
-# launch_coclust  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --n_coclusters 4
-# launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --input_format csv  --n_coclusters 4
-
-#  python ./bin/launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --n_coclusters 4 --input_format csv --visu
-
+####    else :
+####        print("To use the --eval option you need to specify a value for the --true_row_labels option .")
+##
+### coclust.py modularity  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --n_coclusters 4
+### launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --input_format csv  --n_coclusters 4
+##
+###  python ./bin/launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --n_coclusters 4 --input_format csv --visu
+##
 main()
