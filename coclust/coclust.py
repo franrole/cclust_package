@@ -161,4 +161,3 @@ def modularity(args):
 ##
 ###  python ./bin/launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --n_coclusters 4 --input_format csv --visu
 ##
-main()
