@@ -2,7 +2,7 @@ Script
 ======
 
 .. argparse::
-   :module: bin.coclust
+   :module: coclust.coclust
    :func: get_parser
    :prog: coclust
 

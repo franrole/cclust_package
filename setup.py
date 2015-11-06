@@ -18,8 +18,12 @@ setup(name='coclust',
       install_requires=[
           'numpy',"scipy","nose"
       ],
+      entry_points={
+          'console_scripts': [
+              'coclust = coclust.coclust:main',
+            ],
+      },
       include_package_data=True,
       zip_safe=False,
       test_suite='nose.collector',
-      tests_require=['nose'],
-      scripts=['bin/launch_coclust'],)
+      tests_require=['nose'],)

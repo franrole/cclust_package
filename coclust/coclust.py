@@ -95,7 +95,7 @@ def modularity(args):
     #####################################################################################
     ## 3) perform co-clustering
 
-    from coclust.CoclustMod import CoclustMod
+    from .CoclustMod import CoclustMod
     model = CoclustMod(n_clusters=args.n_coclusters, init=W, max_iter=args.max_iter)
     model.fit(X)
 
