@@ -3,51 +3,82 @@ import numpy as np
 import scipy.sparse as sp
 import sys
 
-def get_parsers():
-
-    parser = argparse.ArgumentParser(prog='coclust')
-
-    subparsers = parser.add_subparsers(help='choose the algorithm to use', dest='subparser_name')
-
-    # create the parser for the "modularity" command
-    parser_modularity = subparsers.add_parser('modularity', help='use the modularity based algorithm')
-
-    input_group = parser_modularity.add_argument_group('input')
-
-    input_group.add_argument('INPUT_MATRIX', help='matrix file path')
-    input_params_group=input_group.add_mutually_exclusive_group()
-    input_params_group.add_argument('-k', '--matlab_matrix_key', default=None, help='if not set, csv input is considered')
-    input_params_group.add_argument('-sep', '--csv_sep', default=None, help='if not set, "," is considered')
-
-    output_group = parser_modularity.add_argument_group('output')
-    output_group.add_argument('--output_row_labels', help='file path for the predicted row labels')
-    output_group.add_argument('--output_column_labels', help='file path for the predicted column labels')
-    output_group.add_argument('--output_fuzzy_row_labels', help='file path for the predicted fuzzy row labels')
-    output_group.add_argument('--output_fuzzy_column_labels', help='file path for the predicted fuzzy column labels')
-    output_group.add_argument('--convergence_plot', help='file path for the convergence plot')
-    output_group.add_argument('--reorganized_matrix', help='file path for the reorganized matrix')
-
-    parameters_group = parser_modularity.add_argument_group('algorithm parameters')
-    parameters_group.add_argument('-n', '--n_coclusters', help='number of co-clusters', default=2, type=int)
-    parameters_group.add_argument('-m', '--max_iter', type=int, default=15, help='maximum number of iterations')
-    parameters_group.add_argument('-e', '--epsilon', type=float, default=1e-9,  help='stop if the criterion (modularity) variation in an iteration is less than EPSILON')
-
-    init_group = parameters_group.add_mutually_exclusive_group()
-    init_group.add_argument('-i', '--init_row_labels', default=None, help='file containing the initial row labels, if not set random initialization is performed')
-    init_group.add_argument('--n_runs', type=int, default=1, help='number of runs')
-
-    evaluation_group = parser_modularity.add_argument_group('evaluation parameters')
-    evaluation_group.add_argument('-l', '--true_row_labels', default=None, help='file containing the true row labels')
-    evaluation_group.add_argument("--visu", action="store_true", help="Plot modularity values and reorganized matrix (requires numpy/scipy and matplotlib).")
-
-    #parser_modularity.add_argument('-r', '--report', choices={'none', 'text', 'graphical'}, help='')
-
-
-    return (parser, parser_modularity)
 
 def get_parser():
-    (parser, parser_modularity) = get_parsers()
-    return parser
+
+    main_parser = argparse.ArgumentParser(prog='coclust')
+
+    subparsers = main_parser.add_subparsers(help='choose the algorithm to use',
+                                            dest='subparser_name')
+
+    # create the parser for the "modularity" command
+    parser_modularity = subparsers.add_parser('modularity',
+                                              help='use the modularity based \
+                                              algorithm')
+
+    # create the parser for the "specmodularity" command
+    parser_spec_modularity = subparsers.add_parser('specmodularity',
+                                                   help='use the spectral \
+                                                   modularity based algorithm')
+
+    parser_list = [parser_modularity, parser_spec_modularity]
+    for parser in parser_list:
+        input_group = parser.add_argument_group('input')
+
+        input_group.add_argument('INPUT_MATRIX', help='matrix file path')
+        input_params_group = input_group.add_mutually_exclusive_group()
+        input_params_group.add_argument('-k', '--matlab_matrix_key',
+                                        default=None, help='if not set, csv \
+                                        input is considered')
+        input_params_group.add_argument('-sep', '--csv_sep', default=None,
+                                        help='if not set, "," is considered')
+
+        output_group = parser.add_argument_group('output')
+        output_group.add_argument('--output_row_labels',
+                                  help='file path for the predicted row labels')
+        output_group.add_argument('--output_column_labels', help='file path \
+                                  for the predicted column labels')
+        if parser == parser_modularity:
+            output_group.add_argument('--output_fuzzy_row_labels', help='file \
+                                      path for the predicted fuzzy row labels')
+            output_group.add_argument('--output_fuzzy_column_labels',
+                                      help='file path for the predicted fuzzy \
+                                      column labels')
+            output_group.add_argument('--convergence_plot', help='file path \
+                                      for the convergence plot')
+        output_group.add_argument('--reorganized_matrix', help='file path for \
+                                  the reorganized matrix')
+
+        parameters_group = parser.add_argument_group('algorithm parameters')
+        parameters_group.add_argument('-n', '--n_coclusters',
+                                      help='number of co-clusters',
+                                      default=2, type=int)
+        parameters_group.add_argument('-m', '--max_iter', type=int, default=15,
+                                      help='maximum number of iterations')
+        parameters_group.add_argument('-e', '--epsilon', type=float,
+                                      default=1e-9, help='stop if the \
+                                      criterion (modularity) variation in an \
+                                      iteration is less than EPSILON')
+
+        init_group = parameters_group.add_mutually_exclusive_group()
+        if parser == parser_modularity:
+            init_group.add_argument('-i', '--init_row_labels', default=None,
+                                    help='file containing the initial row \
+                                    labels, if not set random initialization \
+                                    is performed')
+        init_group.add_argument('--n_runs', type=int, default=1,
+                                help='number of runs')
+
+        evaluation_group = parser.add_argument_group('evaluation parameters')
+        evaluation_group.add_argument('-l', '--true_row_labels', default=None,
+                                      help='file containing the true \
+                                      row labels')
+        evaluation_group.add_argument("--visu", action="store_true",
+                                      help="Plot modularity values and \
+                                      reorganized matrix (requires numpy/scipy \
+                                      and matplotlib).")
+
+    return main_parser
 
 
 def main():
@@ -56,11 +87,12 @@ def main():
     if (args.subparser_name == "modularity"):
         modularity(args)
     elif (args.subparser_name == "specmodularity"):
-        pass
+        spec_modularity(args)
 
-def modularity(args):
-    #####################################################################################
-    ## 1) read the provided matlab matrix or build a matrix from a file in sparse format
+
+def get_data_matrix(args):
+    # 1) read the provided matlab matrix or build a matrix from a file in
+    # sparse format
 
     if args.matlab_matrix_key is not None:
         # matlab input
@@ -84,30 +116,17 @@ def modularity(args):
                     print("problem with line", i)
                     sys.exit(0)
 
-    #####################################################################################
-    ## 2) Initialization options
+    return X
 
-    if args.init_row_labels:
-        W = sp.lil_matrix(np.loadtxt(args.init_row_labels), dtype=float)
-    else:
-        W = None
 
-    #####################################################################################
-    ## 3) perform co-clustering
-
-    from .CoclustMod import CoclustMod
-    model = CoclustMod(n_clusters=args.n_coclusters, init=W, max_iter=args.max_iter)
-    model.fit(X)
-
+def process_output_labels(args, model):
     print("*****", "row labels",  "*****")
     print(model.row_labels_)
     print("*****", "column labels", "*****")
     print(model.column_labels_)
 
-    #####################################################################################
-    ## 4) show convergence and reorganised matrix
 
-
+def process_visualization(args, model, X):
     if args.visu:
         try:
             import matplotlib.pyplot as plt
@@ -128,10 +147,7 @@ def modularity(args):
             print("This option requires Numpy/Scipy as well as Matplotlib.")
 
 
-
-#####################################################################################
-## 5) evaluate using gold standard (if provided)
-
+def process_evaluation(args, model):
     if args.true_row_labels:
         try:
             with open(args.true_row_labels, 'r') as f:
@@ -151,13 +167,44 @@ def modularity(args):
             print()
             print(cm)
         except Exception as e:
-            print("Exception concerning the ----true_row_labels option (evaluation)", e)
-            print("This option requires Numpy/Scipy, Matplotlib and scikit-learn.")
-####    else :
-####        print("To use the --eval option you need to specify a value for the --true_row_labels option .")
-##
-### coclust.py modularity  ~frole/recherche/python_packaging/coclust/datasets/cstr.mat --n_coclusters 4
-### launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --input_format csv  --n_coclusters 4
-##
-###  python ./bin/launch_coclust ~frole/recherche/python_packaging/coclust/datasets/cstr.csv  --n_coclusters 4 --input_format csv --visu
-##
+            print("Exception concerning the --true_row_labels option \
+                  (evaluation)", e)
+            print("This option requires Numpy/Scipy, Matplotlib and \
+                  scikit-learn.")
+
+
+def spec_modularity(args):
+    X = get_data_matrix(args)
+
+    from .CoclustSpecMod import CoclustSpecMod
+    model = CoclustSpecMod(n_clusters=args.n_coclusters, max_iter=args.max_iter)
+    model.fit(X)
+
+    process_output_labels(args, model)
+    # TODO: visualisation
+    process_evaluation(args, model)
+
+
+def modularity(args):
+    # 2) Initialization options
+    X = get_data_matrix(args)
+
+    if args.init_row_labels:
+        W = sp.lil_matrix(np.loadtxt(args.init_row_labels), dtype=float)
+    else:
+        W = None
+
+    # 3) perform co-clustering
+
+    from .CoclustMod import CoclustMod
+    model = CoclustMod(n_clusters=args.n_coclusters, init=W,
+                       max_iter=args.max_iter)
+    model.fit(X)
+
+    process_output_labels(args, model)
+
+    # 4) show convergence and reorganised matrix
+    process_visualization(args, model, X)
+
+    # 5) evaluate using gold standard (if provided)
+    process_evaluation(args, model)
