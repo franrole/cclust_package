@@ -25,7 +25,7 @@ class TestCstr(TestCase):
     def setUpClass(cls):
         file_name = "datasets/cstr.mat"
         matlab_dict = loadmat(file_name)
-        X = matlab_dict['fea'] # numpy.ndarray
+        X = matlab_dict['fea']  # numpy.ndarray
         model = CoclustMod(n_clusters=4)
         model.fit(X)
         cls.model = model
@@ -51,7 +51,7 @@ class TestClassic3(TestCase):
     def setUpClass(cls):
         file_name = "datasets/classic3.mat"
         matlab_dict = loadmat(file_name)
-        X = matlab_dict['A'] # scipy.sparse.csc.csc_matrix
+        X = matlab_dict['A']  # scipy.sparse.csc.csc_matrix
         model = CoclustMod(n_clusters=3)
         model.fit(X)
         cls.model = model
@@ -70,6 +70,7 @@ class TestClassic3(TestCase):
                               range(len(self.model.row_labels_)))
         self.assertItemsEqual(all_column_indices,
                               range(len(self.model.column_labels_)))
+
 
 def get_indices(model):
     all_row_indices = []

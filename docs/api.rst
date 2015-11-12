@@ -9,3 +9,8 @@ coclust.CoclustMod module
 ..    :undoc-members:
 ..    :show-inheritance:
 
+coclust.CoclustSpecMod module
+-------------------------
+
+.. automodule:: coclust.CoclustSpecMod
+    :members:

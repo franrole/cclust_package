@@ -17,7 +17,7 @@ Optional
 
 For runnig the examples, Matplotlib is required.
 
-Cclust can be used with Scikit-learn, for example within a pipeline.
+Coclust can be used with Scikit-learn, for example within a pipeline.
 
 Performances
 ''''''''''''
