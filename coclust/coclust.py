@@ -23,8 +23,8 @@ def get_parser():
 
     parser_list = [parser_modularity, parser_spec_modularity]
     for parser in parser_list:
+        # input args
         input_group = parser.add_argument_group('input')
-
         input_group.add_argument('INPUT_MATRIX', help='matrix file path')
         input_params_group = input_group.add_mutually_exclusive_group()
         input_params_group.add_argument('-k', '--matlab_matrix_key',
@@ -32,7 +32,8 @@ def get_parser():
                                         input is considered')
         input_params_group.add_argument('-sep', '--csv_sep', default=None,
                                         help='if not set, "," is considered')
-
+                                        
+        # output args
         output_group = parser.add_argument_group('output')
         output_group.add_argument('--output_row_labels',
                                   help='file path for the predicted row labels')
@@ -48,7 +49,8 @@ def get_parser():
                                       for the convergence plot')
         output_group.add_argument('--reorganized_matrix', help='file path for \
                                   the reorganized matrix')
-
+                                  
+        # parameter args
         parameters_group = parser.add_argument_group('algorithm parameters')
         parameters_group.add_argument('-n', '--n_coclusters',
                                       help='number of co-clusters',
@@ -59,7 +61,8 @@ def get_parser():
                                       default=1e-9, help='stop if the \
                                       criterion (modularity) variation in an \
                                       iteration is less than EPSILON')
-
+                                      
+        # init and runs args
         init_group = parameters_group.add_mutually_exclusive_group()
         if parser == parser_modularity:
             init_group.add_argument('-i', '--init_row_labels', default=None,
@@ -68,7 +71,8 @@ def get_parser():
                                     is performed')
         init_group.add_argument('--n_runs', type=int, default=1,
                                 help='number of runs')
-
+                                
+        # evaluation and visu args
         evaluation_group = parser.add_argument_group('evaluation parameters')
         evaluation_group.add_argument('-l', '--true_row_labels', default=None,
                                       help='file containing the true \
@@ -120,10 +124,20 @@ def get_data_matrix(args):
 
 
 def process_output_labels(args, model):
-    print("*****", "row labels",  "*****")
-    print(model.row_labels_)
-    print("*****", "column labels", "*****")
-    print(model.column_labels_)
+    if args.output_row_labels :
+        with open(args.output_row_labels,'w') as f :
+            f.write(" ".join([str(i) for i in model.row_labels_]))
+    else :
+        print("*****", "row labels", "*****")
+        print(model.row_labels_)
+	
+    if args.output_column_labels :
+        with open(args.output_column_labels,'w') as f :
+            f.write(" ".join([str(i) for i in model.column_labels_]))
+    else :
+        print("*****", "row labels", "*****")
+        print(model.column_labels_)	
+	
 
 
 def process_visualization(args, model, X):
@@ -177,7 +191,7 @@ def spec_modularity(args):
     X = get_data_matrix(args)
 
     from .CoclustSpecMod import CoclustSpecMod
-    model = CoclustSpecMod(n_clusters=args.n_coclusters, max_iter=args.max_iter)
+    model = CoclustSpecMod(n_clusters=args.n_coclusters, max_iter=args.max_iter, n_runs=args.n_runs,epsilon=args.epsilon)
     model.fit(X)
 
     process_output_labels(args, model)
@@ -186,7 +200,7 @@ def spec_modularity(args):
 
 
 def modularity(args):
-    # 2) Initialization options
+    # 1) Initialization options
     X = get_data_matrix(args)
 
     if args.init_row_labels:
@@ -194,17 +208,17 @@ def modularity(args):
     else:
         W = None
 
-    # 3) perform co-clustering
+    # 2) perform co-clustering
 
     from .CoclustMod import CoclustMod
     model = CoclustMod(n_clusters=args.n_coclusters, init=W,
-                       max_iter=args.max_iter)
+                       max_iter=args.max_iter, n_runs=args.n_runs)
     model.fit(X)
 
     process_output_labels(args, model)
 
-    # 4) show convergence and reorganised matrix
+    # 3) show convergence and reorganised matrix
     process_visualization(args, model, X)
 
-    # 5) evaluate using gold standard (if provided)
+    # 4) evaluate using gold standard (if provided)
     process_evaluation(args, model)

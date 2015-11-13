@@ -20,9 +20,9 @@ class CoclustMod(object):
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
-    n_init : int, optional, default: 1
+    n_runs : int, optional, default: 1
         Number of time the algorithm will be run with different initializations.
-        The final results will be the best output of `n_init` consecutive runs
+        The final results will be the best output of `n_runs` consecutive runs
         in terms of modularity.
 
     Attributes
@@ -45,15 +45,16 @@ class CoclustMod(object):
     Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
     """
 
-    def __init__(self, n_clusters=2, init=None, max_iter=20, n_init=1):
+    def __init__(self, n_clusters=2, init=None, max_iter=20, n_runs=1, epsilon=1e-9):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
-        self.n_init = n_init
+        self.n_runs = n_runs
+        self.epsilon=epsilon
 
         self.row_labels_ = None
         self.column_labels_ = None
-        self.modularity = float("NaN")
+        self.modularity = -np.inf
         self.modularities = []
 
     def fit(self, X, y=None):
@@ -65,14 +66,14 @@ class CoclustMod(object):
             Matrix to be analyzed
         """
 
-        self._fit_single(X, y)
-        row_labels_ = self.row_labels_
-        column_labels_ = self.column_labels_
+        #self._fit_single(X, y)
+        #row_labels_ = self.row_labels_
+        #column_labels_ = self.column_labels_
         modularity = self.modularity
-        modularities = self.modularities
+        #modularities = self.modularities
 
-        for i in range(self.n_init):
-            self.__init__(self.n_clusters, self.init, self.max_iter)
+        for i in range(self.n_runs):
+            #self.__init__(self.n_clusters, self.init, self.max_iter)
             self._fit_single(X, y)
 
             # remember attributes corresponding to the best modularity
@@ -87,6 +88,7 @@ class CoclustMod(object):
         self.modularities = modularities
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
+        
 
     def _fit_single(self, X, y=None):
         """Perform one run of co-clustering by direct maximization of graph
@@ -120,7 +122,7 @@ class CoclustMod(object):
         # Loop
         m_begin = float("-inf")
         change = True
-        iteration = 1
+        iteration = 0
         while change:
             change = False
 
@@ -138,8 +140,8 @@ class CoclustMod(object):
 
             k_times_k = (Z.T).dot(BW)
             m_end = np.trace(k_times_k)
-
-            if np.abs(m_end - m_begin) > 1e-9 and iteration < self.max_iter:
+            iteration+=1
+            if np.abs(m_end - m_begin) > self.epsilon and iteration < self.max_iter:
                 self.modularities.append(m_end/N)
                 m_begin = m_end
                 change = True
