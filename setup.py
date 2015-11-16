@@ -36,7 +36,8 @@ setup(name='coclust',
       },
       entry_points={
           'console_scripts': [
-              'coclust = coclust.coclust:main',
+              'coclust = coclust.coclust:main_coclust',
+              'coclust-nb = coclust.coclust:main_coclust_nb',
             ],
       },
       include_package_data=True,
