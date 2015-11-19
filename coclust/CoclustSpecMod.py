@@ -36,10 +36,14 @@ class CoclustSpecMod(object):
     conference on Neural Information Processing - Volume Part II Pages 700-708
     """
 
-    def __init__(self, n_clusters=2, max_iter=20, n_init=10):
+    def __init__(self, n_clusters=2, max_iter=20, n_init=10, epsilon=1e-9,
+                 n_runs=1):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.n_init = n_init
+        self.epsilon = epsilon
+        self.n_runs = n_runs
+
         self.row_labels_ = None
         self.column_labels_ = None
 
@@ -62,12 +66,15 @@ class CoclustSpecMod(object):
         D_c = np.diag(np.asarray(X.sum(axis=0)).flatten())
 
         # Compute weighted X
+        with np.errstate(divide='ignore'):
+            D_r **= (-1./2)
+            D_r[D_r == np.inf] = 0
 
-        D_r **= (-1./2)
-        D_r[D_r == np.inf] = 0
+            D_c = D_c**(-1./2)
+            D_c[D_c == np.inf] = 0
 
-        D_c = D_c**(-1./2)
-        D_c[D_c == np.inf] = 0
+        D_r = np.matrix(D_r)
+        D_c = np.matrix(D_c)
 
         X_tilde = D_r * X * D_c
 
@@ -98,15 +105,18 @@ class CoclustSpecMod(object):
 
         # kmeans
 
-        k_means = KMeans(init='k-means++', n_clusters=self.n_clusters,
-                         n_init=self.n_init)
+        k_means = KMeans(init='k-means++',
+                         n_clusters=self.n_clusters,
+                         n_init=self.n_runs,
+                         max_iter=self.max_iter,
+                         tol=self.epsilon)
         k_means.fit(Q)
         k_means_labels = k_means.labels_
 
         nb_rows = X.shape[0]
 
-        self.row_labels_ = k_means_labels[0:nb_rows]
-        self.column_labels_ = k_means_labels[nb_rows:]
+        self.row_labels_ = k_means_labels[0:nb_rows].tolist()
+        self.column_labels_ = k_means_labels[nb_rows:].tolist()
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
@@ -124,7 +134,9 @@ class CoclustSpecMod(object):
         """
         return {"n_clusters": self.n_clusters,
                 "max_iter": self.max_iter,
-                "n_init": self.n_init
+                "n_init": self.n_init,
+                "epsilon": self.epsilon,
+                "n_runs": self.n_runs
                 }
 
     def set_params(self, **parameters):
