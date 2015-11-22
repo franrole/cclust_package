@@ -23,7 +23,11 @@ def get_parsers():
                                                    help='use the spectral \
                                                    modularity based algorithm')
 
-    parser_list = [parser_modularity, parser_spec_modularity, coclust_nb_parser]
+    # create the parser for the "info" command
+    parser_info = subparsers.add_parser('info')
+
+    parser_list = [parser_modularity, parser_spec_modularity, parser_info,
+                   coclust_nb_parser]
     for parser in parser_list:
         # input args
         input_group = parser.add_argument_group('input')
@@ -41,7 +45,7 @@ def get_parsers():
                                   help='file path for the predicted row labels')
         output_group.add_argument('--output_column_labels', help='file path \
                                   for the predicted column labels')
-        if parser == parser_modularity:
+        if parser == parser_modularity or parser == info:
             output_group.add_argument('--output_fuzzy_row_labels', help='file \
                                       path for the predicted fuzzy row labels')
             output_group.add_argument('--output_fuzzy_column_labels',
@@ -59,6 +63,13 @@ def get_parsers():
                                           help='minimum number of co-clusters')
             parameters_group.add_argument('--to', default=10, type=int,
                                           help='maximum number of co-clusters')
+        elif parser == parser_info:
+            parameters_group.add_argument('-K', '--n_row_clusters',
+                                          help='number of row clusters',
+                                          default=2, type=int)
+            parameters_group.add_argument('-L', '--n_col_clusters',
+                                          help='number of column clusters',
+                                          default=2, type=int)
         else:
             parameters_group.add_argument('-n', '--n_coclusters',
                                           help='number of co-clusters',
@@ -72,7 +83,7 @@ def get_parsers():
 
         # init and runs args
         init_group = parameters_group.add_mutually_exclusive_group()
-        if parser == parser_modularity:
+        if parser == parser_modularity or parser == parser_info:
             init_group.add_argument('-i', '--init_row_labels', default=None,
                                     help='file containing the initial row \
                                     labels, if not set random initialization \
@@ -138,6 +149,8 @@ def main_coclust():
         modularity(args)
     elif (args['subparser_name'] == "specmodularity"):
         spec_modularity(args)
+    elif (args['subparser_name'] == "info"):
+        info(args)
 
 
 def get_data_matrix(args):
@@ -182,7 +195,7 @@ def process_output_labels(args, model):
         with open(args['output_column_labels'], 'w') as f:
             f.write(" ".join([str(i) for i in model.column_labels_]))
     else:
-        print("*****", "row labels", "*****")
+        print("*****", "column labels", "*****")
         print(model.column_labels_)
 
 
@@ -190,10 +203,14 @@ def process_visualization(args, model, X):
     if args['visu']:
         try:
             import matplotlib.pyplot as plt
-            plt.plot(model.modularities, marker='o')
+            if (args['subparser_name'] == "info"):
+                plt.plot(model.criterions, marker='o')
+                plt.title("Evolution of criterion")
+            if (args['subparser_name'] == "modularity"):
+                plt.plot(model.modularities, marker='o')
+                plt.title("Evolution of modularity")
             plt.ylabel('Lc')
             plt.xlabel('Iterations')
-            plt.title("Evolution of modularity")
             plt.show()
 
             X = sp.csr_matrix(X)
@@ -262,6 +279,32 @@ def modularity(args):
     from .CoclustMod import CoclustMod
     model = CoclustMod(n_clusters=args['n_coclusters'], init=W,
                        max_iter=args['max_iter'], n_runs=args['n_runs'])
+    model.fit(X)
+
+    process_output_labels(args, model)
+
+    # 3) show convergence and reorganised matrix
+    process_visualization(args, model, X)
+
+    # 4) evaluate using gold standard (if provided)
+    process_evaluation(args, model)
+
+
+def info(args):
+    # 1) Initialization options
+    X = get_data_matrix(args)
+
+    if args['init_row_labels']:
+        W = sp.lil_matrix(np.loadtxt(args['init_row_labels']), dtype=float)
+    else:
+        W = None
+
+    # 2) perform co-clustering
+
+    from .CoclustInfo import CoclustInfo
+    model = CoclustInfo(n_row_clusters=args['n_row_clusters'],
+                        n_col_clusters=args['n_col_clusters'], init=W,
+                        max_iter=args['max_iter'], n_runs=args['n_runs'])
     model.fit(X)
 
     process_output_labels(args, model)

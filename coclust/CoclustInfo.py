@@ -1,237 +1,286 @@
+# -*- coding: utf-8 -*-
 import numpy as np
-from numpy import *
-
 import scipy.sparse as sp
- 
-import scipy
- 
-from random import randint
-import itertools
-from scipy.io import loadmat, savemat
+from .utils.initialization import random_init
 
 
-mat= loadmat("../datasets/classic3.mat")
-X = mat['A']
+class CoclustInfo(object):
+    """Co-clustering.
 
+    Parameters
+    ----------
 
+    n_row_clusters : int, optional, default: 2
+        Number of row clusters to form
 
-X=sp.csr_matrix(X)
+    n_col_clusters : int, optional, default: 2
+        Number of column clusters to form
 
-N = float(X.sum())
-X = X.multiply(1./N)
-print("X")
-print(X.todense())
-nb_rows=X.shape[0]
-nb_cols=X.shape[1]
+    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters), \
+        optional, default: None
+        Initial column labels
 
-K=3
+    max_iter : int, optional, default: 20
+        Maximum number of iterations
 
-## Z, W
-Z=np.zeros((nb_rows,K))
-Z_a=np.random.randint(K,size=nb_rows)
-Z=np.zeros((nb_rows,K))
-Z[np.arange(nb_rows) , Z_a]=1
-Z=sp.lil_matrix(Z)
+    n_runs : int, optional, default: 1
+        Number of time the algorithm will be run with different initializations.
+        The final results will be the best output of `n_runs` consecutive runs.
 
+    Attributes
+    ----------
+    row_labels_ : array-like, shape (n_rows,)
+        Bicluster label of each row
 
-W=np.zeros((nb_cols,K))
-W_a=np.random.randint(K,size=nb_cols)
-W=np.zeros((nb_cols,K))
-W[np.arange(nb_cols) , W_a]=1
-W=sp.lil_matrix(W)
+    column_labels_ : array-like, shape (n_cols,)
+        Bicluster label of each column
+    """
 
-print("Z")
-print(Z.todense())
-print("W")
-print(W.todense())
-(X*W).todense()
+    def __init__(self, n_row_clusters=2, n_col_clusters=2, init=None,
+                 max_iter=20, n_runs=1, epsilon=1e-9):
+        self.n_row_clusters = n_row_clusters
+        self.n_col_clusters = n_col_clusters
+        self.init = init
+        self.max_iter = max_iter
+        self.n_runs = n_runs
+        self.epsilon = epsilon
 
+        self.row_labels_ = None
+        self.column_labels_ = None
+        self.criterions = []
+        self.criterion = -np.inf
 
-## Initial delta
-p_il=X*W  
-p_il=p_il # matrice m,l ; la colonne l' contient les p_il'
-p_kj=X.T*Z # matrice j,k
-print("p_kj")
-print(p_kj.todense())
-print("p_il")
-print(p_il.todense())
+    def fit(self, X, y=None):
+        """Perform co-clustering.
 
-p_kd=p_kj.sum(axis=0)  # array contenant les p_k.
-p_dl=p_il.sum(axis=0)      # array  contenant les p_.l
-print("p_kd")
-print(p_kd)
-print("p_dl")
-print(p_dl)
-p_kd_times_p_dl=  p_kd.T * p_dl # p_k. p_.l ; transpose because p_kd is "horizontal"
-min_p_kd_times_p_dl=np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
-p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
-print("p_kd_times_p_dl")
-print(p_kd_times_p_dl)
-p_kd_times_p_dl_inv=1./p_kd_times_p_dl
+        Parameters
+        ----------
+        X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
+            Matrix to be analyzed
+        """
+        criterion = self.criterion
 
-p_kl= (Z.T * X ) * W
-print("p_kl")
-print(p_kl.todense())
-delta_kl=p_kl.multiply(p_kd_times_p_dl_inv)
+        for i in range(self.n_runs):
+            self._fit_single(X, y)
 
-print("First delta")
-print(delta_kl)
+            # remember attributes corresponding to the best criterion
+            if (self.criterion > criterion):
+                criterion = self.criterion
+                criterions = self.criterions
+                row_labels_ = self.row_labels_
+                column_labels_ = self.column_labels_
 
+        # update attributes
+        self.criterion = criterion
+        self.criterions = criterions
+        self.row_labels_ = row_labels_
+        self.column_labels_ = column_labels_
 
+    def _fit_single(self, X, y=None):
+        """Perform one run of co-clustering.
 
-change=True
-news=[]
+        Parameters
+        ----------
+        X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
+            Matrix to be analyzed
+        """
+        K = self.n_row_clusters
 
-n_iters=20
-pkl_mi_previous=float(-inf)
+        if not sp.issparse(X):
+            X = np.matrix(X)
 
-## Loop 
-while change and n_iters > 0:
-    change=False
-    
-    # Update Z
-    #print("Current Z")
-    #print(Z.todense())
-    p_il=X*W  # matrice m,l ; la colonne l' contient les p_il'
-    delta_kl[delta_kl==0.]=0.0001 # to prevent log(0)
-    log_delta_kl=log(delta_kl.T)
-    log_delta_kl=sp.lil_matrix(log_delta_kl)
-    Z1=p_il * log_delta_kl  # p_il * (d_kl)T ; on examine chaque cluster 
-    Z1=Z1.toarray()
-    Z =np.zeros_like(Z1)
-    Z[np.arange(len(Z1)), Z1.argmax(1)] = 1 # Z[(line index 1...), (max col index for 1...)]
-    Z=sp.lil_matrix(Z)
-    #print("New Z")
-    #print(Z.todense())
+        if self.init is None:
+            W = random_init(K, X.shape[1])
+        else:
+            W = np.matrix(self.init, dtype=float)
 
-    
-    # Update delta
-    p_kj=X.T*Z      # matrice d,k ; la colonne k' contient les p_jk'
-    # p_il unchanged
-    p_dl=p_il.sum(axis=0)      # array l contenant les p_.l
-    p_kd=p_kj.sum(axis=0)  # array k contenant les p_k.
-    
-    p_kd_times_p_dl=  p_kd.T * p_dl # p_k. p_.l ; transpose because p_kd is "horizontal"
-    min_p_kd_times_p_dl=np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
-    p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
-    p_kd_times_p_dl_inv=1./p_kd_times_p_dl
-    p_kl= (Z.T * X ) * W
-    #print(p_kl.todense())
-    delta_kl=p_kl.multiply(p_kd_times_p_dl_inv)
-    #print(delta_kl)
-    #print("delta after modifying Z")
-    #print(delta_kl)
-    
-    # Update W
-    #print("Current W")
-    #print(W.todense())
-    p_kj=X.T*Z  # matrice m,l ; la colonne l' contient les p_il'
-    delta_kl[delta_kl==0.]=0.0001 # to prevent log(0)
-    log_delta_kl=log(delta_kl)
-    log_delta_kl=sp.lil_matrix(log_delta_kl)
-    W1=p_kj * log_delta_kl  # p_kj * d_kl ; on examine chaque cluster 
-    W1=W1.toarray()
-    W =np.zeros_like(W1)
-    W[np.arange(len(W1)), W1.argmax(1)] = 1
-    W=sp.lil_matrix(W)
-    #print("New W")
-    #print(W.todense())
+        Z = np.zeros((X.shape[0], K))
 
-    # Update delta
-    #print("Current delta")
-    #print(delta_kl)
-    p_il=X*W     # matrice d,k ; la colonne k' contient les p_jk'
-    # p_kj unchanged
-    p_dl=p_il.sum(axis=0)      # array l contenant les p_.l
-    p_kd=p_kj.sum(axis=0)  # array k contenant les p_k.
+        # TODO
+        X = sp.csr_matrix(X)
 
-    p_kd_times_p_dl=  p_kd.T * p_dl # p_k. p_.l ; transpose because p_kd is "horizontal"
-    min_p_kd_times_p_dl=np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
-    p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
-    p_kd_times_p_dl_inv=1./p_kd_times_p_dl
-    p_kl= (Z.T * X ) * W
+        N = float(X.sum())
+        X = X.multiply(1. / N)
+        nb_rows = X.shape[0]
+        nb_cols = X.shape[1]
 
-    delta_kl=p_kl.multiply(p_kd_times_p_dl_inv)
-    delta_kl[delta_kl==0.]=0.0001 # to prevent log(0) when computing criterion
-    #print("delta after modifying W")
-    #print(delta_kl)
+        Z = sp.lil_matrix(random_init(K, nb_rows))
+        W = sp.lil_matrix(random_init(K, nb_cols))
 
-    # Criterion
-    #print(p_kl.todense())
-    #print(log(delta_kl))
-    pkl_mi=sp.lil_matrix(p_kl).multiply(sp.lil_matrix(log(delta_kl)))
-    pkl_mi=pkl_mi.sum()
-    print(pkl_mi)
+        # Initial delta
+        p_il = X * W
+        p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
+        p_kj = X.T * Z  # matrice j,k
 
+        p_kd = p_kj.sum(axis=0)  # array contenant les p_k.
+        p_dl = p_il.sum(axis=0)  # array contenant les p_.l
 
-    if np.abs(pkl_mi - pkl_mi_previous)  > 1e-9 :
-        pkl_mi_previous=pkl_mi
-        change=True
-        news.append(pkl_mi)
-        n_iters-=1
+        p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+        min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+        p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
+        p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
 
+        p_kl = (Z.T * X) * W
+        delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
 
+        change = True
+        news = []
 
+        n_iters = self.max_iter
+        pkl_mi_previous = float(-np.inf)
 
-		
-import matplotlib.pyplot as plt
-import itertools
-from scipy.io import loadmat, savemat
+        # Loop
+        while change and n_iters > 0:
+            change = False
 
-from sklearn.metrics import confusion_matrix
-from sklearn.cluster import MiniBatchKMeans, KMeans
-from sklearn.metrics import accuracy_score
-from sklearn.metrics.cluster import normalized_mutual_info_score
-from sklearn.feature_extraction.text import *
-from sklearn.metrics.cluster import adjusted_rand_score
-		
-labels=mat['labels']
-labels=labels.tolist()
-labels = list(itertools.chain.from_iterable(labels))
+            # Update Z
+            p_il = X * W  # matrice m,l ; la colonne l' contient les p_il'
+            delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
+            log_delta_kl = np.log(delta_kl.T)
+            log_delta_kl = sp.lil_matrix(log_delta_kl)
+            Z1 = p_il * log_delta_kl  # p_il * (d_kl)T ; on examine chaque cluster
+            Z1 = Z1.toarray()
+            Z = np.zeros_like(Z1)
+            Z[np.arange(len(Z1)), Z1.argmax(1)] = 1  # Z[(line index 1...), (max col index for 1...)]
+            Z = sp.lil_matrix(Z)
 
-part=Z.todense().argmax(axis=1).tolist()
-part=[item for sublist in part for item in sublist]
+            # Update delta
+            p_kj = X.T * Z      # matrice d,k ; la colonne k' contient les p_jk'
+            # p_il unchanged
+            p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
+            p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
-part2=W.todense().argmax(axis=1).tolist()
-part2=[item for sublist in part2 for item in sublist]
+            p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+            min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+            p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
+            p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
+            p_kl = (Z.T * X) * W
+            delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
 
-n=normalized_mutual_info_score(labels, part)
-ari=adjusted_rand_score(labels, part)
+            # Update W
+            p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
+            delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
+            log_delta_kl = np.log(delta_kl)
+            log_delta_kl = sp.lil_matrix(log_delta_kl)
+            W1 = p_kj * log_delta_kl  # p_kj * d_kl ; on examine chaque cluster
+            W1 = W1.toarray()
+            W = np.zeros_like(W1)
+            W[np.arange(len(W1)), W1.argmax(1)] = 1
+            W = sp.lil_matrix(W)
 
-cm=confusion_matrix(labels, part)
-cm=np.matrix(cm)
-print (cm)
+            # Update delta
+            p_il = X * W     # matrice d,k ; la colonne k' contient les p_jk'
+            # p_kj unchanged
+            p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
+            p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
-cm1=cm
+            p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+            min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+            p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
+            p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
+            p_kl = (Z.T * X) * W
 
-cml=np.array(cm).tolist()
-	
+            delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
+            delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0) when computing criterion
 
-cml = list(itertools.chain(*cml))
+            # Criterion
+            pkl_mi = sp.lil_matrix(p_kl).multiply(sp.lil_matrix(np.log(delta_kl)))
+            pkl_mi = pkl_mi.sum()
 
-total=0
-for i in range(0,K):
-	if len(cml) != 0:
-		ma=max(cml)
-		if (ma  in cm1): 
-			index = np.where(cm1==ma)
-			total = total +ma
-			cml.remove(ma)
-			cm1 = scipy.delete(cm1,index[0][0,0], 0)
-			cm1 = scipy.delete(cm1, index[1][0,0], 1)
-			cml=np.array(cm1).tolist()
+            if np.abs(pkl_mi - pkl_mi_previous) > self.epsilon:
+                pkl_mi_previous = pkl_mi
+                change = True
+                news.append(pkl_mi)
+                n_iters -= 1
 
-			cml = list(itertools.chain(*cml))
+        self.criterions = news
+        self.criterion = pkl_mi
 
-purity=(total)/(nb_rows*1.)
-print( "Accuracy ==>" + str(purity))
-print ("nmi ==>" + str(n))
-print ("adjusted rand index ==>" + str(ari))
+        self.row_labels_ = Z.todense().argmax(axis=1).tolist()
+        self.row_labels_ = [item for sublist in self.row_labels_ for item in sublist]
 
+        self.column_labels_ = W.todense().argmax(axis=1).tolist()
+        self.column_labels_ = [item for sublist in self.column_labels_ for item in sublist]
 
-plt.plot(news,marker='o')
-plt.ylabel('Lc')
-plt.xlabel('Iterations')
-plt.show()
+    def get_params(self, deep=True):
+        """Get parameters for this estimator.
 
+        Parameters
+        ----------
+        deep: boolean, optional
+            If True, will return the parameters for this estimator and
+            contained subobjects that are estimators
 
+        Returns
+        -------
+        dict
+            Mapping of string to any parameter names mapped to their values
+        """
+        return {"init": self.init,
+                "n_row_clusters": self.n_row_clusters,
+                "n_col_clusters": self.n_col_clusters,
+                "max_iter": self.max_iter,
+                "n_runs": self.n_runs,
+                "epsilon": self.epsilon
+                }
+
+    def set_params(self, **parameters):
+        """Set the parameters of this estimator.
+
+        The method works on simple estimators as well as on nested objects
+        (such as pipelines). The former have parameters of the form
+        ``<component>__<parameter>`` so that it's possible to update each
+        component of a nested object.
+
+        Returns
+        -------
+        CoclustMod.CoclustMod
+            self
+        """
+        for parameter, value in parameters.items():
+            setattr(self, parameter, value)
+        return self
+
+    def get_indices(self, i):
+        """Give the row and column indices of the i’th co-cluster.
+
+        Parameters
+        ----------
+        i : integer
+            Index of the co-cluster
+
+        Returns
+        -------
+        (list, list)
+            (row indices, column indices)
+        """
+        row_indices = [index for index, label in enumerate(self.row_labels_)
+                       if label == i]
+        column_indices = [index for index, label
+                          in enumerate(self.column_labels_) if label == i]
+        return (row_indices, column_indices)
+
+    def get_shape(self, i):
+        """Give the shape of the i’th co-cluster.
+
+        Parameters
+        ----------
+        i : integer
+            Index of the co-cluster
+
+        Returns
+        -------
+        (int, int)
+            (number of rows, number of columns)
+        """
+        row_indices, column_indices = self.get_indices(i)
+        return (len(row_indices), len(column_indices))
+
+    def get_submatrix(self, i, data):
+        """Returns the submatrix corresponding to bicluster `i`.
+
+        Works with sparse matrices. Only works if ``rows_`` and
+        ``columns_`` attributes exist.
+        """
+        row_ind, col_ind = self.get_indices(i)
+        return data[row_ind[:, np.newaxis], col_ind]
