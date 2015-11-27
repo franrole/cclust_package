@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.sparse as sp
 from .utils.initialization import random_init
+from sklearn.utils import check_random_state
 
 
 class CoclustMod(object):
@@ -9,7 +10,6 @@ class CoclustMod(object):
 
     Parameters
     ----------
-
     n_clusters : int, optional, default: 2
         Number of co-clusters to form
 
@@ -24,6 +24,11 @@ class CoclustMod(object):
         Number of time the algorithm will be run with different initializations.
         The final results will be the best output of `n_runs` consecutive runs
         in terms of modularity.
+
+    random_state : integer or numpy.RandomState, optional
+        The generator used to initialize the centers. If an integer is
+        given, it fixes the seed. Defaults to the global numpy random
+        number generator.
 
     Attributes
     ----------
@@ -46,12 +51,13 @@ class CoclustMod(object):
     """
 
     def __init__(self, n_clusters=2, init=None, max_iter=20, n_runs=1,
-                 epsilon=1e-9):
+                 epsilon=1e-9, random_state=None):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
         self.n_runs = n_runs
         self.epsilon = epsilon
+        self.random_state = check_random_state(random_state)
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -69,7 +75,10 @@ class CoclustMod(object):
 
         modularity = self.modularity
 
-        for i in range(self.n_runs):
+        random_state = self.random_state
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_runs)
+        for seed in seeds:
+            self.random_state = seed
             self._fit_single(X, y)
 
             # remember attributes corresponding to the best modularity
@@ -78,6 +87,8 @@ class CoclustMod(object):
                 modularities = self.modularities
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
+
+        self.random_state = random_state
 
         # update attributes
         self.modularity = modularity
@@ -99,7 +110,7 @@ class CoclustMod(object):
             X = np.matrix(X)
 
         if self.init is None:
-            W = random_init(self.n_clusters, X.shape[1])
+            W = random_init(self.n_clusters, X.shape[1], self.random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
@@ -164,7 +175,8 @@ class CoclustMod(object):
                 "n_clusters": self.n_clusters,
                 "max_iter": self.max_iter,
                 "n_runs": self.n_runs,
-                "epsilon": self.epsilon
+                "epsilon": self.epsilon,
+                "random_state": self.random_state
                 }
 
     def set_params(self, **parameters):

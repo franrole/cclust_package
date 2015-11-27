@@ -36,8 +36,9 @@ def get_parsers():
         input_params_group.add_argument('-k', '--matlab_matrix_key',
                                         default=None, help='if not set, csv \
                                         input is considered')
-        input_params_group.add_argument('-sep', '--csv_sep', default=None,
-                                        help='if not set, "," is considered')
+        input_params_group.add_argument('-sep', '--csv_sep', default=",",
+                                        help='if not set, "," is considered, \
+                                        use "\\t" for tab-separated values')
 
         # output args
         output_group = parser.add_argument_group('output')
@@ -88,8 +89,13 @@ def get_parsers():
                                     help='file containing the initial row \
                                     labels, if not set random initialization \
                                     is performed')
+
         init_group.add_argument('--n_runs', type=int, default=1,
                                 help='number of runs')
+
+        parameters_group.add_argument('--seed', type=int, default=None,
+                                      help='set the random state, useful for \
+                                      reproductible results')
 
         # evaluation and visu args
         evaluation_group = parser.add_argument_group('evaluation parameters')
@@ -126,7 +132,7 @@ def main_coclust_nb():
 
     for n_coclusters in range(args['from'], args['to'] + 1):
         model = CoclustMod(n_clusters=n_coclusters, max_iter=args['max_iter'],
-                           n_runs=args['n_runs'])
+                           n_runs=args['n_runs'], random_state=args['seed'])
         model.fit(X)
 
         if (model.modularity > modularity):
@@ -165,13 +171,15 @@ def get_data_matrix(args):
         X = matlab_dict[key]
     else:
         # csv file (matrix market format)
+        if args['csv_sep'] == "\\t":
+            args['csv_sep'] = "\t"
         with open(args['INPUT_MATRIX'], 'r') as f:
             f_line = f.readline().strip()
-            t_line = f_line.split(',')
-            X = sp.lil_matrix((t_line[0], t_line[1]))
+            t_line = f_line.split(args['csv_sep'])
+            X = sp.lil_matrix((int(t_line[0]), int(t_line[1])))
             for i, l in enumerate(f):
                 l = l.strip()
-                t = l.split(',')
+                t = l.split(args['csv_sep'])
                 r, c, v = int(t[0]), int(t[1]), int(t[2])
                 try:
                     X[r, c] = v
@@ -257,7 +265,8 @@ def spec_modularity(args):
     model = CoclustSpecMod(n_clusters=args['n_coclusters'],
                            max_iter=args['max_iter'],
                            n_runs=args['n_runs'],
-                           epsilon=args['epsilon'])
+                           epsilon=args['epsilon'],
+                           random_state=args['seed'])
     model.fit(X)
 
     process_output_labels(args, model)
@@ -278,7 +287,8 @@ def modularity(args):
 
     from .CoclustMod import CoclustMod
     model = CoclustMod(n_clusters=args['n_coclusters'], init=W,
-                       max_iter=args['max_iter'], n_runs=args['n_runs'])
+                       max_iter=args['max_iter'], n_runs=args['n_runs'],
+                       random_state=args['seed'])
     model.fit(X)
 
     process_output_labels(args, model)

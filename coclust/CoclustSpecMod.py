@@ -10,17 +10,21 @@ class CoclustSpecMod(object):
 
     Parameters
     ----------
-
     n_clusters : int, optional, default: 2
         Number of co-clusters to form
 
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
-    n_init : int, optional, default: 10
+    n_runs : int, optional, default: 10
         Number of time the k-means algorithm will be run with different centroid
-        seeds. The final results will be the best output of `n_init` consecutive
+        seeds. The final results will be the best output of `n_runs` consecutive
         runs in terms of inertia.
+
+    random_state : integer or numpy.RandomState, optional
+        The generator used to initialize the centers. If an integer is
+        given, it fixes the seed. Defaults to the global numpy random
+        number generator.
 
     Attributes
     ----------
@@ -36,13 +40,13 @@ class CoclustSpecMod(object):
     conference on Neural Information Processing - Volume Part II Pages 700-708
     """
 
-    def __init__(self, n_clusters=2, max_iter=20, n_init=10, epsilon=1e-9,
-                 n_runs=1):
+    def __init__(self, n_clusters=2, max_iter=20, epsilon=1e-9, n_runs=1,
+                 random_state=None):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
-        self.n_init = n_init
         self.epsilon = epsilon
         self.n_runs = n_runs
+        self.random_state = random_state
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -109,7 +113,8 @@ class CoclustSpecMod(object):
                          n_clusters=self.n_clusters,
                          n_init=self.n_runs,
                          max_iter=self.max_iter,
-                         tol=self.epsilon)
+                         tol=self.epsilon,
+                         random_state=self.random_state)
         k_means.fit(Q)
         k_means_labels = k_means.labels_
 
@@ -134,9 +139,9 @@ class CoclustSpecMod(object):
         """
         return {"n_clusters": self.n_clusters,
                 "max_iter": self.max_iter,
-                "n_init": self.n_init,
                 "epsilon": self.epsilon,
-                "n_runs": self.n_runs
+                "n_runs": self.n_runs,
+                "random_state": self.random_state
                 }
 
     def set_params(self, **parameters):
