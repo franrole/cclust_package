@@ -47,9 +47,9 @@ def get_parsers():
         output_group.add_argument('--output_column_labels', help='file path \
                                   for the predicted column labels')
         if parser == parser_modularity or parser == info:
-            output_group.add_argument('--output_fuzzy_row_labels', help='file \
+            output_group.add_argument('--output_fuzzy_row_labels', default=2, help='file \
                                       path for the predicted fuzzy row labels')
-            output_group.add_argument('--output_fuzzy_column_labels',
+            output_group.add_argument('--output_fuzzy_column_labels', default=2,
                                       help='file path for the predicted fuzzy \
                                       column labels')
             output_group.add_argument('--convergence_plot', help='file path \
@@ -205,6 +205,12 @@ def process_output_labels(args, model):
     else:
         print("*****", "column labels", "*****")
         print(model.column_labels_)
+        
+    if args['output_fuzzy_row_labels']:
+       print("Save first  cols of ordered BW")
+       
+    if args['output_fuzzy_col_labels']:
+        print("Save first cols of ordered BtZ")
 
 
 def process_visualization(args, model, X):
