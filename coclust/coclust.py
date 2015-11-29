@@ -121,6 +121,22 @@ def get_coclust_nb_parser():
     return get_parsers()['coclust-nb']
 
 
+def modularity_by_number_of_clusters(args, modularities):
+    if args['visu']:
+        try:
+            import matplotlib.pyplot as plt
+            plt.plot(modularities, marker='o',
+                     xdata=range(args['from'], args['to'] + 1))
+            plt.title("Evolution of modularity")
+            plt.ylabel('Lc')
+            plt.xlabel('Number of clusters')
+            plt.show()
+
+        except Exception as e:
+            print("Exception concerning the --visu option", e)
+            print("This option requires Numpy/Scipy as well as Matplotlib.")
+
+
 def main_coclust_nb():
     parser = get_coclust_nb_parser()
     args = vars(parser.parse_args())
@@ -130,10 +146,12 @@ def main_coclust_nb():
     modularity = -np.inf
     best_model = CoclustMod()
 
+    modularities = []
     for n_coclusters in range(args['from'], args['to'] + 1):
         model = CoclustMod(n_clusters=n_coclusters, max_iter=args['max_iter'],
                            n_runs=args['n_runs'], random_state=args['seed'])
         model.fit(X)
+        modularities.append(model.modularity)
 
         if (model.modularity > modularity):
             modularity = model.modularity
@@ -145,7 +163,9 @@ def main_coclust_nb():
     process_output_labels(args, best_model)
 
     # 3) show convergence and reorganised matrix
+    args['subparser_name'] = "modularity"
     process_visualization(args, best_model, X)
+    modularity_by_number_of_clusters(args, modularities)
 
 
 def main_coclust():
