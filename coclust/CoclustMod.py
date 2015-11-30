@@ -155,6 +155,8 @@ class CoclustMod(object):
 
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
+        self.btz=BtZ
+        self.bw=BW
         self.modularity = m_end / N
 
     def get_params(self, deep=True):
@@ -239,3 +241,13 @@ class CoclustMod(object):
         """
         row_ind, col_ind = self.get_indices(i)
         return data[row_ind[:, np.newaxis], col_ind]
+        
+    def get_assignment_matrix(self, kind, i):
+        """Returns the indices of 'best' i cols of an assignment matrix (row or column).
+        """
+        if kind=="rows" :
+            s_bw=np.argsort(self.bw)
+            return s_bw[: , -1:-(i+1):-1]
+        if  kind=="cols" :
+            s_btz=np.argsort(self.btz)
+            return s_btz[:, -1:-(i+1):-1]
