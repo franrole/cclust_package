@@ -96,31 +96,34 @@ class CoclustInfo(object):
             Matrix to be analyzed
         """
         K = self.n_row_clusters
+        L = self.n_col_clusters
 
         if not sp.issparse(X):
             X = np.matrix(X)
 
         if self.init is None:
-            W = random_init(K, X.shape[1], self.random_state)
+            W = random_init(L, X.shape[1], self.random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
-        Z = np.zeros((X.shape[0], K))
+#        Z = np.zeros((X.shape[0], K))
 
         # TODO
         X = sp.csr_matrix(X)
 
         N = float(X.sum())
         X = X.multiply(1. / N)
-        nb_rows = X.shape[0]
-        nb_cols = X.shape[1]
+#        nb_rows = X.shape[0]
+#        nb_cols = X.shape[1]
 
-        Z = sp.lil_matrix(random_init(K, nb_rows))
-        W = sp.lil_matrix(random_init(K, nb_cols))
+        Z = sp.lil_matrix(random_init(K, X.shape[0]))
+#        W = sp.lil_matrix(random_init(L, nb_cols))
+
+        W = sp.csr_matrix(W)
 
         # Initial delta
         p_il = X * W
-        p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
+        #p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
         p_kj = X.T * Z  # matrice j,k
 
         p_kd = p_kj.sum(axis=0)  # array contenant les p_k.
