@@ -228,10 +228,10 @@ def process_output_labels(args, model):
         print("*****", "column labels", "*****")
         print(model.column_labels_)
 
-    if args['output_fuzzy_row_labels']:
+    if args.get('output_fuzzy_row_labels', None):
         print("Save first  cols of ordered BW")
 
-    if args['output_fuzzy_column_labels']:
+    if args.get('output_fuzzy_column_labels', None):
         print("Save first cols of ordered BtZ")
 
 
