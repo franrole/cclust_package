@@ -23,14 +23,17 @@ class CoclustInfo(object):
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
-    n_runs : int, optional, default: 1
+    n_init : int, optional, default: 1
         Number of time the algorithm will be run with different initializations.
-        The final results will be the best output of `n_runs` consecutive runs.
+        The final results will be the best output of `n_init` consecutive runs.
 
     random_state : integer or numpy.RandomState, optional
         The generator used to initialize the centers. If an integer is
         given, it fixes the seed. Defaults to the global numpy random
         number generator.
+
+    tol : float, default: 1e-9
+        Relative tolerance with regards to criterion to declare convergence
 
     Attributes
     ----------
@@ -42,13 +45,13 @@ class CoclustInfo(object):
     """
 
     def __init__(self, n_row_clusters=2, n_col_clusters=2, init=None,
-                 max_iter=20, n_runs=1, epsilon=1e-9, random_state=None):
+                 max_iter=20, n_init=1, tol=1e-9, random_state=None):
         self.n_row_clusters = n_row_clusters
         self.n_col_clusters = n_col_clusters
         self.init = init
         self.max_iter = max_iter
-        self.n_runs = n_runs
-        self.epsilon = epsilon
+        self.n_init = n_init
+        self.tol = tol
         self.random_state = check_random_state(random_state)
 
         self.row_labels_ = None
@@ -67,7 +70,7 @@ class CoclustInfo(object):
         criterion = self.criterion
 
         random_state = self.random_state
-        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_runs)
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
@@ -123,14 +126,16 @@ class CoclustInfo(object):
 
         # Initial delta
         p_il = X * W
-        #p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
+        # p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
         p_kj = X.T * Z  # matrice j,k
 
         p_kd = p_kj.sum(axis=0)  # array contenant les p_k.
         p_dl = p_il.sum(axis=0)  # array contenant les p_.l
 
         p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-        min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+        min_p_kd_times_p_dl = np.min(
+            p_kd_times_p_dl[
+                np.nonzero(p_kd_times_p_dl)])
         p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
         p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
 
@@ -152,10 +157,12 @@ class CoclustInfo(object):
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl.T)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
-            Z1 = p_il * log_delta_kl  # p_il * (d_kl)T ; on examine chaque cluster
+            # p_il * (d_kl)T ; on examine chaque cluster
+            Z1 = p_il * log_delta_kl
             Z1 = Z1.toarray()
             Z = np.zeros_like(Z1)
-            Z[np.arange(len(Z1)), Z1.argmax(1)] = 1  # Z[(line index 1...), (max col index for 1...)]
+            # Z[(line index 1...), (max col index for 1...)]
+            Z[np.arange(len(Z1)), Z1.argmax(1)] = 1
             Z = sp.lil_matrix(Z)
 
             # Update delta
@@ -165,7 +172,9 @@ class CoclustInfo(object):
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
             p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-            min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+            min_p_kd_times_p_dl = np.min(
+                p_kd_times_p_dl[
+                    np.nonzero(p_kd_times_p_dl)])
             p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
@@ -189,19 +198,23 @@ class CoclustInfo(object):
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
             p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-            min_p_kd_times_p_dl = np.min(p_kd_times_p_dl[np.nonzero(p_kd_times_p_dl)])
+            min_p_kd_times_p_dl = np.min(
+                p_kd_times_p_dl[
+                    np.nonzero(p_kd_times_p_dl)])
             p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0) when computing criterion
+            # to prevent log(0) when computing criterion
+            delta_kl[delta_kl == 0.] = 0.0001
 
             # Criterion
-            pkl_mi = sp.lil_matrix(p_kl).multiply(sp.lil_matrix(np.log(delta_kl)))
+            pkl_mi = sp.lil_matrix(p_kl).multiply(
+                sp.lil_matrix(np.log(delta_kl)))
             pkl_mi = pkl_mi.sum()
 
-            if np.abs(pkl_mi - pkl_mi_previous) > self.epsilon:
+            if np.abs(pkl_mi - pkl_mi_previous) > self.tol:
                 pkl_mi_previous = pkl_mi
                 change = True
                 news.append(pkl_mi)
@@ -211,10 +224,13 @@ class CoclustInfo(object):
         self.criterion = pkl_mi
 
         self.row_labels_ = Z.todense().argmax(axis=1).tolist()
-        self.row_labels_ = [item for sublist in self.row_labels_ for item in sublist]
+        self.row_labels_ = [item for sublist in self.row_labels_
+                            for item in sublist]
 
         self.column_labels_ = W.todense().argmax(axis=1).tolist()
-        self.column_labels_ = [item for sublist in self.column_labels_ for item in sublist]
+        self.column_labels_ = [item
+                               for sublist in self.column_labels_
+                               for item in sublist]
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
@@ -234,8 +250,8 @@ class CoclustInfo(object):
                 "n_row_clusters": self.n_row_clusters,
                 "n_col_clusters": self.n_col_clusters,
                 "max_iter": self.max_iter,
-                "n_runs": self.n_runs,
-                "epsilon": self.epsilon,
+                "n_init": self.n_init,
+                "tol": self.tol,
                 "random_state": self.random_state
                 }
 

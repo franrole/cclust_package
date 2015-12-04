@@ -20,15 +20,18 @@ class CoclustMod(object):
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
-    n_runs : int, optional, default: 1
+    n_init : int, optional, default: 1
         Number of time the algorithm will be run with different initializations.
-        The final results will be the best output of `n_runs` consecutive runs
+        The final results will be the best output of `n_init` consecutive runs
         in terms of modularity.
 
     random_state : integer or numpy.RandomState, optional
         The generator used to initialize the centers. If an integer is
         given, it fixes the seed. Defaults to the global numpy random
         number generator.
+
+    tol : float, default: 1e-9
+        Relative tolerance with regards to modularity to declare convergence
 
     Attributes
     ----------
@@ -50,13 +53,13 @@ class CoclustMod(object):
     Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810
     """
 
-    def __init__(self, n_clusters=2, init=None, max_iter=20, n_runs=1,
-                 epsilon=1e-9, random_state=None):
+    def __init__(self, n_clusters=2, init=None, max_iter=20, n_init=1,
+                 tol=1e-9, random_state=None):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
-        self.n_runs = n_runs
-        self.epsilon = epsilon
+        self.n_init = n_init
+        self.tol = tol
         self.random_state = check_random_state(random_state)
 
         self.row_labels_ = None
@@ -76,7 +79,7 @@ class CoclustMod(object):
         modularity = self.modularity
 
         random_state = self.random_state
-        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_runs)
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
@@ -147,7 +150,7 @@ class CoclustMod(object):
             k_times_k = (Z.T).dot(BW)
             m_end = np.trace(k_times_k)
             iteration += 1
-            if (np.abs(m_end - m_begin) > self.epsilon and
+            if (np.abs(m_end - m_begin) > self.tol and
                     iteration < self.max_iter):
                 self.modularities.append(m_end/N)
                 m_begin = m_end
@@ -155,8 +158,8 @@ class CoclustMod(object):
 
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
-        self.btz=BtZ
-        self.bw=BW
+        self.btz = BtZ
+        self.bw = BW
         self.modularity = m_end / N
 
     def get_params(self, deep=True):
@@ -176,8 +179,8 @@ class CoclustMod(object):
         return {"init": self.init,
                 "n_clusters": self.n_clusters,
                 "max_iter": self.max_iter,
-                "n_runs": self.n_runs,
-                "epsilon": self.epsilon,
+                "n_init": self.n_init,
+                "tol": self.tol,
                 "random_state": self.random_state
                 }
 
@@ -241,13 +244,13 @@ class CoclustMod(object):
         """
         row_ind, col_ind = self.get_indices(i)
         return data[row_ind[:, np.newaxis], col_ind]
-        
+
     def get_assignment_matrix(self, kind, i):
         """Returns the indices of 'best' i cols of an assignment matrix (row or column).
         """
-        if kind=="rows" :
-            s_bw=np.argsort(self.bw)
-            return s_bw[: , -1:-(i+1):-1]
-        if  kind=="cols" :
-            s_btz=np.argsort(self.btz)
+        if kind == "rows":
+            s_bw = np.argsort(self.bw)
+            return s_bw[:, -1:-(i+1):-1]
+        if kind == "cols":
+            s_btz = np.argsort(self.btz)
             return s_btz[:, -1:-(i+1):-1]

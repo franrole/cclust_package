@@ -37,7 +37,7 @@ def get_parsers():
                                         default=None, help='if not set, csv \
                                         input is considered')
         input_params_group.add_argument('-sep', '--csv_sep', default=",",
-                                        help='if not set, "," is considered, \
+                                        help='if not set, "," is considered; \
                                         use "\\t" for tab-separated values')
 
         # output args
@@ -47,9 +47,11 @@ def get_parsers():
         output_group.add_argument('--output_column_labels', help='file path \
                                   for the predicted column labels')
         if parser == parser_modularity or parser == info:
-            output_group.add_argument('--output_fuzzy_row_labels', default=2,  type=int, help='file \
+            output_group.add_argument('--output_fuzzy_row_labels', default=2,
+                                      type=int, help='file \
                                       path for the predicted fuzzy row labels')
-            output_group.add_argument('--output_fuzzy_column_labels', default=2,  type=int,
+            output_group.add_argument('--output_fuzzy_column_labels', default=2,
+                                      type=int,
                                       help='file path for the predicted fuzzy \
                                       column labels')
             output_group.add_argument('--convergence_plot', help='file path \
@@ -149,7 +151,7 @@ def main_coclust_nb():
     modularities = []
     for n_coclusters in range(args['from'], args['to'] + 1):
         model = CoclustMod(n_clusters=n_coclusters, max_iter=args['max_iter'],
-                           n_runs=args['n_runs'], random_state=args['seed'])
+                           n_init=args['n_runs'], random_state=args['seed'])
         model.fit(X)
         modularities.append(model.modularity)
 
@@ -225,10 +227,10 @@ def process_output_labels(args, model):
     else:
         print("*****", "column labels", "*****")
         print(model.column_labels_)
-        
+
     if args['output_fuzzy_row_labels']:
-       print("Save first  cols of ordered BW")
-       
+        print("Save first  cols of ordered BW")
+
     if args['output_fuzzy_column_labels']:
         print("Save first cols of ordered BtZ")
 
@@ -290,8 +292,8 @@ def spec_modularity(args):
     from .CoclustSpecMod import CoclustSpecMod
     model = CoclustSpecMod(n_clusters=args['n_coclusters'],
                            max_iter=args['max_iter'],
-                           n_runs=args['n_runs'],
-                           epsilon=args['epsilon'],
+                           n_init=args['n_runs'],
+                           tol=args['epsilon'],
                            random_state=args['seed'])
     model.fit(X)
 
@@ -313,7 +315,8 @@ def modularity(args):
 
     from .CoclustMod import CoclustMod
     model = CoclustMod(n_clusters=args['n_coclusters'], init=W,
-                       max_iter=args['max_iter'], n_runs=args['n_runs'],
+                       max_iter=args['max_iter'], n_init=args['n_runs'],
+                       tol=args['epsilon'],
                        random_state=args['seed'])
     model.fit(X)
 
@@ -340,7 +343,8 @@ def info(args):
     from .CoclustInfo import CoclustInfo
     model = CoclustInfo(n_row_clusters=args['n_row_clusters'],
                         n_col_clusters=args['n_col_clusters'], init=W,
-                        max_iter=args['max_iter'], n_runs=args['n_runs'])
+                        max_iter=args['max_iter'], n_init=args['n_runs'],
+                        tol=args['epsilon'])
     model.fit(X)
 
     process_output_labels(args, model)
