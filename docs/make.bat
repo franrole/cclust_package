@@ -73,7 +73,8 @@ if errorlevel 9009 (
 
 
 if "%1" == "html" (
-	%SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
+	REM %SPHINXBUILD% -b html %ALLSPHINXOPTS% %BUILDDIR%/html
+	sphinx-build -b html  .  %BUILDDIR%/html
 	if errorlevel 1 exit /b 1
 	echo.
 	echo.Build finished. The HTML pages are in %BUILDDIR%/html.
