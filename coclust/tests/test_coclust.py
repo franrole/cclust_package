@@ -8,6 +8,8 @@ import sys
 from coclust.CoclustMod import CoclustMod
 
 
+###############  CoClustMod
+
 class TestDiagonal(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -85,9 +87,6 @@ class TestClassic3(TestCase):
             self.assertCountEqual(all_column_indices,
                                   range(len(self.model.column_labels_)))
             
-        
-            
-
 
 def get_indices(model):
     all_row_indices = []
@@ -99,3 +98,5 @@ def get_indices(model):
         all_column_indices.extend(column_indices)
 
     return (all_row_indices, all_column_indices)
+    
+

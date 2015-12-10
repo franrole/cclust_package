@@ -271,47 +271,65 @@ class CoclustInfo(object):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
-
-    def get_indices(self, i):
-        """Give the row and column indices of the i’th co-cluster.
+        
+    def get_row_indices(self, i):
+        """Give the row indices of the i’th co-cluster.
 
         Parameters
         ----------
         i : integer
-            Index of the co-cluster
+            Index of the ith row  cluster
 
         Returns
         -------
-        (list, list)
-            (row indices, column indices)
+        list
+            list of row indices 
         """
         row_indices = [index for index, label in enumerate(self.row_labels_)
-                       if label == i]
-        column_indices = [index for index, label
-                          in enumerate(self.column_labels_) if label == i]
-        return (row_indices, column_indices)
-
-    def get_shape(self, i):
-        """Give the shape of the i’th co-cluster.
+                   if label == i]
+        return row_indices
+        
+        
+    def get_col_indices(self, i):
+        """Give the column indices of the i’th co-cluster.
 
         Parameters
         ----------
         i : integer
-            Index of the co-cluster
+            Index of the ith column  cluster
 
         Returns
         -------
-        (int, int)
-            (number of rows, number of columns)
+        list
+            list of column indices 
         """
-        row_indices, column_indices = self.get_indices(i)
-        return (len(row_indices), len(column_indices))
+        col_indices = [index for index, label in enumerate(self.column_labels_)
+                   if label == i]
+        return col_indices
+        
+        
 
-    def get_submatrix(self, i, data):
-        """Returns the submatrix corresponding to bicluster `i`.
-
-        Works with sparse matrices. Only works if ``rows_`` and
-        ``columns_`` attributes exist.
-        """
-        row_ind, col_ind = self.get_indices(i)
-        return data[row_ind[:, np.newaxis], col_ind]
+#    def get_shape(self, i):
+#        """Give the shape of the i’th co-cluster.
+#
+#        Parameters
+#        ----------
+#        i : integer
+#            Index of the co-cluster
+#
+#        Returns
+#        -------
+#        (int, int)
+#            (number of rows, number of columns)
+#        """
+#        row_indices, column_indices = self.get_indices(i)
+#        return (len(row_indices), len(column_indices))
+#
+#    def get_submatrix(self, i, data):
+#        """Returns the submatrix corresponding to bicluster `i`.
+#
+#        Works with sparse matrices. Only works if ``rows_`` and
+#        ``columns_`` attributes exist.
+#        """
+#        row_ind, col_ind = self.get_indices(i)
+#        return data[row_ind[:, np.newaxis], col_ind]
