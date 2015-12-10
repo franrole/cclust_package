@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from unittest import TestCase
 import numpy as np
 from scipy.io import loadmat
+import sys
 
 
 from coclust.CoclustMod import CoclustMod
@@ -40,10 +41,17 @@ class TestCstr(TestCase):
 
     def test_cstr_get_indices(self):
         all_row_indices, all_column_indices = get_indices(self.model)
-        self.assertItemsEqual(all_row_indices,
-                              range(len(self.model.row_labels_)))
-        self.assertItemsEqual(all_column_indices,
-                              range(len(self.model.column_labels_)))
+        if sys.version_info[0] < 3:
+            self.assertItemsEqual(all_row_indices,
+                                  range(len(self.model.row_labels_)))
+            self.assertItemsEqual(all_column_indices,
+                                  range(len(self.model.column_labels_)))
+        else :
+            self.assertCountEqual(all_row_indices,
+                                  range(len(self.model.row_labels_)))
+            self.assertCountEqual(all_column_indices,
+                                  range(len(self.model.column_labels_)))
+            
 
 
 class TestClassic3(TestCase):
@@ -66,10 +74,19 @@ class TestClassic3(TestCase):
 
     def test_classic3_get_indices(self):
         all_row_indices, all_column_indices = get_indices(self.model)
-        self.assertItemsEqual(all_row_indices,
-                              range(len(self.model.row_labels_)))
-        self.assertItemsEqual(all_column_indices,
-                              range(len(self.model.column_labels_)))
+        if sys.version_info[0] < 3:
+            self.assertItemsEqual(all_row_indices,
+                                  range(len(self.model.row_labels_)))
+            self.assertItemsEqual(all_column_indices,
+                                  range(len(self.model.column_labels_)))
+        else :
+            self.assertCountEqual(all_row_indices,
+                                  range(len(self.model.row_labels_)))
+            self.assertCountEqual(all_column_indices,
+                                  range(len(self.model.column_labels_)))
+            
+        
+            
 
 
 def get_indices(model):
