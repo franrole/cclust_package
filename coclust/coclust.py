@@ -190,7 +190,12 @@ def get_data_matrix(args):
         from scipy.io import loadmat
         matlab_dict = loadmat(args['INPUT_MATRIX'])
         key = args['matlab_matrix_key']
-        X = matlab_dict[key]
+        try:
+            X = matlab_dict[key]
+        except:
+            print("Matlab key", key, "not found.")
+            sys.exit(0)
+
     else:
         # csv file (matrix market format)
         if args['csv_sep'] == "\\t":
