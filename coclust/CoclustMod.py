@@ -78,7 +78,7 @@ class CoclustMod(object):
 
         modularity = self.modularity
 
-        random_state = self.random_state
+        random_state = check_random_state(self.random_state)
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self.random_state = seed
@@ -161,6 +161,7 @@ class CoclustMod(object):
         self.btz = BtZ
         self.bw = BW
         self.modularity = m_end / N
+        self.nb_iterations = iteration
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.

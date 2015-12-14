@@ -69,7 +69,7 @@ class CoclustInfo(object):
         """
         criterion = self.criterion
 
-        random_state = self.random_state
+        random_state = check_random_state(self.random_state)
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self.random_state = seed
@@ -119,7 +119,7 @@ class CoclustInfo(object):
 #        nb_rows = X.shape[0]
 #        nb_cols = X.shape[1]
 
-        Z = sp.lil_matrix(random_init(K, X.shape[0]))
+        Z = sp.lil_matrix(random_init(K, X.shape[0], self.random_state))
 #        W = sp.lil_matrix(random_init(L, nb_cols))
 
         W = sp.csr_matrix(W)
@@ -271,43 +271,42 @@ class CoclustInfo(object):
         for parameter, value in parameters.items():
             setattr(self, parameter, value)
         return self
-        
+
     def get_row_indices(self, i):
         """Give the row indices of the i’th co-cluster.
 
         Parameters
         ----------
         i : integer
-            Index of the ith row  cluster
+            Index of the i'th row cluster
 
         Returns
         -------
         list
-            list of row indices 
+            list of row indices
         """
         row_indices = [index for index, label in enumerate(self.row_labels_)
-                   if label == i]
+                       if label == i]
         return row_indices
-        
-        
+
     def get_col_indices(self, i):
         """Give the column indices of the i’th co-cluster.
 
         Parameters
         ----------
         i : integer
-            Index of the ith column  cluster
+            Index of the i'th column cluster
 
         Returns
         -------
         list
-            list of column indices 
+            list of column indices
         """
         col_indices = [index for index, label in enumerate(self.column_labels_)
-                   if label == i]
+                       if label == i]
         return col_indices
-        
-        
+
+
 
 #    def get_shape(self, i):
 #        """Give the shape of the i’th co-cluster.
