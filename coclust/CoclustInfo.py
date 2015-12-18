@@ -223,14 +223,13 @@ class CoclustInfo(object):
         self.criterions = news
         self.criterion = pkl_mi
 
-        self.row_labels_ = Z.todense().argmax(axis=1).tolist()
-        self.row_labels_ = [item for sublist in self.row_labels_
-                            for item in sublist]
-
-        self.column_labels_ = W.todense().argmax(axis=1).tolist()
-        self.column_labels_ = [item
-                               for sublist in self.column_labels_
-                               for item in sublist]
+        self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
+##        print( self.row_labels_)
+##        self.row_labels_ = [item for sublist in self.row_labels_
+##                            for item in sublist]
+        
+        self.column_labels_ = W.toarray().argmax(axis=1).tolist()
+        
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.

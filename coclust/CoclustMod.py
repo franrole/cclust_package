@@ -128,6 +128,8 @@ class CoclustMod(object):
         # B is a numpy matrix
         B = X - indep
 
+        self.modularities=[]
+
         # Loop
         m_begin = float("-inf")
         change = True
