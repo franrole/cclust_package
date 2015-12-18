@@ -104,6 +104,8 @@ class CoclustInfo(object):
         if not sp.issparse(X):
             X = np.matrix(X)
 
+        X = X.astype(float)
+
         if self.init is None:
             W = random_init(L, X.shape[1], self.random_state)
         else:

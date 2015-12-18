@@ -67,6 +67,8 @@ class CoclustSpecMod(object):
         if not sp.issparse(X):
             X = np.matrix(X)
 
+        X = X.astype(float)
+
         # Compute diagonal matrices D_r and D_c
 
         D_r = np.diag(np.asarray(X.sum(axis=1)).flatten())

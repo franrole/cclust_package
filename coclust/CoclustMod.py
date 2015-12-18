@@ -113,6 +113,8 @@ class CoclustMod(object):
         if not sp.issparse(X):
             X = np.matrix(X)
 
+        X = X.astype(float)
+
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1], self.random_state)
         else:
