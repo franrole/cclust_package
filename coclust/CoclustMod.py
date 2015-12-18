@@ -98,6 +98,7 @@ class CoclustMod(object):
         self.modularities = modularities
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
+        
 
     def _fit_single(self, X, y=None):
         """Perform one run of co-clustering by direct maximization of graph

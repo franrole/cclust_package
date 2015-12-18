@@ -9,9 +9,13 @@ from __future__ import print_function
 import argparse
 import numpy as np
 import scipy.sparse as sp
+import scipy
 import sys
 import matplotlib.pyplot as plt
-
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
+from sklearn.metrics.cluster import adjusted_rand_score
+import itertools
 
 from scipy.io import loadmat
 
@@ -31,8 +35,6 @@ def plot_convergence(criteria, criterion_name,marker='o'):
     plt.show()
 
 def print_NMI_and_ARI(true_labels, predicted_labels) :
-     from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
-     from sklearn.metrics.cluster import adjusted_rand_score
      print("NMI:", nmi(true_labels, predicted_labels))
      print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
 
@@ -50,6 +52,20 @@ def show_terms(model,terms,idx,limit=20,t='d') :
             print(terms[idx])
             i+=1
             if i >= limit : break
+
+def print_accuracy(cm,n_rows,n_classes) :
+    total=0
+    for i in range(n_classes):
+        if len(cm) ==0 : break
+        max_value=np.amax(cm)
+        r_indices,c_indices = np.where(cm==max_value)
+        total = total + max_value
+        cm = np.delete(cm,r_indices[0], 0)
+        cm = np.delete(cm, c_indices[0], 1)
+    accuracy=(total)/(n_rows*1.)
+    print("ACCURACY:" + str(accuracy))
+
+
         
 import json
 ##    with open("d:/recherche/cclust_package/datasets/classic3-terms.json",'w') as f :
@@ -88,41 +104,48 @@ def main_coclust_demo():
     
     # Use the computed and true row labels to compute and print the NMI
     predicted_row_labels = model.row_labels_
-    true_row_labels = matlab_dict['gnd'].flatten()
+    true_row_labels = matlab_dict['gnd'].flatten()-1
     print_NMI_and_ARI( true_row_labels, predicted_row_labels)
+
+    print(true_row_labels)
+    print()
+    print(predicted_row_labels)
 
     # Plot reorganized matrix
     plot_reorganized_matrix(X,model)
 
-
-    print("\n\n########## CoclustMod Usage (classic3.mat) #############")
-    
-    #from coclust.CoclustMod import CoclustMod
-    
-    from .CoclustMod import CoclustMod
-    
-    # Retrieve the classic  document-term matrix from a matlab file
-    print("1) Loading data")
-    file_name = "../datasets/classic3.mat"
-    matlab_dict = loadmat(file_name)
-    X = matlab_dict['A']
-    # Create and fit a model with 3 co-clusters
-    print("2) Co-clustering") 
-    model = CoclustMod(n_clusters=3,n_init=4)
-    model.fit(X)
-
-    # Print best modularity
-    print("MODULARITY:",model.modularity)
-    # Use the computed and true row labels to compute the NMI
-    true_row_labels=matlab_dict['labels'].flatten()
-    predicted_row_labels = model.row_labels_
-    print_NMI_and_ARI( true_row_labels, predicted_row_labels)
-
-    # Show terms
-    show_terms(model,terms,1,limit=20,t='d')
+    cm=confusion_matrix(true_row_labels, predicted_row_labels)
+    print_accuracy(cm,X.shape[0],4)
     
 
-    
+##    print("\n\n########## CoclustMod Usage (classic3.mat) #############")
+##    
+##    #from coclust.CoclustMod import CoclustMod
+##    
+##    from .CoclustMod import CoclustMod
+##    
+##    # Retrieve the classic  document-term matrix from a matlab file
+##    print("1) Loading data")
+##    file_name = "../datasets/classic3.mat"
+##    matlab_dict = loadmat(file_name)
+##    X = matlab_dict['A']
+##    # Create and fit a model with 3 co-clusters
+##    print("2) Co-clustering") 
+##    model = CoclustMod(n_clusters=3,n_init=4)
+##    model.fit(X)
+##
+##    # Print best modularity
+##    print("MODULARITY:",model.modularity)
+##    # Use the computed and true row labels to compute the NMI
+##    true_row_labels=matlab_dict['labels'].flatten()
+##    predicted_row_labels = model.row_labels_
+##    print_NMI_and_ARI( true_row_labels, predicted_row_labels)
+##
+##    # Show terms
+##    show_terms(model,terms,1,limit=20,t='d')
+##    
+##
+##    
     print("\n\n#######   CoclustInfo (classic3.mat) ##########################")
 
     from coclust.CoclustInfo import CoclustInfo
@@ -154,13 +177,17 @@ def main_coclust_demo():
     true_row_labels=matlab_dict['labels'].flatten()
     predicted_row_labels = model.row_labels_
     print_NMI_and_ARI( true_row_labels, predicted_row_labels)
+    cm=confusion_matrix(true_row_labels, predicted_row_labels)
+    print_accuracy(cm,X.shape[0],3)
+    print(cm)
 
-    #plot_reorganized_matrix(X,model)
-
-    # Display terms
-    print("TERMS:")
-    show_terms(model,terms,0,limit=10,t='nd')
-
+##
+##    #plot_reorganized_matrix(X,model)
+##
+##    # Display terms
+##    print("TERMS:")
+##    show_terms(model,terms,0,limit=10,t='nd')
+##
     
     
 ##    print("\n\n ####### CoclustSpecMod Usage (classic3.csv) ###############")
