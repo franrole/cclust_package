@@ -1,3 +1,4 @@
 include README.rst
 include docs/*.txt
 include datasets/cstr.mat
+include demo/*.ipynb
