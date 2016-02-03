@@ -1,0 +1,2 @@
+coclust modularity  -k fea --n_coclusters 4 --output_row_labels cstr-rows.txt  --n_runs 3 cstr.mat 
+
