@@ -15,11 +15,11 @@ The following libraries are required:
 Optional
 ''''''''
 
-For runnig the examples, Matplotlib is required.
+Matplotlib is required for running examples involving visualizations.
 
-Coclust can be used with Scikit-learn, for example within a pipeline.
+Coclust can also be used with Scikit-learn, for example within a pipeline.
 
-Performances
+Performance
 ''''''''''''
 
 OpenBLAS provides a fast multi-threaded implementation, you can install it with::
