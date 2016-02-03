@@ -230,7 +230,7 @@ def process_output_labels(args, model):
         with open(args['output_column_labels'], 'w') as f:
             f.write(" ".join([str(i) for i in model.column_labels_]))
     else:
-        print("*****", "column labels", "*****")
+        print("******", "column labels", "*****")
         print(model.column_labels_)
 
     if args.get('output_fuzzy_row_labels', None):
