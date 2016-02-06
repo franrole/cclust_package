@@ -10,12 +10,12 @@ Coclust provides both a Python package, and a ready to use script to perform co-
 
 The script enables the user to process a dataset with co-clustering algorithms without writing Python code.
 
-The Python package provides an API to do it with Python and to use the algorithms in a pipeline with Scikit-learn library for example.
+The Python package provides an API for Python programmers.  This API allows to use the algorithms in a pipeline with Scikit-learn library for example.
 
 
 **Coclust** includes implementations of the algorithms described in the following papers: 
 
-* `Melissa Ailem, Francois Role, and Mohamed Nadif. 2015. Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. In Proceedings of the 24th ACM International on Conference on Information and Knowledge Management (CIKM '15). ACM, New York, NY, USA, 1807-1810.`_
+* `Melissa Ailem, Francois Role, and Mohamed Nadif. 2015. Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. In Proceedings of the 24th ACM International on Conference on Information and Knowledge Management (CIKM '15). ACM, New York, NY, USA, 1807-1810. <http://dl.acm.org/citation.cfm?id=2806639&CFID=566459486&CFTOKEN=63982807>`_
 * L. Labiod and M. Nadif. Co-clustering for Binary Data with Maximum Modularity. ICONIP (2), 700-708, 2011.
 
 
@@ -24,8 +24,7 @@ The Python package provides an API to do it with Python and to use the algorithm
    :maxdepth: 1
 
    install
-   overview
-   script
+   scripts
    api
    examples
 ..   coclust
@@ -40,3 +39,5 @@ The Python package provides an API to do it with Python and to use the algorithm
 .. * :ref:`search`
 
 .. _`Melissa Ailem, François Role, and Mohamed Nadif. 2015. Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. In Proceedings of the 24th ACM International on Conference on Information and Knowledge Management (CIKM '15). ACM, New York, NY, USA, 1807-1810.`: http://dl.acm.org/citation.cfm?id=2806639&CFID=566459486&CFTOKEN=63982807
+
+

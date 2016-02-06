@@ -1,0 +1,1 @@
+coclust-nb cstr.csv --seed=1 --n_runs=20 --max_iter=60  --from 2 --to 6 

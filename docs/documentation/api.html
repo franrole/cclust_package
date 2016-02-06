@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python API &mdash; Coclust  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Coclust  documentation" href="index.html"/>
+        <link rel="next" title="Basic Usage Examples" href="examples.html"/>
+        <link rel="prev" title="Scripts" href="scripts.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html" class="icon icon-home"> Coclust
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#ubuntu-debian">Ubuntu &amp; Debian</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#required">Required</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#optional">Optional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#performance">Performance</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scripts.html#process-co-clustering-the-coclust-script">Process co-clustering: the <em>coclust</em> script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scripts.html#detect-the-best-number-of-co-clusters-the-coclust-nb-script">Detect the best number of co-clusters: the <em>coclust-nb</em> script</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-coclust.CoclustMod">coclust.CoclustMod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coclust-coclustspecmod-module">coclust.CoclustSpecMod module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coclust-coclustinfo-module">coclust.CoclustInfo module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Basic Usage Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#coclustmod">CoclustMod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#coclustspecmod">CoclustSpecMod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#coclustinfo">CoclustInfo</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Coclust</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Python API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="python-api">
+<h1>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-coclust.CoclustMod">
+<span id="coclust-coclustmod-module"></span><h2>coclust.CoclustMod module<a class="headerlink" href="#module-coclust.CoclustMod" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="coclust.CoclustMod.CoclustMod">
+<em class="property">class </em><code class="descclassname">coclust.CoclustMod.</code><code class="descname">CoclustMod</code><span class="sig-paren">(</span><em>n_clusters=2</em>, <em>init=None</em>, <em>max_iter=20</em>, <em>n_init=1</em>, <em>tol=1e-09</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Co-clustering by direct maximization of graph modularity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_clusters</strong> (<em>int, optional, default: 2</em>) &#8211; Number of co-clusters to form</li>
+<li><strong>init</strong> (<em>numpy array or scipy sparse matrix, shape (n_features, n_clusters),         optional, default: None</em>) &#8211; Initial column labels</li>
+<li><strong>max_iter</strong> (<em>int, optional, default: 20</em>) &#8211; Maximum number of iterations</li>
+<li><strong>n_init</strong> (<em>int, optional, default: 1</em>) &#8211; Number of time the algorithm will be run with different initializations.
+The final results will be the best output of <cite>n_init</cite> consecutive runs
+in terms of modularity.</li>
+<li><strong>random_state</strong> (<em>integer or numpy.RandomState, optional</em>) &#8211; The generator used to initialize the centers. If an integer is
+given, it fixes the seed. Defaults to the global numpy random
+number generator.</li>
+<li><strong>tol</strong> (<em>float, default: 1e-9</em>) &#8211; Relative tolerance with regards to modularity to declare convergence</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="coclust.CoclustMod.CoclustMod.row_labels_">
+<code class="descname">row_labels_</code><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.row_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_rows,)</em></p>
+<p>Bicluster label of each row</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coclust.CoclustMod.CoclustMod.column_labels_">
+<code class="descname">column_labels_</code><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.column_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_cols,)</em></p>
+<p>Bicluster label of each column</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coclust.CoclustMod.CoclustMod.modularity">
+<code class="descname">modularity</code><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.modularity" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Final value of the modularity</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coclust.CoclustMod.CoclustMod.modularities">
+<code class="descname">modularities</code><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.modularities" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em></p>
+<p>Record of all computed modularity values for all iterations</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<ul class="simple">
+<li>Ailem M., Role F., Nadif M., Co-clustering Document-term Matrices by     Direct Maximization of Graph Modularity. CIKM 2015: 1807-1810</li>
+</ul>
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform co-clustering by direct maximization of graph modularity.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>numpy array or scipy sparse matrix, shape=(n_samples, n_features)</em>) &#8211; Matrix to be analyzed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.get_assignment_matrix">
+<code class="descname">get_assignment_matrix</code><span class="sig-paren">(</span><em>kind</em>, <em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.get_assignment_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.get_assignment_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the indices of &#8216;best&#8217; i cols of an assignment matrix (row or column).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.get_indices">
+<code class="descname">get_indices</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.get_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.get_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the row and column indices of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the co-cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(row indices, column indices)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list, list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep</strong> (<em>boolean, optional</em>) &#8211; If True, will return the parameters for this estimator and
+contained subobjects that are estimators</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Mapping of string to any parameter names mapped to their values</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.get_shape">
+<code class="descname">get_shape</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.get_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.get_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the shape of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the co-cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(number of rows, number of columns)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int, int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.get_submatrix">
+<code class="descname">get_submatrix</code><span class="sig-paren">(</span><em>i</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.get_submatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.get_submatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the submatrix corresponding to bicluster <cite>i</cite>.</p>
+<p>Works with sparse matrices. Only works if <code class="docutils literal"><span class="pre">rows_</span></code> and
+<code class="docutils literal"><span class="pre">columns_</span></code> attributes exist.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustMod.CoclustMod.set_params">
+<code class="descname">set_params</code><span class="sig-paren">(</span><em>**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustMod.html#CoclustMod.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustMod.CoclustMod.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<code class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it&#8217;s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CoclustMod.CoclustMod</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="coclust-coclustspecmod-module">
+<h2>coclust.CoclustSpecMod module<a class="headerlink" href="#coclust-coclustspecmod-module" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-coclust.CoclustSpecMod"></span><dl class="class">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod">
+<em class="property">class </em><code class="descclassname">coclust.CoclustSpecMod.</code><code class="descname">CoclustSpecMod</code><span class="sig-paren">(</span><em>n_clusters=2</em>, <em>max_iter=20</em>, <em>tol=1e-09</em>, <em>n_init=1</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Co-clustering by spectral approximation of the modularity matrix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_clusters</strong> (<em>int, optional, default: 2</em>) &#8211; Number of co-clusters to form</li>
+<li><strong>max_iter</strong> (<em>int, optional, default: 20</em>) &#8211; Maximum number of iterations</li>
+<li><strong>n_init</strong> (<em>int, optional, default: 10</em>) &#8211; Number of time the k-means algorithm will be run with different centroid
+seeds. The final results will be the best output of <cite>n_init</cite> consecutive
+runs in terms of inertia.</li>
+<li><strong>random_state</strong> (<em>integer or numpy.RandomState, optional</em>) &#8211; The generator used to initialize the centers. If an integer is
+given, it fixes the seed. Defaults to the global numpy random
+number generator.</li>
+<li><strong>tol</strong> (<em>float, default: 1e-9</em>) &#8211; Relative tolerance with regards to criterion to declare convergence</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.row_labels_">
+<code class="descname">row_labels_</code><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.row_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_rows,)</em></p>
+<p>Bicluster label of each row</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.column_labels_">
+<code class="descname">column_labels_</code><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.column_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_cols,)</em></p>
+<p>Bicluster label of each column</p>
+</dd></dl>
+
+<p class="rubric">References</p>
+<ul class="simple">
+<li>Labiod L., Nadif M., ICONIP&#8216;11 Proceedings of the 18th international     conference on Neural Information Processing - Volume Part II Pages 700-708</li>
+</ul>
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform co-clustering by spectral approximation of the modularity
+matrix</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>numpy array or scipy sparse matrix, shape=(n_samples, n_features)</em>) &#8211; Matrix to be analyzed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.get_indices">
+<code class="descname">get_indices</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.get_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.get_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the row and column indices of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the co-cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(row indices, column indices)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(list, list)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep</strong> (<em>boolean, optional</em>) &#8211; If True, will return the parameters for this estimator and
+contained subobjects that are estimators</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Mapping of string to any parameter names mapped to their values</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.get_shape">
+<code class="descname">get_shape</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.get_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.get_shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the shape of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the co-cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(number of rows, number of columns)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">(int, int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.get_submatrix">
+<code class="descname">get_submatrix</code><span class="sig-paren">(</span><em>i</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.get_submatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.get_submatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the submatrix corresponding to bicluster <cite>i</cite>.</p>
+<p>Works with sparse matrices. Only works if <code class="docutils literal"><span class="pre">rows_</span></code> and
+<code class="docutils literal"><span class="pre">columns_</span></code> attributes exist.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustSpecMod.CoclustSpecMod.set_params">
+<code class="descname">set_params</code><span class="sig-paren">(</span><em>**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustSpecMod.html#CoclustSpecMod.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustSpecMod.CoclustSpecMod.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<code class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it&#8217;s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CoclustSpecMod.CoclustSpecMod</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="coclust-coclustinfo-module">
+<h2>coclust.CoclustInfo module<a class="headerlink" href="#coclust-coclustinfo-module" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-coclust.CoclustInfo"></span><dl class="class">
+<dt id="coclust.CoclustInfo.CoclustInfo">
+<em class="property">class </em><code class="descclassname">coclust.CoclustInfo.</code><code class="descname">CoclustInfo</code><span class="sig-paren">(</span><em>n_row_clusters=2</em>, <em>n_col_clusters=2</em>, <em>init=None</em>, <em>max_iter=20</em>, <em>n_init=1</em>, <em>tol=1e-09</em>, <em>random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Co-clustering.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n_row_clusters</strong> (<em>int, optional, default: 2</em>) &#8211; Number of row clusters to form</li>
+<li><strong>n_col_clusters</strong> (<em>int, optional, default: 2</em>) &#8211; Number of column clusters to form</li>
+<li><strong>init</strong> (<em>numpy array or scipy sparse matrix, shape (n_features, n_clusters),         optional, default: None</em>) &#8211; Initial column labels</li>
+<li><strong>max_iter</strong> (<em>int, optional, default: 20</em>) &#8211; Maximum number of iterations</li>
+<li><strong>n_init</strong> (<em>int, optional, default: 1</em>) &#8211; Number of time the algorithm will be run with different initializations.
+The final results will be the best output of <cite>n_init</cite> consecutive runs.</li>
+<li><strong>random_state</strong> (<em>integer or numpy.RandomState, optional</em>) &#8211; The generator used to initialize the centers. If an integer is
+given, it fixes the seed. Defaults to the global numpy random
+number generator.</li>
+<li><strong>tol</strong> (<em>float, default: 1e-9</em>) &#8211; Relative tolerance with regards to criterion to declare convergence</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="coclust.CoclustInfo.CoclustInfo.row_labels_">
+<code class="descname">row_labels_</code><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.row_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_rows,)</em></p>
+<p>Bicluster label of each row</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coclust.CoclustInfo.CoclustInfo.column_labels_">
+<code class="descname">column_labels_</code><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.column_labels_" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>array-like, shape (n_cols,)</em></p>
+<p>Bicluster label of each column</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustInfo.CoclustInfo.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform co-clustering.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<em>numpy array or scipy sparse matrix, shape=(n_samples, n_features)</em>) &#8211; Matrix to be analyzed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustInfo.CoclustInfo.get_col_indices">
+<code class="descname">get_col_indices</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo.get_col_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.get_col_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the column indices of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the i&#8217;th column cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of column indices</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustInfo.CoclustInfo.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><em>deep=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.get_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep</strong> (<em>boolean, optional</em>) &#8211; If True, will return the parameters for this estimator and
+contained subobjects that are estimators</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Mapping of string to any parameter names mapped to their values</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustInfo.CoclustInfo.get_row_indices">
+<code class="descname">get_row_indices</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo.get_row_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.get_row_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the row indices of the i’th co-cluster.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> (<em>integer</em>) &#8211; Index of the i&#8217;th row cluster</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of row indices</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coclust.CoclustInfo.CoclustInfo.set_params">
+<code class="descname">set_params</code><span class="sig-paren">(</span><em>**parameters</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/coclust/CoclustInfo.html#CoclustInfo.set_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#coclust.CoclustInfo.CoclustInfo.set_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as pipelines). The former have parameters of the form
+<code class="docutils literal"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it&#8217;s possible to update each
+component of a nested object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">CoclustMod.CoclustMod</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="examples.html" class="btn btn-neutral float-right" title="Basic Usage Examples" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="scripts.html" class="btn btn-neutral" title="Scripts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
