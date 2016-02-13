@@ -242,17 +242,38 @@ class CoclustMod(object):
         row_indices, column_indices = self.get_indices(i)
         return (len(row_indices), len(column_indices))
 
-    def get_submatrix(self, i, data):
-        """Returns the submatrix corresponding to bicluster `i`.
+    def get_submatrix(self,m,  i):
+        """Give the submatrix corresponding to co-cluster i.
 
-        Works with sparse matrices. Only works if ``rows_`` and
-        ``columns_`` attributes exist.
+        Parameters    
+        ----------
+        m : X : numpy array or scipy sparse matrix
+            Matrix from which the block has to be extracted
+        i : integer
+           index of the co-cluster
+
+        Returns
+        -------
+        numpy array or scipy sparse matrix
+            Submatrix corresponding to co-cluster i  
         """
         row_ind, col_ind = self.get_indices(i)
-        return data[row_ind[:, np.newaxis], col_ind]
+        row_ind=np.array(row_ind)
+        col_ind=np.array(col_ind)
+        return m[row_ind[:, np.newaxis], col_ind]
 
     def get_assignment_matrix(self, kind, i):
         """Returns the indices of 'best' i cols of an assignment matrix (row or column).
+
+        Parameters    
+        ----------
+        kind : string
+             Assignment matrix to be used: rows or cols
+
+        Returns
+        -------
+        numpy array or scipy sparse matrix
+            Matrix containing the i 'best' columns of a row or column assignment matrix
         """
         if kind == "rows":
             s_bw = np.argsort(self.bw)
@@ -260,3 +281,4 @@ class CoclustMod(object):
         if kind == "cols":
             s_btz = np.argsort(self.btz)
             return s_btz[:, -1:-(i+1):-1]
+        

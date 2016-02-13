@@ -111,18 +111,14 @@ class CoclustInfo(object):
         else:
             W = np.matrix(self.init, dtype=float)
 
-#        Z = np.zeros((X.shape[0], K))
 
-        # TODO
         X = sp.csr_matrix(X)
 
         N = float(X.sum())
         X = X.multiply(1. / N)
-#        nb_rows = X.shape[0]
-#        nb_cols = X.shape[1]
+
 
         Z = sp.lil_matrix(random_init(K, X.shape[0], self.random_state))
-#        W = sp.lil_matrix(random_init(L, nb_cols))
 
         W = sp.csr_matrix(W)
 
@@ -135,7 +131,7 @@ class CoclustInfo(object):
         p_dl = p_il.sum(axis=0)  # array contenant les p_.l
 
         p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-        min_p_kd_times_p_dl = np.min(
+        min_p_kd_times_p_dl = np.nanmin(
             p_kd_times_p_dl[
                 np.nonzero(p_kd_times_p_dl)])
         p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
@@ -143,6 +139,8 @@ class CoclustInfo(object):
 
         p_kl = (Z.T * X) * W
         delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
+        delta_kl=delta_kl.toarray()
+
 
         change = True
         news = []
@@ -174,13 +172,14 @@ class CoclustInfo(object):
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
             p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-            min_p_kd_times_p_dl = np.min(
+            min_p_kd_times_p_dl = np.nanmin(
                 p_kd_times_p_dl[
                     np.nonzero(p_kd_times_p_dl)])
             p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
+            delta_kl=delta_kl.toarray()
 
             # Update W
             p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
@@ -200,7 +199,7 @@ class CoclustInfo(object):
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
             p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
-            min_p_kd_times_p_dl = np.min(
+            min_p_kd_times_p_dl = np.nanmin(
                 p_kd_times_p_dl[
                     np.nonzero(p_kd_times_p_dl)])
             p_kd_times_p_dl[p_kd_times_p_dl == 0.] = min_p_kd_times_p_dl * 0.01
@@ -208,6 +207,7 @@ class CoclustInfo(object):
             p_kl = (Z.T * X) * W
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
+            delta_kl=delta_kl.toarray()
             # to prevent log(0) when computing criterion
             delta_kl[delta_kl == 0.] = 0.0001
 
@@ -226,10 +226,6 @@ class CoclustInfo(object):
         self.criterion = pkl_mi
 
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
-##        print( self.row_labels_)
-##        self.row_labels_ = [item for sublist in self.row_labels_
-##                            for item in sublist]
-        
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
         
 
@@ -309,27 +305,44 @@ class CoclustInfo(object):
 
 
 
-#    def get_shape(self, i):
-#        """Give the shape of the i’th co-cluster.
-#
-#        Parameters
-#        ----------
-#        i : integer
-#            Index of the co-cluster
-#
-#        Returns
-#        -------
-#        (int, int)
-#            (number of rows, number of columns)
-#        """
-#        row_indices, column_indices = self.get_indices(i)
-#        return (len(row_indices), len(column_indices))
-#
-#    def get_submatrix(self, i, data):
-#        """Returns the submatrix corresponding to bicluster `i`.
-#
-#        Works with sparse matrices. Only works if ``rows_`` and
-#        ``columns_`` attributes exist.
-#        """
-#        row_ind, col_ind = self.get_indices(i)
-#        return data[row_ind[:, np.newaxis], col_ind]
+    def get_shape(self, i,j):
+        """Give the shape of block corresponding to the i’th row cluster and
+           the j'th column cluster.
+
+        Parameters
+        ----------
+        i : integer
+            Index of the row cluster
+        j : integer
+            Index of the column cluster
+
+        Returns
+        -------
+        (int, int)
+            (number of rows, number of columns)
+        """
+        row_indices = self.get_row_indices(i)
+        column_indices = self.get_col_indices(i)
+        return (len(row_indices), len(column_indices))
+
+    def get_submatrix(self,m, i, j):
+        """Give the submatrix corresponding to row cluster i and column cluster j.
+
+        Parameters    
+        ----------
+        m : X : numpy array or scipy sparse matrix
+            Matrix from which the block has to be extracted
+        i : integer
+           index of the row cluster
+        j : integer
+           index of the col cluster
+
+        Returns
+        -------
+        numpy array or scipy sparse matrix
+            Submatrix corresponding to row cluster i and column cluster j 
+        """
+        row_ind= np.array(self.get_row_indices(i))
+        col_ind=  np.array(self.get_col_indices(j))
+        return m[row_ind[:, np.newaxis], col_ind]
+
