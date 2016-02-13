@@ -7,7 +7,7 @@ entry of a matrix with three columns: the row index, the column index and the va
 separator is given by a script parameter.
 
 
-Process co-clustering: the *coclust* script
+Perform co-clustering: the *coclust* script
 -------------------------------------------
 
 The *coclust* script can be used to run a particular co-clustering algorithm on a data matrix. The user has to select an algorithm which is given as a first argument to *coclust*.
@@ -17,7 +17,7 @@ The choices are:
 * specmodularity
 * info
 
-The following command line shows how to run the *CoclustMod* algorithm thhre times on a matrix contained in a Matlab file whose matrix key is the string 'fea'.
+The following command line shows how to run the *CoclustMod* algorithm three times on a matrix contained in a Matlab file whose matrix key is the string 'fea'.
 The compiuted row labels are to be stored in a file called cstr-rows.txt:
 
 .. literalinclude:: coclust.txt
