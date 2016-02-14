@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import scipy.sparse as sp
-from .utils.initialization import random_init
+from .utils.initialization import random_init, check_array, check_numbers
 from sklearn.utils import check_random_state
-
+import sys
 
 class CoclustMod(object):
     """Co-clustering by direct maximization of graph modularity.
@@ -75,7 +75,14 @@ class CoclustMod(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+        
+        check_numbers(X,self.n_clusters)
+        
+        if not sp.issparse(X):
+            X = np.matrix(X)
+            check_array(X)
 
+        X = X.astype(float)
         modularity = self.modularity
 
         random_state = check_random_state(self.random_state)
@@ -83,7 +90,9 @@ class CoclustMod(object):
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
-
+            if np.isnan(self.modularity) :
+                print("EXCEPTION: your matrix may contain unexpected NaN values")
+                sys.exit(0)
             # remember attributes corresponding to the best modularity
             if (self.modularity > modularity):
                 modularity = self.modularity
@@ -92,7 +101,6 @@ class CoclustMod(object):
                 column_labels_ = self.column_labels_
 
         self.random_state = random_state
-
         # update attributes
         self.modularity = modularity
         self.modularities = modularities
@@ -110,17 +118,14 @@ class CoclustMod(object):
             Matrix to be analyzed
         """
 
-        if not sp.issparse(X):
-            X = np.matrix(X)
-
-        X = X.astype(float)
-
         if self.init is None:
             W = random_init(self.n_clusters, X.shape[1], self.random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
+
         Z = np.zeros((X.shape[0], self.n_clusters))
+
 
         # Compute the modularity matrix
         row_sums = np.matrix(X.sum(axis=1))
@@ -128,8 +133,10 @@ class CoclustMod(object):
         N = float(X.sum())
         indep = (row_sums.dot(col_sums)) / N
 
+
         # B is a numpy matrix
         B = X - indep
+       
 
         self.modularities=[]
 
@@ -139,13 +146,13 @@ class CoclustMod(object):
         iteration = 0
         while change:
             change = False
-
+            
             # Reassign rows
             BW = B.dot(W)
             for idx, k in enumerate(np.argmax(BW, axis=1)):
                 Z[idx, :] = 0
                 Z[idx, k] = 1
-
+            
             # Reassign columns
             BtZ = (B.T).dot(Z)
             for idx, k in enumerate(np.argmax(BtZ, axis=1)):
@@ -160,13 +167,14 @@ class CoclustMod(object):
                 self.modularities.append(m_end/N)
                 m_begin = m_end
                 change = True
-
+        
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
         self.btz = BtZ
         self.bw = BW
         self.modularity = m_end / N
         self.nb_iterations = iteration
+        
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import scipy.sparse as sp
-from .utils.initialization import random_init
+from .utils.initialization import random_init, check_numbers_non_diago
 from sklearn.utils import check_random_state
+import sys
 
 
 class CoclustInfo(object):
@@ -67,6 +68,13 @@ class CoclustInfo(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+        check_numbers_non_diago(X, self.n_row_clusters,self.n_col_clusters)
+        if not sp.issparse(X):
+            X = np.matrix(X)
+            check_array(X)
+
+        X = X.astype(float)
+
         criterion = self.criterion
 
         random_state = check_random_state(self.random_state)
@@ -74,7 +82,9 @@ class CoclustInfo(object):
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
-
+            if np.isnan(self.criterion) :
+                print("EXCEPTION: your matrix may contain negative or unexpected NaN values")
+                sys.exit(0)
             # remember attributes corresponding to the best criterion
             if (self.criterion > criterion):
                 criterion = self.criterion
@@ -101,16 +111,11 @@ class CoclustInfo(object):
         K = self.n_row_clusters
         L = self.n_col_clusters
 
-        if not sp.issparse(X):
-            X = np.matrix(X)
-
-        X = X.astype(float)
-
+        
         if self.init is None:
             W = random_init(L, X.shape[1], self.random_state)
         else:
             W = np.matrix(self.init, dtype=float)
-
 
         X = sp.csr_matrix(X)
 

@@ -74,59 +74,64 @@ class CoclustSpecMod(object):
         D_r = np.diag(np.asarray(X.sum(axis=1)).flatten())
         D_c = np.diag(np.asarray(X.sum(axis=0)).flatten())
 
-        # Compute weighted X
-        with np.errstate(divide='ignore'):
-            D_r **= (-1./2)
-            D_r[D_r == np.inf] = 0
+        try: 
 
-            D_c = D_c**(-1./2)
-            D_c[D_c == np.inf] = 0
+            # Compute weighted X
+            with np.errstate(divide='ignore'):
+                D_r **= (-1./2)
+                D_r[D_r == np.inf] = 0
 
-        D_r = np.matrix(D_r)
-        D_c = np.matrix(D_c)
+                D_c = D_c**(-1./2)
+                D_c[D_c == np.inf] = 0
 
-        X_tilde = D_r * X * D_c
+            D_r = np.matrix(D_r)
+            D_c = np.matrix(D_c)
 
-        # Compute the g-1 largest eigenvectors of X_tilde
+            X_tilde = D_r * X * D_c
 
-        U, s, V = svds(X_tilde, k=self.n_clusters)
-        V = V.transpose()
+            # Compute the g-1 largest eigenvectors of X_tilde
 
-        # Form matrices U-tilde and V_tilde and stack them to form Q
+            U, s, V = svds(X_tilde, k=self.n_clusters)
+            V = V.transpose()
 
-        U = D_r * U
-        # TODO:
-        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2 ???
+            # Form matrices U-tilde and V_tilde and stack them to form Q
 
-        norm = np.linalg.norm(U, axis=0)
-        U_tilde = U/norm
+            U = D_r * U
+            # TODO:
+            # verifier type U  nd-array ou matrice ??? Convertir en csr ?
+            # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2 ???
 
-        V = D_c * V
-        # TODO:
-        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2
+            norm = np.linalg.norm(U, axis=0)
+            U_tilde = U/norm
 
-        norm = np.linalg.norm(V, axis=0)
-        V_tilde = V/norm
+            V = D_c * V
+            # TODO:
+            # verifier type U  nd-array ou matrice ??? Convertir en csr ?
+            # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2
 
-        Q = np.concatenate((U_tilde, V_tilde), axis=0)
+            norm = np.linalg.norm(V, axis=0)
+            V_tilde = V/norm
 
-        # kmeans
+            Q = np.concatenate((U_tilde, V_tilde), axis=0)
 
-        k_means = KMeans(init='k-means++',
-                         n_clusters=self.n_clusters,
-                         n_init=self.n_init,
-                         max_iter=self.max_iter,
-                         tol=self.tol,
-                         random_state=self.random_state)
-        k_means.fit(Q)
-        k_means_labels = k_means.labels_
+            # kmeans
 
-        nb_rows = X.shape[0]
+            k_means = KMeans(init='k-means++',
+                             n_clusters=self.n_clusters,
+                             n_init=self.n_init,
+                             max_iter=self.max_iter,
+                             tol=self.tol,
+                             random_state=self.random_state)
+            k_means.fit(Q)
+            k_means_labels = k_means.labels_
 
-        self.row_labels_ = k_means_labels[0:nb_rows].tolist()
-        self.column_labels_ = k_means_labels[nb_rows:].tolist()
+            nb_rows = X.shape[0]
+
+            self.row_labels_ = k_means_labels[0:nb_rows].tolist()
+            self.column_labels_ = k_means_labels[nb_rows:].tolist()
+
+        except:
+            print("EXCEPTION: your matrix may contain unexpected NaN values")
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
