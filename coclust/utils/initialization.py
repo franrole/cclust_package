@@ -15,10 +15,10 @@ def random_init(n_clusters, n_cols, random_state=None):
 
 def check_array(a) :
 
-  if len(a[np.all(a == 0, axis=0)]) > 0 :
+  if len(np.where(~a.any(axis=0))[0]) > 0 :
        print("ERROR: Zero-valued columns in data.")
        sys.exit(0)
-  if len(a[np.all(a == 0, axis=1)]) > 0 :
+  if len(np.where(~a.any(axis=1))[1]) > 0 :
        print("ERROR: Zero-valued rows in data.")
        sys.exit(0)
   if (a < 0).any():
