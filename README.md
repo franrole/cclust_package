@@ -1,8 +1,8 @@
 Install
 =======
 
-Ubuntu & Debian
----------------
+Ubuntu & Debian & Windows
+--------------------------
 
 ### Required
 The following libraries are required:
@@ -10,7 +10,7 @@ The following libraries are required:
 -  SciPy
 
 ### Optional
-For runnig the examples, Matplotlib is required.
+For running the examples, Matplotlib is required.
 
 Cclust can be used with Scikit-learn, for example within a pipeline.
 
