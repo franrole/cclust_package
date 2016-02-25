@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+
+"""
+CoclustSpecMod
+"""
+
+# Author: Francois Role <francois.role@gmail.com>
+#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+
+# License: BSD 3 clause
+
 import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import svds

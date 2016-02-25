@@ -1,4 +1,14 @@
 # -*- coding: utf-8 -*-
+
+"""
+CoclustMod
+"""
+
+# Author: Francois Role <francois.role@gmail.com>
+#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+
+# License: BSD 3 clause
+
 import numpy as np
 import scipy.sparse as sp
 from .utils.initialization import random_init, check_array, check_numbers

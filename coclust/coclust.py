@@ -1,3 +1,12 @@
+"""
+coclusts script
+"""
+
+# Author: Francois Role <francois.role@gmail.com>
+#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+
+# License: BSD 3 clause
+
 from __future__ import print_function
 import argparse
 import numpy as np

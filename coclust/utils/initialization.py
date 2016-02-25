@@ -1,3 +1,12 @@
+"""
+Initialization and sanity checking routines
+"""
+
+# Author: Francois Role <francois.role@gmail.com>
+#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+
+# License: BSD 3 clause
+
 import numpy as np
 from sklearn.utils import check_random_state
 import sys
