@@ -17,13 +17,13 @@ def readme():
         return f.read()
 
 setup(name='coclust',
-      version='0.2',
-      description='coclustering algorithms',
+      version='0.1',
+      description='coclustering algorithms for data mining',
       long_description=readme(),
-      classifiers=['Topic :: Data Mining :: Co-clustering'],
+      classifiers=['Topic :: Scientific/Engineering :: Information Analysis'],
       url='https://github.com/franrole/cclust_package.git',
-      author='XXXX',
-      author_email='XXXX',
+      author='Francois Role, Stanislas Morbieu',
+      author_email='francois.role@gmail.com',
       license='BSD3',
       packages=['coclust', 'coclust/tests', 'coclust/utils'],
       setup_requires=["numpy"],
