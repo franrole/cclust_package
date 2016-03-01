@@ -16,7 +16,7 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
-setup(name='coclust',
+setup(name='test0104',
       version='0.1',
       description='coclustering algorithms for data mining',
       long_description=readme(),
