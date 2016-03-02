@@ -10,7 +10,7 @@ CoclustInfo
 
 import numpy as np
 import scipy.sparse as sp
-from .utils.initialization import random_init, check_numbers_non_diago
+from .utils.initialization import random_init, check_numbers_non_diago, check_array
 from sklearn.utils import check_random_state
 import sys
 

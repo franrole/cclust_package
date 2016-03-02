@@ -33,6 +33,40 @@ def plot_convergence(criteria, criterion_name,marker='o'):
     plt.xlabel('Iterations')
     plt.show()
     plt.show()
+    
+def plot_confusion_matrix(cm,colormap=plt.cm.jet , labels='012') :
+  import numpy as np
+  import matplotlib.pyplot as plt
+
+  conf_arr=np.array(cm)
+
+  norm_conf_arr = []
+  for i in conf_arr:
+    a = 0
+    tmp_arr = []
+    a = sum(i, 0)
+    print(a)
+    for j in i:
+        tmp_arr.append(float(j)/float(a))
+    norm_conf_arr.append(tmp_arr)
+
+  fig = plt.figure()
+  plt.clf()
+  ax = fig.add_subplot(111)
+  ax.set_aspect(1)
+  res = ax.imshow(np.array(norm_conf_arr), cmap=plt.cm.jet, 
+                interpolation='nearest')
+
+  width, height = conf_arr.shape
+
+  for x in np.arange(width):
+    for y in np.arange(height):
+        ax.annotate(str(conf_arr[x][y]), xy=(y, x), 
+                    horizontalalignment='center',
+                    verticalalignment='center')
+  cb = fig.colorbar(res)
+  plt.xticks(range(width), labels[:width])
+  plt.yticks(range(height), labels[:height])
 
 def print_NMI_and_ARI(true_labels, predicted_labels) :
      print("NMI:", nmi(true_labels, predicted_labels))
@@ -50,9 +84,7 @@ def print_accuracy(cm,n_rows,n_classes) :
         cm = np.delete(cm, c_indices[0], 1)
     accuracy=(total)/(n_rows*1.)
     print("ACCURACY:" + str(accuracy))
-
-
-
+    
 ## Better version used in the benchmark code
 ## To use it you need to install the munkres package
 ##from munkres import Munkres, make_cost_matrix
