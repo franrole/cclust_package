@@ -31,7 +31,7 @@ On Windows
 :::::::::::
 
 The simplest method is to use a distribution which includes all the libraries. For example, when using the Continuum distro
-go to the `download site`_ to get and double-click the graphical installer. Then, enter `pip install coclust` at the command line.
+go to the `download site`_ to get and double-click the graphical installer. Then, enter ``pip install coclust`` at the command line.
 
 On Ubuntu, Debian
 ::::::::::::::::::
@@ -46,7 +46,7 @@ You can also try to compile from source, but compiling Scipy may be tricky, so i
    sudo apt-get install gfortran , python-dev
    sudo apt-get install libopenblas-base
    sudo apt-get install liblapack-dev
-   pip install coclust
+   sudo pip install coclust
 
 
 OpenBLAS provides a fast multi-threaded implementation. If other implementations are installed on your system, you can select OpenBLAS with::
