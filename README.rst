@@ -51,7 +51,7 @@ You can also try to compile from source, but compiling Scipy may be tricky, so i
 
 OpenBLAS provides a fast multi-threaded implementation. If other implementations are installed on your system, you can select OpenBLAS with::
 
-sudo update-alternatives --config libblas.so.3
+   sudo update-alternatives --config libblas.so.3
 
 .. _`download site`: https://www.continuum.io/downloads
 .. _`HTML documentation`: http://coclust.readthedocs.org
