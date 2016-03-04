@@ -77,10 +77,10 @@ class CoclustInfo(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+        
+        check_array(X)
+        
         check_numbers_non_diago(X, self.n_row_clusters,self.n_col_clusters)
-        if not sp.issparse(X):
-            X = np.matrix(X)
-            check_array(X)
 
         X = X.astype(float)
 

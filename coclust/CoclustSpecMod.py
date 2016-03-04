@@ -13,6 +13,7 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
+from .utils.initialization import random_init, check_array, check_numbers
 
 
 class CoclustSpecMod(object):
@@ -73,9 +74,10 @@ class CoclustSpecMod(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
-
-        if not sp.issparse(X):
-            X = np.matrix(X)
+        
+        check_array(X)
+        
+        check_numbers(X,self.n_clusters)
 
         X = X.astype(float)
 
