@@ -226,7 +226,7 @@ class CoclustMod(object):
         return self
 
     def get_indices(self, i):
-        """Give the row and column indices of the i’th co-cluster.
+        """Give the row and column indices of the iâ€™th co-cluster.
 
         Parameters
         ----------
@@ -245,7 +245,7 @@ class CoclustMod(object):
         return (row_indices, column_indices)
 
     def get_shape(self, i):
-        """Give the shape of the i’th co-cluster.
+        """Give the shape of the iâ€™th co-cluster.
 
         Parameters
         ----------
@@ -299,3 +299,4 @@ class CoclustMod(object):
         if kind == "cols":
             s_btz = np.argsort(self.btz)
             return s_btz[:, -1:-(i+1):-1]
+        
