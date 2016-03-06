@@ -24,8 +24,7 @@ def random_init(n_clusters, n_cols, random_state=None):
 
 
 def check_array(a) :
-    
-  if not ( type(a) == np.ndarray or sp.issparse(a) ): 
+  if not ( type(a) == np.ndarray or type(a) == np.matrix or sp.issparse(a) ): 
     print("ERROR: The input data must be an numpy/scipy array or matrix.")
     sys.exit(0)
     

@@ -88,11 +88,14 @@ class CoclustMod(object):
         
         check_numbers(X,self.n_clusters)
         
-        if not sp.issparse(X):
-            X = np.matrix(X)
-            check_array(X)
+        check_array(X)
+        
+        check_numbers(X,self.n_clusters)
+        
+        if type(X) == np.ndarray : X = np.matrix(X)
 
         X = X.astype(float)
+
         modularity = self.modularity
 
         random_state = check_random_state(self.random_state)
