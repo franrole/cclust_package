@@ -53,6 +53,9 @@ OpenBLAS provides a fast multi-threaded implementation. If other implementations
 
    sudo update-alternatives --config libblas.so.3
    
+Code
+====
+   
 You can check the latest sources with the command::
    
    git clone https://github.com/franrole/cclust_package.git
