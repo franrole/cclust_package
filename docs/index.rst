@@ -16,7 +16,7 @@ The Python package provides an API for Python programmers.  This API allows to u
 **Coclust** includes implementations of the algorithms described in the following papers: 
 
 * `Melissa Ailem, Francois Role, and Mohamed Nadif. 2015. Co-clustering Document-term Matrices by Direct Maximization of Graph Modularity. In Proceedings of the 24th ACM International on Conference on Information and Knowledge Management (CIKM '15). ACM, New York, NY, USA, 1807-1810. <http://dl.acm.org/citation.cfm?id=2806639&CFID=566459486&CFTOKEN=63982807>`_
-* L. Labiod and M. Nadif. Co-clustering for Binary Data with Maximum Modularity. ICONIP (2), 700-708, 2011.
+*  Lazhar Labiod and Mohamed Nadif. Co-clustering for Binary and Categorical Data with Maximum Modularity. In 11th IEEE International Conference on Data Mining, ICDM 2011, Vancouver, BC, Canada, December 11-14, 2011, pages 1140--1145, 2011. 
 
 
   
