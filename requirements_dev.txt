@@ -1,4 +1,6 @@
 numpy
 scipy
 scikit-learn
+matplotlib
+sphinx
 sphinx-argparse
