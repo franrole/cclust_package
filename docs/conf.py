@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Coclust'
-#copyright = u'2015-2016, Francois Role, Stanislas Morbieu'
+copyright = u'2015-2016, Francois Role, Stanislas Morbieu'
 author = u'Francois Role, Stanislas Morbieu ; francois.role@parisdescartes.fr'
 
 # The version info for the project you're documenting, acts as replacement for

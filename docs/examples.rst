@@ -4,7 +4,7 @@ Basic Usage Examples
 CoclustMod
 ~~~~~~~~~~
 
-In the following example, the CSTR dataset is loaded from a matlab matrix using
+In the following example, the CSTR dataset is loaded from a Matlab matrix using
 the SciPy library. The data is stored in X and a co-clustering model using 
 direct maximisation of the modularity is then fitted with 4 clusters. The
 modularity is printed and the predicted row labels and column labels are

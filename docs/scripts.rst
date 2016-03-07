@@ -1,5 +1,5 @@
 Scripts
-======
+=======
 
 The input matrix can be a Matlab file or a text file. For the Matlab file, the key
 corresponding to the matrix must be given. For the text file, each line should describe an
@@ -18,13 +18,15 @@ The choices are:
 * info
 
 The following command line shows how to run the *CoclustMod* algorithm three times on a matrix contained in a Matlab file whose matrix key is the string 'fea'.
-The compiuted row labels are to be stored in a file called cstr-rows.txt:
+The computed row labels are to be stored in a file called cstr-rows.txt:
 
 .. literalinclude:: coclust.txt
 
 To have a list of all possible parameters for a given algorithm use the -h option as in the following example:
 
-coclust modularity -h
+.. code-block:: bash
+
+    coclust modularity -h
 
 
 
