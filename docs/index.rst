@@ -28,7 +28,7 @@ The Python package provides an API for Python programmers.  This API allows to u
    api
    examples
 ..   coclust
-..   setup
+   setup
 
 
 .. Indices and tables

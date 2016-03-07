@@ -38,12 +38,12 @@ On Ubuntu, Debian
 
 The easiest method is to use your package manager. For example, on Ubuntu::
 
-   sudo apt-get install python-numpy  python-scipy python-sklearn
+   sudo apt-get install python-numpy python-scipy python-sklearn
    sudo pip install coclust
 
 You can also try to compile from source, but compiling Scipy may be tricky, so it is not the recommended way. Try at your own risk::
 
-   sudo apt-get install gfortran , python-dev
+   sudo apt-get install gfortran python-dev
    sudo apt-get install libopenblas-base
    sudo apt-get install liblapack-dev
    sudo pip install coclust

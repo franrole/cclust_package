@@ -10,13 +10,13 @@ coclust.CoclustMod module
 ..    :show-inheritance:
 
 coclust.CoclustSpecMod module
--------------------------
+-----------------------------
 
 .. automodule:: coclust.CoclustSpecMod
     :members:
 
 coclust.CoclustInfo module
--------------------------
+--------------------------
 
 .. automodule:: coclust.CoclustInfo
     :members:
