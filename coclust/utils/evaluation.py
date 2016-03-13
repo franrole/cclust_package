@@ -100,5 +100,46 @@ def print_accuracy(cm,n_rows,n_classes) :
 ##        total += value
 ##    return(total*1./np.sum(cm))
 
+%matplotlib inline
+import matplotlib as mpl
+
+def plot_all() :
+    grid_size=(6,10)
+    ax_1=plt.subplot2grid(grid_size, (0,0), rowspan=2, colspan=10)
+    ax_2=plt.subplot2grid(grid_size, (2,0), rowspan=4, colspan=5)
+    ax_3=plt.subplot2grid(grid_size, (2,5), rowspan=2, colspan=5)
+    ax_4=plt.subplot2grid(grid_size, (4,5), rowspan=2, colspan=5)
+    
+    ax_1.get_xaxis().set_visible(False)
+    ax_2.get_xaxis().set_visible(False)
+    ax_3.get_xaxis().set_visible(False)
+    ax_1.get_yaxis().set_visible(False)
+    ax_2.get_yaxis().set_visible(False)
+    ax_3.get_yaxis().set_visible(False)
+    plt.subplots_adjust(hspace = -.6, wspace=0.4)
+    
+    grid = np.array([[1,8,13,29,17,26,10,4],[16,25,31,5,21,30,19,15]])
+    ax_1.plot(np.arange(20))
+    ax_1.set_title('EEEEE')
+    ax_2.imshow(grid, interpolation ='none', aspect = 'auto')
+    ax_2.set_title('EEEEE')
+    cmap = mpl.colors.ListedColormap(['white','white'])
+    bounds=[0.,1.]
+    imshow_data = np.array([[0.125,0.268,0.230]])
+    ax_3.imshow(imshow_data, interpolation ='none', aspect = 'auto', cmap=cmap)
+    ax_3.text(0., 0.,'ACC\n\n 0.986', bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24, fontweight='bold')
+    ax_3.text(1., 0.,'ARI\n\n 0.960', bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24 , fontweight='bold')
+    ax_3.text(2., 0.,'NMI\n\n 0.932',bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24, fontweight='bold')
+    ax_3.set_title('EEEEE')
+    
+    ax_4.imshow(grid, interpolation ='none', aspect = 'auto')
+    
+    fig=ax_1.get_figure()
+    fig.set_size_inches(12,12)
+#    fig.suptitle('Evaluation Report', fontsize=20, fontweight='bold')
+    plt.tight_layout(h_pad=3, w_pad=0.8)
+    plt.axis('off')
+    
+
 
         
