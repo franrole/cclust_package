@@ -67,6 +67,34 @@ def plot_confusion_matrix(cm,colormap=plt.cm.jet , labels='012') :
   cb = fig.colorbar(res)
   plt.xticks(range(width), labels[:width])
   plt.yticks(range(height), labels[:height])
+  
+  
+  
+def plot_delta_kl(delta,colormap=plt.cm.jet , labels='012') :
+  import numpy as np
+  import matplotlib.pyplot as plt
+
+  delta_arr=np.round(np.array(delta), decimals=3)
+
+  fig = plt.figure()
+  plt.clf()
+  ax = fig.add_subplot(111)
+  ax.set_aspect(1)
+  res = ax.imshow(np.array(delta_arr), cmap=colormap, 
+                interpolation='nearest')
+
+  width, height = delta_arr.shape
+
+  for x in np.arange(width):
+    for y in np.arange(height):
+        ax.annotate(str(delta_arr[x][y]), xy=(y, x), 
+                    horizontalalignment='center',
+                    verticalalignment='center')
+  cb = fig.colorbar(res)
+  plt.xticks(range(width), labels[:width])
+  plt.yticks(range(height), labels[:height])
+
+ 
 
 def print_NMI_and_ARI(true_labels, predicted_labels) :
      print("NMI:", nmi(true_labels, predicted_labels))
@@ -100,7 +128,7 @@ def print_accuracy(cm,n_rows,n_classes) :
 ##        total += value
 ##    return(total*1./np.sum(cm))
 
-%matplotlib inline
+# %matplotlib inline
 import matplotlib as mpl
 
 def plot_all() :

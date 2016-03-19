@@ -52,6 +52,9 @@ class CoclustInfo(object):
 
     column_labels_ : array-like, shape (n_cols,)
         Bicluster label of each column
+        
+    delta_kl_ : array-like, shape (k,l)
+        Value p_kl / (p_k. * p_.l) for each row cluster k and column cluster l
     """
 
     def __init__(self, n_row_clusters=2, n_col_clusters=2, init=None,
@@ -68,6 +71,7 @@ class CoclustInfo(object):
         self.column_labels_ = None
         self.criterions = []
         self.criterion = -np.inf
+        self.delta_kl_= None
 
     def fit(self, X, y=None):
         """Perform co-clustering.
@@ -100,6 +104,7 @@ class CoclustInfo(object):
                 criterions = self.criterions
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
+                delta_kl_=self.delta_kl_
 
         self.random_state = random_state
 
@@ -108,6 +113,7 @@ class CoclustInfo(object):
         self.criterions = criterions
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
+        self.delta_kl_=delta_kl_
 
     def _fit_single(self, X, y=None):
         """Perform one run of co-clustering.
@@ -238,9 +244,9 @@ class CoclustInfo(object):
 
         self.criterions = news
         self.criterion = pkl_mi
-
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
+        self.delta_kl_ = delta_kl
         
 
     def get_params(self, deep=True):
