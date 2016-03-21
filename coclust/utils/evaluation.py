@@ -70,7 +70,7 @@ def plot_confusion_matrix(cm,colormap=plt.cm.jet , labels='012') :
   
   
   
-def plot_delta_kl(delta,colormap=plt.cm.jet , labels='012') :
+def plot_delta_kl(delta,model, colormap=plt.cm.jet , labels='012') :
   import numpy as np
   import matplotlib.pyplot as plt
 
@@ -87,7 +87,9 @@ def plot_delta_kl(delta,colormap=plt.cm.jet , labels='012') :
 
   for x in np.arange(width):
     for y in np.arange(height):
-        ax.annotate(str(delta_arr[x][y]), xy=(y, x), 
+        nb_docs=len(model.get_row_indices(x))
+        nb_terms=len(model.get_col_indices(y))
+        ax.annotate(str(delta_arr[x][y]) + "\n(%d,%d)" % (nb_docs,nb_terms) , xy=(y, x), 
                     horizontalalignment='center',
                     verticalalignment='center')
   cb = fig.colorbar(res)
