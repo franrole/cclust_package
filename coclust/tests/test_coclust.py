@@ -4,11 +4,8 @@ import numpy as np
 from scipy.io import loadmat
 import sys
 
-
 from coclust.CoclustMod import CoclustMod
 
-
-###############  CoClustMod
 
 class TestDiagonal(TestCase):
     @classmethod
@@ -48,12 +45,11 @@ class TestCstr(TestCase):
                                   range(len(self.model.row_labels_)))
             self.assertItemsEqual(all_column_indices,
                                   range(len(self.model.column_labels_)))
-        else :
+        else:
             self.assertCountEqual(all_row_indices,
                                   range(len(self.model.row_labels_)))
             self.assertCountEqual(all_column_indices,
                                   range(len(self.model.column_labels_)))
-            
 
 
 class TestClassic3(TestCase):
@@ -81,12 +77,12 @@ class TestClassic3(TestCase):
                                   range(len(self.model.row_labels_)))
             self.assertItemsEqual(all_column_indices,
                                   range(len(self.model.column_labels_)))
-        else :
+        else:
             self.assertCountEqual(all_row_indices,
                                   range(len(self.model.row_labels_)))
             self.assertCountEqual(all_column_indices,
                                   range(len(self.model.column_labels_)))
-            
+
 
 def get_indices(model):
     all_row_indices = []
@@ -98,5 +94,3 @@ def get_indices(model):
         all_column_indices.extend(column_indices)
 
     return (all_row_indices, all_column_indices)
-    
-

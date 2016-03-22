@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 CoclustInfo
 """
@@ -10,7 +11,8 @@ CoclustInfo
 
 import numpy as np
 import scipy.sparse as sp
-from .utils.initialization import random_init, check_numbers_non_diago, check_array
+from .utils.initialization import (random_init, check_numbers_non_diago,
+                                   check_array)
 from sklearn.utils import check_random_state
 import sys
 
@@ -26,16 +28,17 @@ class CoclustInfo(object):
     n_col_clusters : int, optional, default: 2
         Number of column clusters to form
 
-    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters), \
-        optional, default: None
+    init : numpy array or scipy sparse matrix, \
+        shape (n_features, n_clusters), optional, default: None
         Initial column labels
 
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
     n_init : int, optional, default: 1
-        Number of time the algorithm will be run with different initializations.
-        The final results will be the best output of `n_init` consecutive runs.
+        Number of time the algorithm will be run with different
+        initializations. The final results will be the best output of `n_init`
+        consecutive runs.
 
     random_state : integer or numpy.RandomState, optional
         The generator used to initialize the centers. If an integer is
@@ -52,7 +55,7 @@ class CoclustInfo(object):
 
     column_labels_ : array-like, shape (n_cols,)
         Bicluster label of each column
-        
+
     delta_kl_ : array-like, shape (k,l)
         Value p_kl / (p_k. * p_.l) for each row cluster k and column cluster l
     """
@@ -71,7 +74,7 @@ class CoclustInfo(object):
         self.column_labels_ = None
         self.criterions = []
         self.criterion = -np.inf
-        self.delta_kl_= None
+        self.delta_kl_ = None
 
     def fit(self, X, y=None):
         """Perform co-clustering.
@@ -81,10 +84,10 @@ class CoclustInfo(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
-        
+
         check_array(X)
-        
-        check_numbers_non_diago(X, self.n_row_clusters,self.n_col_clusters)
+
+        check_numbers_non_diago(X, self.n_row_clusters, self.n_col_clusters)
 
         X = X.astype(float)
 
@@ -95,8 +98,9 @@ class CoclustInfo(object):
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
-            if np.isnan(self.criterion) :
-                print("EXCEPTION: your matrix may contain negative or unexpected NaN values")
+            if np.isnan(self.criterion):
+                print("EXCEPTION: your matrix may contain negative or "
+                      "unexpected NaN values")
                 sys.exit(0)
             # remember attributes corresponding to the best criterion
             if (self.criterion > criterion):
@@ -104,7 +108,7 @@ class CoclustInfo(object):
                 criterions = self.criterions
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
-                delta_kl_=self.delta_kl_
+                delta_kl_ = self.delta_kl_
 
         self.random_state = random_state
 
@@ -113,7 +117,7 @@ class CoclustInfo(object):
         self.criterions = criterions
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
-        self.delta_kl_=delta_kl_
+        self.delta_kl_ = delta_kl_
 
     def _fit_single(self, X, y=None):
         """Perform one run of co-clustering.
@@ -126,7 +130,6 @@ class CoclustInfo(object):
         K = self.n_row_clusters
         L = self.n_col_clusters
 
-        
         if self.init is None:
             W = random_init(L, X.shape[1], self.random_state)
         else:
@@ -136,7 +139,6 @@ class CoclustInfo(object):
 
         N = float(X.sum())
         X = X.multiply(1. / N)
-
 
         Z = sp.lil_matrix(random_init(K, X.shape[0], self.random_state))
 
@@ -150,7 +152,8 @@ class CoclustInfo(object):
         p_kd = p_kj.sum(axis=0)  # array contenant les p_k.
         p_dl = p_il.sum(axis=0)  # array contenant les p_.l
 
-        p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+        # p_k. p_.l ; transpose because p_kd is "horizontal"
+        p_kd_times_p_dl = p_kd.T * p_dl
         min_p_kd_times_p_dl = np.nanmin(
             p_kd_times_p_dl[
                 np.nonzero(p_kd_times_p_dl)])
@@ -159,8 +162,7 @@ class CoclustInfo(object):
 
         p_kl = (Z.T * X) * W
         delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-        delta_kl=delta_kl.toarray()
-
+        delta_kl = delta_kl.toarray()
 
         change = True
         news = []
@@ -186,12 +188,14 @@ class CoclustInfo(object):
             Z = sp.lil_matrix(Z)
 
             # Update delta
-            p_kj = X.T * Z      # matrice d,k ; la colonne k' contient les p_jk'
+            # matrice d, k ; la colonne k' contient les p_jk'
+            p_kj = X.T * Z
             # p_il unchanged
             p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
-            p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+            # p_k. p_.l ; transpose because p_kd is "horizontal"
+            p_kd_times_p_dl = p_kd.T * p_dl
             min_p_kd_times_p_dl = np.nanmin(
                 p_kd_times_p_dl[
                     np.nonzero(p_kd_times_p_dl)])
@@ -199,7 +203,7 @@ class CoclustInfo(object):
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl=delta_kl.toarray()
+            delta_kl = delta_kl.toarray()
 
             # Update W
             p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
@@ -218,7 +222,8 @@ class CoclustInfo(object):
             p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
             p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
 
-            p_kd_times_p_dl = p_kd.T * p_dl  # p_k. p_.l ; transpose because p_kd is "horizontal"
+            # p_k. p_.l ; transpose because p_kd is "horizontal"
+            p_kd_times_p_dl = p_kd.T * p_dl
             min_p_kd_times_p_dl = np.nanmin(
                 p_kd_times_p_dl[
                     np.nonzero(p_kd_times_p_dl)])
@@ -227,7 +232,7 @@ class CoclustInfo(object):
             p_kl = (Z.T * X) * W
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl=delta_kl.toarray()
+            delta_kl = delta_kl.toarray()
             # to prevent log(0) when computing criterion
             delta_kl[delta_kl == 0.] = 0.0001
 
@@ -247,7 +252,6 @@ class CoclustInfo(object):
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
         self.delta_kl_ = delta_kl
-        
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
@@ -323,9 +327,7 @@ class CoclustInfo(object):
                        if label == i]
         return col_indices
 
-
-
-    def get_shape(self, i,j):
+    def get_shape(self, i, j):
         """Give the shape of block corresponding to the i’th row cluster and
            the j'th column cluster.
 
@@ -345,10 +347,10 @@ class CoclustInfo(object):
         column_indices = self.get_col_indices(i)
         return (len(row_indices), len(column_indices))
 
-    def get_submatrix(self,m, i, j):
+    def get_submatrix(self, m, i, j):
         """Give the submatrix corresponding to row cluster i and column cluster j.
 
-        Parameters    
+        Parameters
         ----------
         m : X : numpy array or scipy sparse matrix
             Matrix from which the block has to be extracted
@@ -360,9 +362,8 @@ class CoclustInfo(object):
         Returns
         -------
         numpy array or scipy sparse matrix
-            Submatrix corresponding to row cluster i and column cluster j 
+            Submatrix corresponding to row cluster i and column cluster j
         """
-        row_ind= np.array(self.get_row_indices(i))
-        col_ind=  np.array(self.get_col_indices(j))
+        row_ind = np.array(self.get_row_indices(i))
+        col_ind = np.array(self.get_col_indices(j))
         return m[row_ind[:, np.newaxis], col_ind]
-

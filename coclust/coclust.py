@@ -51,16 +51,16 @@ def get_parsers():
 
         # output args
         output_group = parser.add_argument_group('output')
-        output_group.add_argument('--output_row_labels',
-                                  help='file path for the predicted row labels')
+        output_group.add_argument('--output_row_labels', help='file path for \
+                                  the predicted row labels')
         output_group.add_argument('--output_column_labels', help='file path \
                                   for the predicted column labels')
         if parser == parser_modularity or parser == info:
             output_group.add_argument('--output_fuzzy_row_labels', default=2,
                                       type=int, help='file \
                                       path for the predicted fuzzy row labels')
-            output_group.add_argument('--output_fuzzy_column_labels', default=2,
-                                      type=int,
+            output_group.add_argument('--output_fuzzy_column_labels',
+                                      default=2, type=int,
                                       help='file path for the predicted fuzzy \
                                       column labels')
             output_group.add_argument('--convergence_plot', help='file path \
@@ -117,8 +117,8 @@ def get_parsers():
                                           row labels')
         evaluation_group.add_argument("--visu", action="store_true",
                                       help="Plot modularity values and \
-                                      reorganized matrix (requires numpy/scipy \
-                                      and matplotlib).")
+                                      reorganized matrix (requires Numpy, \
+                                      SciPy and matplotlib).")
 
     return {'coclust': main_parser,
             'coclust-nb': coclust_nb_parser}

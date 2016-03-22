@@ -10,10 +10,9 @@ CoclustSpecMod
 # License: BSD 3 clause
 
 import numpy as np
-import scipy.sparse as sp
 from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
-from .utils.initialization import random_init, check_array, check_numbers
+from .utils.initialization import check_array, check_numbers
 
 
 class CoclustSpecMod(object):
@@ -28,9 +27,9 @@ class CoclustSpecMod(object):
         Maximum number of iterations
 
     n_init : int, optional, default: 10
-        Number of time the k-means algorithm will be run with different centroid
-        seeds. The final results will be the best output of `n_init` consecutive
-        runs in terms of inertia.
+        Number of time the k-means algorithm will be run with different
+        centroid seeds. The final results will be the best output of `n_init`
+        consecutive runs in terms of inertia.
 
     random_state : integer or numpy.RandomState, optional
         The generator used to initialize the centers. If an integer is
@@ -74,10 +73,10 @@ class CoclustSpecMod(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
-        
+
         check_array(X)
-        
-        check_numbers(X,self.n_clusters)
+
+        check_numbers(X, self.n_clusters)
 
         X = X.astype(float)
 
@@ -86,7 +85,7 @@ class CoclustSpecMod(object):
         D_r = np.diag(np.asarray(X.sum(axis=1)).flatten())
         D_c = np.diag(np.asarray(X.sum(axis=0)).flatten())
 
-        try: 
+        try:
 
             # Compute weighted X
             with np.errstate(divide='ignore'):
@@ -218,10 +217,10 @@ class CoclustSpecMod(object):
         row_indices, column_indices = self.get_indices(i)
         return (len(row_indices), len(column_indices))
 
-    def get_submatrix(self,m,  i):
+    def get_submatrix(self, m,  i):
         """Give the submatrix corresponding to co-cluster i.
 
-        Parameters    
+        Parameters
         ----------
         m : X : numpy array or scipy sparse matrix
             Matrix from which the block has to be extracted
@@ -231,9 +230,9 @@ class CoclustSpecMod(object):
         Returns
         -------
         numpy array or scipy sparse matrix
-            Submatrix corresponding to co-cluster i  
+            Submatrix corresponding to co-cluster i
         """
         row_ind, col_ind = self.get_indices(i)
-        row_ind=np.array(row_ind)
-        col_ind=np.array(col_ind)
+        row_ind = np.array(row_ind)
+        col_ind = np.array(col_ind)
         return m[row_ind[:, np.newaxis], col_ind]

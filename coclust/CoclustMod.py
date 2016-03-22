@@ -10,10 +10,10 @@ CoclustMod
 # License: BSD 3 clause
 
 import numpy as np
-import scipy.sparse as sp
 from .utils.initialization import random_init, check_array, check_numbers
 from sklearn.utils import check_random_state
 import sys
+
 
 class CoclustMod(object):
     """Co-clustering by direct maximization of graph modularity.
@@ -23,17 +23,17 @@ class CoclustMod(object):
     n_clusters : int, optional, default: 2
         Number of co-clusters to form
 
-    init : numpy array or scipy sparse matrix, shape (n_features, n_clusters), \
-        optional, default: None
+    init : numpy array or scipy sparse matrix, \
+        shape (n_features, n_clusters), optional, default: None
         Initial column labels
 
     max_iter : int, optional, default: 20
         Maximum number of iterations
 
     n_init : int, optional, default: 1
-        Number of time the algorithm will be run with different initializations.
-        The final results will be the best output of `n_init` consecutive runs
-        in terms of modularity.
+        Number of time the algorithm will be run with different
+        initializations. The final results will be the best output of `n_init`
+        consecutive runs in terms of modularity.
 
     random_state : integer or numpy.RandomState, optional
         The generator used to initialize the centers. If an integer is
@@ -85,14 +85,15 @@ class CoclustMod(object):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
-        
-        check_numbers(X,self.n_clusters)
-        
+
+        check_numbers(X, self.n_clusters)
+
         check_array(X)
-        
-        check_numbers(X,self.n_clusters)
-        
-        if type(X) == np.ndarray : X = np.matrix(X)
+
+        check_numbers(X, self.n_clusters)
+
+        if type(X) == np.ndarray:
+            X = np.matrix(X)
 
         X = X.astype(float)
 
@@ -103,8 +104,9 @@ class CoclustMod(object):
         for seed in seeds:
             self.random_state = seed
             self._fit_single(X, y)
-            if np.isnan(self.modularity) :
-                print("EXCEPTION: your matrix may contain unexpected NaN values")
+            if np.isnan(self.modularity):
+                print("EXCEPTION: your matrix may contain unexpected "
+                      "NaN values")
                 sys.exit(0)
             # remember attributes corresponding to the best modularity
             if (self.modularity > modularity):
@@ -119,7 +121,6 @@ class CoclustMod(object):
         self.modularities = modularities
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
-        
 
     def _fit_single(self, X, y=None):
         """Perform one run of co-clustering by direct maximization of graph
@@ -136,9 +137,7 @@ class CoclustMod(object):
         else:
             W = np.matrix(self.init, dtype=float)
 
-
         Z = np.zeros((X.shape[0], self.n_clusters))
-
 
         # Compute the modularity matrix
         row_sums = np.matrix(X.sum(axis=1))
@@ -146,12 +145,10 @@ class CoclustMod(object):
         N = float(X.sum())
         indep = (row_sums.dot(col_sums)) / N
 
-
         # B is a numpy matrix
         B = X - indep
-       
 
-        self.modularities=[]
+        self.modularities = []
 
         # Loop
         m_begin = float("-inf")
@@ -159,13 +156,13 @@ class CoclustMod(object):
         iteration = 0
         while change:
             change = False
-            
+
             # Reassign rows
             BW = B.dot(W)
             for idx, k in enumerate(np.argmax(BW, axis=1)):
                 Z[idx, :] = 0
                 Z[idx, k] = 1
-            
+
             # Reassign columns
             BtZ = (B.T).dot(Z)
             for idx, k in enumerate(np.argmax(BtZ, axis=1)):
@@ -180,14 +177,13 @@ class CoclustMod(object):
                 self.modularities.append(m_end/N)
                 m_begin = m_end
                 change = True
-        
+
         self.row_labels_ = np.argmax(Z, axis=1).tolist()
         self.column_labels_ = np.argmax(W, axis=1).tolist()
         self.btz = BtZ
         self.bw = BW
         self.modularity = m_end / N
         self.nb_iterations = iteration
-        
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
@@ -263,10 +259,10 @@ class CoclustMod(object):
         row_indices, column_indices = self.get_indices(i)
         return (len(row_indices), len(column_indices))
 
-    def get_submatrix(self,m,  i):
+    def get_submatrix(self, m,  i):
         """Give the submatrix corresponding to co-cluster i.
 
-        Parameters    
+        Parameters
         ----------
         m : X : numpy array or scipy sparse matrix
             Matrix from which the block has to be extracted
@@ -276,17 +272,18 @@ class CoclustMod(object):
         Returns
         -------
         numpy array or scipy sparse matrix
-            Submatrix corresponding to co-cluster i  
+            Submatrix corresponding to co-cluster i
         """
         row_ind, col_ind = self.get_indices(i)
-        row_ind=np.array(row_ind)
-        col_ind=np.array(col_ind)
+        row_ind = np.array(row_ind)
+        col_ind = np.array(col_ind)
         return m[row_ind[:, np.newaxis], col_ind]
 
     def get_assignment_matrix(self, kind, i):
-        """Returns the indices of 'best' i cols of an assignment matrix (row or column).
+        """Returns the indices of 'best' i cols of an assignment matrix
+        (row or column).
 
-        Parameters    
+        Parameters
         ----------
         kind : string
              Assignment matrix to be used: rows or cols
@@ -294,7 +291,8 @@ class CoclustMod(object):
         Returns
         -------
         numpy array or scipy sparse matrix
-            Matrix containing the i 'best' columns of a row or column assignment matrix
+            Matrix containing the i 'best' columns of a row or column
+            assignment matrix
         """
         if kind == "rows":
             s_bw = np.argsort(self.bw)
@@ -302,4 +300,3 @@ class CoclustMod(object):
         if kind == "cols":
             s_btz = np.argsort(self.btz)
             return s_btz[:, -1:-(i+1):-1]
-        
