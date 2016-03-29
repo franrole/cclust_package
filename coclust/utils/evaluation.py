@@ -99,7 +99,7 @@ def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
 
     p = cluster.sum(0)
 
-    terms = np.array(terms)
+    terms = np.array(terms)[col_indices]
 
     t = p.getA().flatten()
 
