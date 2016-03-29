@@ -92,6 +92,30 @@ def plot_delta_kl(delta, model, colormap=plt.cm.jet, labels='012'):
     plt.yticks(range(height), labels[:height])
 
 
+def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
+                   x_label="number of occurences"):
+    row_indices, col_indices = model.get_indices(n_cluster)
+    cluster = model.get_submatrix(X, n_cluster)
+
+    p = cluster.sum(0)
+
+    terms = np.array(terms)
+
+    t = p.getA().flatten()
+
+    n = n_terms
+    max_indices = t.argsort()[::-1][:n]
+
+    plt.figure()
+    pos = np.arange(n) + .5
+
+    plt.barh(pos, t[max_indices][::-1])
+    plt.yticks(.4 + pos, terms[max_indices][::-1])
+
+    plt.xlabel(x_label)
+    plt.show()
+
+
 def print_NMI_and_ARI(true_labels, predicted_labels):
     print("NMI:", nmi(true_labels, predicted_labels))
     print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
