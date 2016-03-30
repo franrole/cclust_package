@@ -142,7 +142,7 @@ class CoclustSpecMod(object):
             self.column_labels_ = k_means_labels[nb_rows:].tolist()
 
         except:
-            print("EXCEPTION: your matrix may contain unexpected NaN values")
+            raise ValueError("matrix may contain unexpected NaN values")
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.

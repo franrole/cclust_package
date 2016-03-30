@@ -14,7 +14,6 @@ import scipy.sparse as sp
 from .utils.initialization import (random_init, check_numbers_non_diago,
                                    check_array)
 from sklearn.utils import check_random_state
-import sys
 
 
 class CoclustInfo(object):
@@ -99,9 +98,8 @@ class CoclustInfo(object):
             self.random_state = seed
             self._fit_single(X, y)
             if np.isnan(self.criterion):
-                print("EXCEPTION: your matrix may contain negative or "
-                      "unexpected NaN values")
-                sys.exit(0)
+                raise ValueError("matrix may contain negative or "
+                                 "unexpected NaN values")
             # remember attributes corresponding to the best criterion
             if (self.criterion > criterion):
                 criterion = self.criterion

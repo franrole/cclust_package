@@ -14,6 +14,7 @@ import argparse
 import numpy as np
 import scipy.sparse as sp
 import sys
+import logging
 
 
 def get_parsers():
@@ -145,9 +146,8 @@ def modularity_by_number_of_clusters(args, modularities):
             plt.xlabel('Number of clusters')
             plt.show()
 
-        except Exception as e:
-            print("Exception concerning the --visu option", e)
-            print("This option requires Numpy/Scipy as well as Matplotlib.")
+        except ImportError:
+            logging.error("--visu option requires Matplotlib")
 
 
 def main_coclust_nb():
@@ -204,8 +204,8 @@ def get_data_matrix(args):
         try:
             X = matlab_dict[key]
         except:
-            print("Matlab key", key, "not found.")
-            sys.exit(0)
+            logging.error("Matlab key %s not found" % key)
+            sys.exit(1)
 
     else:
         # csv file (matrix market format)
@@ -222,9 +222,9 @@ def get_data_matrix(args):
                 try:
                     X[r, c] = v
                 except Exception as e:
-                    print(e)
-                    print("problem with line", i)
-                    sys.exit(0)
+                    logging.error(e)
+                    logging.error("Problem with line %s" % i)
+                    sys.exit(1)
 
     return X
 
@@ -271,9 +271,8 @@ def process_visualization(args, model, X):
             plt.spy(X_reorg, precision=0.8, markersize=0.9)
             plt.title("Reorganized matrix")
             plt.show()
-        except Exception as e:
-            print("Exception concerning the --visu option", e)
-            print("This option requires Numpy/Scipy as well as Matplotlib.")
+        except ImportError:
+            logging.error("--visu option requires Matplotlib")
 
 
 def process_evaluation(args, model):
@@ -296,10 +295,8 @@ def process_evaluation(args, model):
             print()
             print(cm)
         except Exception as e:
-            print("Exception concerning the --true_row_labels option \
-                  (evaluation)", e)
-            print("This option requires Numpy/Scipy, Matplotlib and \
-                  scikit-learn.")
+            logging.error("--true_row_labels option (evaluation) exception:\
+                          %s" % e)
 
 
 def spec_modularity(args):
