@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
 from sklearn.metrics.cluster import adjusted_rand_score
-import matplotlib as mpl
+from sklearn.preprocessing import normalize
 
 
 def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
@@ -116,6 +116,35 @@ def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
     plt.show()
 
 
+def plot_cluster_sizes(model):
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111)
+    colors = ['r', 'g', 'b']
+    x = []
+    y = []
+    for i in range(model.n_clusters):
+        number_of_rows, number_of_columns = model.get_shape(i)
+        x.append(number_of_rows)
+        y.append(number_of_columns)
+    data = [x, y]
+    shift = .8 / len(data*2)
+    location = np.arange(model.n_clusters)
+    legend_rects = []
+    for i in range(2):
+        cols = ax.bar(location+i * shift, data[i], width=shift,
+                      color=colors[i % len(colors)], align='center')
+        legend_rects.append(cols[0])
+        for c in cols:
+            h = c.get_height()
+            ax.text(c.get_x()+c.get_width()/2., 0.98*h, '%d' % int(h),
+                    ha='center', va='bottom')
+    ax.set_xticks(location + (shift/2.))
+    ax.set_xticklabels(['coclust-' + str(i) for i in range(model.n_clusters)])
+    plt.xlabel('Co-clusters')
+    plt.ylabel('Sizes')
+    ax.legend(legend_rects, ('Rows', 'Columns'))
+
+
 def print_NMI_and_ARI(true_labels, predicted_labels):
     print("NMI:", nmi(true_labels, predicted_labels))
     print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
@@ -134,6 +163,85 @@ def print_accuracy(cm, n_rows, n_classes):
     accuracy = (total)/(n_rows*1.)
     print("ACCURACY:" + str(accuracy))
 
+
+def get_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2):
+
+    # The structure to be returned
+    graph = {"nodes": [], "links": []}
+
+    # get submatrix and local kist of terms
+    row_indices, col_indices = model.get_indices(n_cluster)
+    cluster = model.get_submatrix(X, n_cluster)
+    terms = np.array(terms)[col_indices]
+
+    # identify most frequent words
+    p = cluster.sum(0)
+    t = p.getA().flatten()
+    top_term_indices = t.argsort()[::-1][:n_top_terms]
+
+    # create tt sim matrix
+    cluster_norm = normalize(cluster, norm='l2', axis=0, copy=True)
+    sim = cluster_norm.T * cluster_norm
+
+    # to be able to compute the final index of a neighbor which is also a
+    # top term
+    d = {t: i for i, t in enumerate(top_term_indices)}
+
+    # identify best neighbors of frequent terms
+    pointed_by = dict()
+    graph = {"nodes": [], "links": []}
+    all_neighbors = set()
+    links = []
+    for idx_tt, t in enumerate(top_term_indices):
+        print("== top term", idx_tt, t)
+        best_neighbors = np.argsort(sim.toarray()[t])[::-1][:n_neighbors]
+        print(best_neighbors)
+        print()
+        for n in best_neighbors:
+            # if  terms[dico_tt[n]].lower() in stopwords: continue
+            if t == n:
+                continue
+            if n in top_term_indices and t in pointed_by.get(n, []):
+                # t was already pointed by n
+                continue
+            if n in top_term_indices:
+                # n will be able to check that is has been pointed by t
+                pointed_by.setdefault(t, []).append(n)
+            else:
+                # a "pure" neighbor
+                all_neighbors.add(n)
+            if n in top_term_indices:
+                # n is a (not yet handled) top term. Lookup in dictionary to
+                # find the d3 index.
+                # Also record original indices using couples.
+                links.append(((idx_tt, t), (d[n], n)))
+            else:
+                # n is a pure neighbor. Compute its d3 index by an addition
+                # use indices suitable for d3 links
+                links.append(((idx_tt, t),
+                             (len(top_term_indices) + len(all_neighbors) - 1,
+                              n)))
+    print("top term indices")
+    print(top_term_indices)
+    print("true neighbors")
+    print(all_neighbors)
+    print()
+    # all_neighbors = all_neighbors.difference(top_terms_indices)
+    # a top term may point to a top term
+
+    for top_term in top_term_indices:
+        graph["nodes"].append({"name": terms[top_term], "group": 0})
+
+    for neighbor in all_neighbors:
+        graph["nodes"].append({"name": terms[neighbor], "group": 1})
+
+    for a, b in links:
+        graph["links"].append({"source": a[0],
+                               "target": b[0],
+                               "value": sim[a[1], b[1]]})
+    return graph
+
+
 ## Better version used in the benchmark code
 ## To use it you need to install the munkres package
 ##from munkres import Munkres, make_cost_matrix
@@ -150,41 +258,3 @@ def print_accuracy(cm, n_rows, n_classes):
 ##    return(total*1./np.sum(cm))
 
 # %matplotlib inline
-
-
-def plot_all():
-    grid_size = (6, 10)
-    ax_1 = plt.subplot2grid(grid_size, (0, 0), rowspan=2, colspan=10)
-    ax_2 = plt.subplot2grid(grid_size, (2, 0), rowspan=4, colspan=5)
-    ax_3 = plt.subplot2grid(grid_size, (2, 5), rowspan=2, colspan=5)
-    ax_4 = plt.subplot2grid(grid_size, (4, 5), rowspan=2, colspan=5)
-
-    ax_1.get_xaxis().set_visible(False)
-    ax_2.get_xaxis().set_visible(False)
-    ax_3.get_xaxis().set_visible(False)
-    ax_1.get_yaxis().set_visible(False)
-    ax_2.get_yaxis().set_visible(False)
-    ax_3.get_yaxis().set_visible(False)
-    plt.subplots_adjust(hspace=-.6, wspace=0.4)
-
-    grid = np.array([[1,8,13,29,17,26,10,4],[16,25,31,5,21,30,19,15]])
-    ax_1.plot(np.arange(20))
-    ax_1.set_title('EEEEE')
-    ax_2.imshow(grid, interpolation ='none', aspect = 'auto')
-    ax_2.set_title('EEEEE')
-    cmap = mpl.colors.ListedColormap(['white', 'white'])
-    bounds = [0., 1.]
-    imshow_data = np.array([[0.125, 0.268, 0.230]])
-    ax_3.imshow(imshow_data, interpolation='none', aspect='auto', cmap=cmap)
-    ax_3.text(0., 0.,'ACC\n\n 0.986', bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24, fontweight='bold')
-    ax_3.text(1., 0.,'ARI\n\n 0.960', bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24 , fontweight='bold')
-    ax_3.text(2., 0.,'NMI\n\n 0.932',bbox={'facecolor':'red', 'alpha':0.5, 'pad':10} , va='center', ha='center', fontsize=24, fontweight='bold')
-    ax_3.set_title('EEEEE')
-
-    ax_4.imshow(grid, interpolation='none', aspect='auto')
-
-    fig = ax_1.get_figure()
-    fig.set_size_inches(12, 12)
-#    fig.suptitle('Evaluation Report', fontsize=20, fontweight='bold')
-    plt.tight_layout(h_pad=3, w_pad=0.8)
-    plt.axis('off')
