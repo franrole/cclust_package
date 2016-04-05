@@ -5,7 +5,7 @@ CoclustMod
 ~~~~~~~~~~
 
 In the following example, the CSTR dataset is loaded from a Matlab matrix using
-the SciPy library. The data is stored in X and a co-clustering model using 
+the SciPy library. The data is stored in X and a co-clustering model using
 direct maximisation of the modularity is then fitted with 4 clusters. The
 modularity is printed and the predicted row labels and column labels are
 retrieved for further exploration or evaluation.
@@ -15,7 +15,7 @@ retrieved for further exploration or evaluation.
     from scipy.io import loadmat
     from coclust.CoclustMod import CoclustMod
 
-    file_name = "datasets/cstr.mat"
+    file_name = "../datasets/cstr.mat"
     matlab_dict = loadmat(file_name)
     X = matlab_dict['fea']
 
@@ -30,7 +30,7 @@ For example, the normalized mutual information score is computed using the
 scikit-learn library:
 
 .. code-block:: python
-    
+
     from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
 
     true_row_labels = matlab_dict['gnd'].flatten()
@@ -54,7 +54,7 @@ are printed.
     import csv
     from coclust.CoclustSpecMod import CoclustSpecMod
 
-    file_name = "datasets/classic3.csv"
+    file_name = "../datasets/classic3.csv"
     csv_file = open(file_name, 'rb')
     csv_reader = csv.reader(csv_file, delimiter=",")
 
@@ -114,4 +114,3 @@ CoclustInfo
     nmi = normalized_mutual_info_score(true_labels, predicted_labels)
 
     print(nmi)
-

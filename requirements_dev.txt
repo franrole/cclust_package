@@ -5,3 +5,9 @@ matplotlib
 sphinx
 sphinx-argparse
 jupyter
+sphinx_rtd_theme
+autopep8
+nose
+coverage
+flake8
+munkres
