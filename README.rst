@@ -53,6 +53,24 @@ OpenBLAS provides a fast multi-threaded implementation. If other implementations
 
    sudo update-alternatives --config libblas.so.3
    
+Changelog
+=========
+
+
+0.3.0 - April 05, 2016
+:::::::::::::::::::::::
+
+- New visualization methods in the utils module. 
+- New demos.
+- Better PEP 8 conformance
+- Improved documentation.
+
+0.1.1 - March 07, 2016
+:::::::::::::::::::::::
+
+- First release.
+
+   
 Code
 ====
    
