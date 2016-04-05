@@ -167,7 +167,7 @@ def print_accuracy(cm, n_rows, n_classes):
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,stopwords_file=None):
     stopwords=[]
     if stopwords_file :
-       with open(stopwords_file,'r') as f :
+       with open(stopwords_file,'r') as f  :
           stopwords=f.read().split()
     # The structure to be returned
     graph = {"nodes": [], "links": []}
