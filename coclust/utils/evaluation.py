@@ -164,8 +164,11 @@ def print_accuracy(cm, n_rows, n_classes):
     print("ACCURACY:" + str(accuracy))
 
 
-def get_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2):
-
+def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,stopwords_file=None):
+    stopwords=[]
+    if stopwords_file :
+       with open(stopwords_file,'r') as f :
+          stopwords=f.read().split()
     # The structure to be returned
     graph = {"nodes": [], "links": []}
 
@@ -198,6 +201,10 @@ def get_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2):
         print(best_neighbors)
         print()
         for n in best_neighbors:
+            if len(stopwords) > 0 :
+              if terms[n] in stopwords : print(terms[n]) ; continue   
+            if (terms[n].endswith("ed") or terms[n].endswith("ing") or terms[n].endswith("ly") ) : continue
+            
             # if  terms[dico_tt[n]].lower() in stopwords: continue
             if t == n:
                 continue
