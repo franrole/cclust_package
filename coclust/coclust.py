@@ -288,7 +288,6 @@ def process_evaluation(args, model):
             n = normalized_mutual_info_score(labels, model.row_labels_)
             ari = adjusted_rand_score(labels, model.row_labels_)
             cm = confusion_matrix(labels, model.row_labels_)
-            # accuracy=(total)/(nb_rows*1.)
 
             print("nmi ==>" + str(n))
             print("adjusted rand index ==>" + str(ari))

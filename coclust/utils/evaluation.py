@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 
 """
-Created on Mon Dec 14 14:23:46 2015
-
-@author: frole
+Evaluation
 """
 
+# Author: Francois Role <francois.role@gmail.com>
+#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+
+# License: BSD 3 clause
+
 from __future__ import print_function
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
 from sklearn.metrics.cluster import adjusted_rand_score
+from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
 
 
@@ -39,9 +44,8 @@ def plot_confusion_matrix(cm, colormap=plt.cm.jet, labels='012'):
         a = 0
         tmp_arr = []
         a = sum(i, 0)
-        print(a)
         for j in i:
-            tmp_arr.append(float(j)/float(a))
+            tmp_arr.append(float(j) / float(a))
         norm_conf_arr.append(tmp_arr)
 
     fig = plt.figure()
@@ -127,18 +131,18 @@ def plot_cluster_sizes(model):
         x.append(number_of_rows)
         y.append(number_of_columns)
     data = [x, y]
-    shift = .8 / len(data*2)
+    shift = .8 / len(data * 2)
     location = np.arange(model.n_clusters)
     legend_rects = []
     for i in range(2):
-        cols = ax.bar(location+i * shift, data[i], width=shift,
+        cols = ax.bar(location + i * shift, data[i], width=shift,
                       color=colors[i % len(colors)], align='center')
         legend_rects.append(cols[0])
         for c in cols:
             h = c.get_height()
-            ax.text(c.get_x()+c.get_width()/2., 0.98*h, '%d' % int(h),
+            ax.text(c.get_x() + c.get_width() / 2., 0.98 * h, '%d' % int(h),
                     ha='center', va='bottom')
-    ax.set_xticks(location + (shift/2.))
+    ax.set_xticks(location + (shift / 2.))
     ax.set_xticklabels(['coclust-' + str(i) for i in range(model.n_clusters)])
     plt.xlabel('Co-clusters')
     plt.ylabel('Sizes')
@@ -150,26 +154,9 @@ def print_NMI_and_ARI(true_labels, predicted_labels):
     print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
 
 
-def print_accuracy(cm, n_rows, n_classes):
-    total = 0
-    for i in range(n_classes):
-        if len(cm) == 0:
-            break
-        max_value = np.amax(cm)
-        r_indices, c_indices = np.where(cm == max_value)
-        total = total + max_value
-        cm = np.delete(cm, r_indices[0], 0)
-        cm = np.delete(cm, c_indices[0], 1)
-    accuracy = (total)/(n_rows*1.)
-    print("ACCURACY:" + str(accuracy))
-
-
-def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,stopwords_file=None):
-    stopwords=[]
-    if stopwords_file :
-       with open(stopwords_file,'r') as f  :
-          stopwords=f.read().split()
-    # The structure to be returned
+def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
+                   stopwords=[]):
+    # The dictionary to be returned
     graph = {"nodes": [], "links": []}
 
     # get submatrix and local kist of terms
@@ -196,15 +183,15 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,sto
     all_neighbors = set()
     links = []
     for idx_tt, t in enumerate(top_term_indices):
-        print("== top term", idx_tt, t)
         best_neighbors = np.argsort(sim.toarray()[t])[::-1][:n_neighbors]
-        print(best_neighbors)
-        print()
         for n in best_neighbors:
-            if len(stopwords) > 0 :
-              if terms[n] in stopwords : print(terms[n]) ; continue   
-            if (terms[n].endswith("ed") or terms[n].endswith("ing") or terms[n].endswith("ly") ) : continue
-            
+            if len(stopwords) > 0:
+                if terms[n] in stopwords:
+                    continue
+            if (terms[n].endswith("ed") or terms[n].endswith("ing") or
+                    terms[n].endswith("ly")):
+                continue
+
             # if  terms[dico_tt[n]].lower() in stopwords: continue
             if t == n:
                 continue
@@ -226,15 +213,8 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,sto
                 # n is a pure neighbor. Compute its d3 index by an addition
                 # use indices suitable for d3 links
                 links.append(((idx_tt, t),
-                             (len(top_term_indices) + len(all_neighbors) - 1,
-                              n)))
-    print("top term indices")
-    print(top_term_indices)
-    print("true neighbors")
-    print(all_neighbors)
-    print()
-    # all_neighbors = all_neighbors.difference(top_terms_indices)
-    # a top term may point to a top term
+                              (len(top_term_indices) + len(all_neighbors) - 1,
+                               n)))
 
     for top_term in top_term_indices:
         graph["nodes"].append({"name": terms[top_term], "group": 0})
@@ -249,19 +229,47 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,sto
     return graph
 
 
-## Better version used in the benchmark code
-## To use it you need to install the munkres package
-##from munkres import Munkres, make_cost_matrix
-##def get_accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
-##    m = Munkres()
-##    cm = confusion_matrix(true_row_labels, predicted_row_labels)
-##    s = np.max(cm)
-##    cost_matrix = make_cost_matrix(cm, lambda cost: s - cost)
-##    indexes = m.compute(cost_matrix)
-##    total = 0
-##    for row, column in indexes:
-##        value = cm[row][column]
-##        total += value
-##    return(total*1./np.sum(cm))
+def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+    try:
+        accuracy = _true_accuracy(X, nb_clusters, true_row_labels,
+                                  predicted_row_labels)
+        return accuracy
+    except ImportError as e:
+        logging.error(e)
+        logging.error("Fallback to approximate accuracy, install Munkres for "
+                      "true accuracy.")
+        return _approximate_accuracy(X, nb_clusters, true_row_labels,
+                                     predicted_row_labels)
 
-# %matplotlib inline
+
+def _true_accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+    from munkres import Munkres, make_cost_matrix
+    m = Munkres()
+    cm = confusion_matrix(true_row_labels, predicted_row_labels)
+    s = np.max(cm)
+    cost_matrix = make_cost_matrix(cm, lambda cost: s - cost)
+    indexes = m.compute(cost_matrix)
+    total = 0
+    for row, column in indexes:
+        value = cm[row][column]
+        total += value
+
+    return(total * 1. / np.sum(cm))
+
+
+def _approximate_accuracy(X, nb_clusters, true_row_labels,
+                          predicted_row_labels):
+    cm = confusion_matrix(true_row_labels, predicted_row_labels)
+    n_rows = len(true_row_labels)
+    total = 0
+    for i in range(nb_clusters):
+        if len(cm) == 0:
+            break
+        max_value = np.amax(cm)
+        r_indices, c_indices = np.where(cm == max_value)
+        total = total + max_value
+        cm = np.delete(cm, r_indices[0], 0)
+        cm = np.delete(cm, c_indices[0], 1)
+    accuracy = (total) / (n_rows * 1.)
+
+    return accuracy
