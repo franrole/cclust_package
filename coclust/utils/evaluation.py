@@ -13,10 +13,27 @@ from __future__ import print_function
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as PathEffects
+
 from sklearn.metrics.cluster import normalized_mutual_info_score as nmi
 from sklearn.metrics.cluster import adjusted_rand_score
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
+
+plt.style.use('ggplot')
+
+
+def _remove_ticks():
+    plt.tick_params(axis='both', which='both', bottom='off', top='off',
+                    right='off', left='off')
+
+
+def plot_criterion(values, ylabel):
+    plt.plot(values, marker='o')
+    plt.ylabel(ylabel)
+    plt.xlabel('Iterations')
+    _remove_ticks()
+    plt.show()
 
 
 def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
@@ -25,6 +42,7 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
     X_reorg = X[row_indices, :]
     X_reorg = X_reorg[:, col_indices]
     plt.spy(X_reorg, precision=precision, markersize=markersize)
+    _remove_ticks()
     plt.show()
 
 
@@ -32,11 +50,11 @@ def plot_convergence(criteria, criterion_name, marker='o'):
     plt.plot(criteria, marker=marker)
     plt.ylabel(criterion_name)
     plt.xlabel('Iterations')
-    plt.show()
+    _remove_ticks()
     plt.show()
 
 
-def plot_confusion_matrix(cm, colormap=plt.cm.jet, labels='012'):
+def plot_confusion_matrix(cm, colormap=plt.get_cmap("viridis"), labels='012'):
     conf_arr = np.array(cm)
 
     norm_conf_arr = []
@@ -52,23 +70,30 @@ def plot_confusion_matrix(cm, colormap=plt.cm.jet, labels='012'):
     plt.clf()
     ax = fig.add_subplot(111)
     ax.set_aspect(1)
-    res = ax.imshow(np.array(norm_conf_arr), cmap=plt.cm.jet,
+    res = ax.imshow(np.array(norm_conf_arr), cmap=colormap,
                     interpolation='nearest')
 
     width, height = conf_arr.shape
 
     for x in np.arange(width):
         for y in np.arange(height):
-            ax.annotate(str(conf_arr[x][y]), xy=(y, x),
+            ax.annotate(str(conf_arr[x][y]),
+                        xy=(y, x),
                         horizontalalignment='center',
-                        verticalalignment='center')
+                        verticalalignment='center',
+                        path_effects=[PathEffects.withStroke(linewidth=3,
+                                                             foreground="w",
+                                                             alpha=0.7)])
 
     fig.colorbar(res)
     plt.xticks(range(width), labels[:width])
     plt.yticks(range(height), labels[:height])
+    _remove_ticks()
+    plt.show()
 
 
-def plot_delta_kl(delta, model, colormap=plt.cm.jet, labels='012'):
+def plot_delta_kl(delta, model, colormap=plt.get_cmap("viridis"),
+                  labels='012'):
 
     delta_arr = np.round(np.array(delta), decimals=3)
 
@@ -89,11 +114,20 @@ def plot_delta_kl(delta, model, colormap=plt.cm.jet, labels='012'):
                         (nb_docs, nb_terms),
                         xy=(y, x),
                         horizontalalignment='center',
-                        verticalalignment='center')
+                        verticalalignment='center',
+                        path_effects=[PathEffects.withStroke(linewidth=3,
+                                                             foreground="w",
+                                                             alpha=0.7)])
 
     fig.colorbar(res)
     plt.xticks(range(width), labels[:width])
     plt.yticks(range(height), labels[:height])
+
+    ax = plt.gca()
+    ax.grid(False)
+
+    _remove_ticks()
+    plt.show()
 
 
 def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
@@ -117,13 +151,16 @@ def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
     plt.yticks(.4 + pos, terms[max_indices][::-1])
 
     plt.xlabel(x_label)
+    plt.margins(y=0.05)
+    _remove_ticks()
     plt.show()
 
 
 def plot_cluster_sizes(model):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111)
-    colors = ['r', 'g', 'b']
+    prop_list = list(plt.rcParams['axes.prop_cycle'])
+    colors = [prop_list[0]['color'], prop_list[1]['color']]
     x = []
     y = []
     for i in range(model.n_clusters):
@@ -140,13 +177,17 @@ def plot_cluster_sizes(model):
         legend_rects.append(cols[0])
         for c in cols:
             h = c.get_height()
-            ax.text(c.get_x() + c.get_width() / 2., 0.98 * h, '%d' % int(h),
+            ax.text(c.get_x() + c.get_width() / 2., h + 5, '%d' % int(h),
                     ha='center', va='bottom')
     ax.set_xticks(location + (shift / 2.))
     ax.set_xticklabels(['coclust-' + str(i) for i in range(model.n_clusters)])
     plt.xlabel('Co-clusters')
     plt.ylabel('Sizes')
+    plt.tight_layout()
     ax.legend(legend_rects, ('Rows', 'Columns'))
+
+    _remove_ticks()
+    plt.show()
 
 
 def print_NMI_and_ARI(true_labels, predicted_labels):
