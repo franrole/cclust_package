@@ -17,7 +17,7 @@ def readme():
         return f.read()
 
 setup(name='coclust',
-      version='0.1.1',
+      version='0.1.3',
       description='coclustering algorithms for data mining',
       long_description=readme(),
       classifiers=['Topic :: Scientific/Engineering :: Information Analysis'],
