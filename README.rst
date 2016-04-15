@@ -57,7 +57,7 @@ Changelog
 =========
 
 
-0.3.0 - April 05, 2016
+0.1.3 - April, 2016
 :::::::::::::::::::::::
 
 - New visualization methods in the utils module. 
