@@ -11,3 +11,4 @@ nose
 coverage
 flake8
 munkres
+tabulate
