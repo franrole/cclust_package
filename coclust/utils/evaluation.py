@@ -54,7 +54,7 @@ def plot_convergence(criteria, criterion_name, marker='o'):
     plt.show()
 
 
-def plot_confusion_matrix(cm, colormap=plt.get_cmap("viridis"), labels='012'):
+def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012'):
     conf_arr = np.array(cm)
 
     norm_conf_arr = []
@@ -92,7 +92,7 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap("viridis"), labels='012'):
     plt.show()
 
 
-def plot_delta_kl(delta, model, colormap=plt.get_cmap("viridis"),
+def plot_delta_kl(delta, model, colormap=plt.get_cmap(),
                   labels='012'):
 
     delta_arr = np.round(np.array(delta), decimals=3)
