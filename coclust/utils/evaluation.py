@@ -156,10 +156,20 @@ def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
     plt.show()
 
 def print_NMI_and_ARI(true_labels, predicted_labels):
+    if true_labels is None:
+        print("# -- Warning -- Doc labels cannot be found.")
+        print("# ----> Use input argument 'doc_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return
+    
     print("NMI:", nmi(true_labels, predicted_labels))
     print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
 
 def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+    if true_row_labels is None:
+        print("# -- Warning -- Doc labels cannot be found.")
+        print("# ----> Use input argument 'doc_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return
+    
     try:
         accuracy = _true_accuracy(X, nb_clusters, true_row_labels,
                                   predicted_row_labels)

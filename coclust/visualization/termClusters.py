@@ -18,6 +18,11 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
     all_terms: list of all terms from the original data set
     nb_top_terms, model: number of top terms to be displayed per cluster
     """
+    if all_terms is None:
+        print("# -- Warning -- Term labels cannot be found.")
+        print("# ----> Use input argument 'term_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return
+        
     x_label="number of occurences"
     plt.subplots(figsize=(8, 8))
     plt.subplots_adjust(hspace=0.200)
@@ -60,8 +65,14 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
 
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
                    stopwords=[]):
+    
     # The dictionary to be returned
     graph = {"nodes": [], "links": []}
+
+    if terms is None:
+        print("# -- Warning -- Term labels cannot be found.")
+        print("# ----> Use input argument 'term_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return graph
 
     # get submatrix and local kist of terms
     row_indices, col_indices = model.get_indices(n_cluster)
