@@ -251,6 +251,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
         self.delta_kl_ = delta_kl
+        self.Z=Z
+        self.W=W
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
