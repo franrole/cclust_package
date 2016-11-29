@@ -22,6 +22,7 @@ def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init = 1):
     tmp_best_model: model with highest final modularity
     tmp_max_modularities: final modularities for all evaluated partitions
     """
+
     tmp_best_model = None
     tmp_max_modularities = [np.nan] * len(nbr_clusters_range)
     eps_best_model = 1e-4

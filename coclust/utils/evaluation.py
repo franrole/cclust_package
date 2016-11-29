@@ -155,122 +155,21 @@ def plot_top_terms(model, X, terms, n_cluster, n_terms=10,
     _remove_ticks()
     plt.show()
 
-
-def plot_cluster_sizes(model):
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111)
-    prop_list = list(plt.rcParams['axes.prop_cycle'])
-    colors = [prop_list[0]['color'], prop_list[1]['color']]
-    x = []
-    y = []
-    for i in range(model.n_clusters):
-        number_of_rows, number_of_columns = model.get_shape(i)
-        x.append(number_of_rows)
-        y.append(number_of_columns)
-    data = [x, y]
-    shift = .8 / len(data * 2)
-    location = np.arange(model.n_clusters)
-    legend_rects = []
-    for i in range(2):
-        cols = ax.bar(location + i * shift, data[i], width=shift,
-                      color=colors[i % len(colors)], align='center')
-        legend_rects.append(cols[0])
-        for c in cols:
-            h = c.get_height()
-            ax.text(c.get_x() + c.get_width() / 2., h + 5, '%d' % int(h),
-                    ha='center', va='bottom')
-    ax.set_xticks(location + (shift / 2.))
-    ax.set_xticklabels(['coclust-' + str(i) for i in range(model.n_clusters)])
-    plt.xlabel('Co-clusters')
-    plt.ylabel('Sizes')
-    plt.tight_layout()
-    ax.legend(legend_rects, ('Rows', 'Columns'))
-
-    _remove_ticks()
-    plt.show()
-
-
 def print_NMI_and_ARI(true_labels, predicted_labels):
+    if true_labels is None:
+        print("# -- Warning -- Doc labels cannot be found.")
+        print("# ----> Use input argument 'doc_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return
+    
     print("NMI:", nmi(true_labels, predicted_labels))
     print("ARI:", adjusted_rand_score(true_labels, predicted_labels))
 
-
-def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
-                   stopwords=[]):
-    # The dictionary to be returned
-    graph = {"nodes": [], "links": []}
-
-    # get submatrix and local kist of terms
-    row_indices, col_indices = model.get_indices(n_cluster)
-    cluster = model.get_submatrix(X, n_cluster)
-    terms = np.array(terms)[col_indices]
-
-    # identify most frequent words
-    p = cluster.sum(0)
-    t = p.getA().flatten()
-    top_term_indices = t.argsort()[::-1][:n_top_terms]
-
-    # create tt sim matrix
-    cluster_norm = normalize(cluster, norm='l2', axis=0, copy=True)
-    sim = cluster_norm.T * cluster_norm
-
-    # to be able to compute the final index of a neighbor which is also a
-    # top term
-    d = {t: i for i, t in enumerate(top_term_indices)}
-
-    # identify best neighbors of frequent terms
-    pointed_by = dict()
-    graph = {"nodes": [], "links": []}
-    all_neighbors = set()
-    links = []
-    for idx_tt, t in enumerate(top_term_indices):
-        best_neighbors = np.argsort(sim.toarray()[t])[::-1][:n_neighbors]
-        for n in best_neighbors:
-            if len(stopwords) > 0:
-                if terms[n] in stopwords:
-                    continue
-            if (terms[n].endswith("ed") or terms[n].endswith("ing") or
-                    terms[n].endswith("ly")):
-                continue
-
-            # if  terms[dico_tt[n]].lower() in stopwords: continue
-            if t == n:
-                continue
-            if n in top_term_indices and t in pointed_by.get(n, []):
-                # t was already pointed by n
-                continue
-            if n in top_term_indices:
-                # n will be able to check that is has been pointed by t
-                pointed_by.setdefault(t, []).append(n)
-            else:
-                # a "pure" neighbor
-                all_neighbors.add(n)
-            if n in top_term_indices:
-                # n is a (not yet handled) top term. Lookup in dictionary to
-                # find the d3 index.
-                # Also record original indices using couples.
-                links.append(((idx_tt, t), (d[n], n)))
-            else:
-                # n is a pure neighbor. Compute its d3 index by an addition
-                # use indices suitable for d3 links
-                links.append(((idx_tt, t),
-                              (len(top_term_indices) + len(all_neighbors) - 1,
-                               n)))
-
-    for top_term in top_term_indices:
-        graph["nodes"].append({"name": terms[top_term], "group": 0})
-
-    for neighbor in all_neighbors:
-        graph["nodes"].append({"name": terms[neighbor], "group": 1})
-
-    for a, b in links:
-        graph["links"].append({"source": a[0],
-                               "target": b[0],
-                               "value": sim[a[1], b[1]]})
-    return graph
-
-
 def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+    if true_row_labels is None:
+        print("# -- Warning -- Doc labels cannot be found.")
+        print("# ----> Use input argument 'doc_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        return
+    
     try:
         accuracy = _true_accuracy(X, nb_clusters, true_row_labels,
                                   predicted_row_labels)
