@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 """
 SphericalKmeans
@@ -63,6 +63,8 @@ class SphericalKmeans:
         self.criterions = []
         self.criterion = -np.inf
         self.weighting=weighting
+        self.Z =  None 
+        self.Z_fuzzy =  None 
         
     def fit(self, X, y=None):
         """Perform clustering.
@@ -72,7 +74,7 @@ class SphericalKmeans:
             Matrix to be analyzed
         """
 
-        check_array(X)
+        check_array(X,pos=False)
 
         check_numbers_clustering(X, self.n_clusters)
         
@@ -94,6 +96,7 @@ class SphericalKmeans:
         random_state = check_random_state(self.random_state)
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
+            print(" == New init == ")
             self.random_state = seed
             self._fit_single(X)
             # remember attributes corresponding to the best criterion
@@ -101,6 +104,8 @@ class SphericalKmeans:
               criterion = self.criterion
               criterions = self.criterions
               labels_ = self.labels_
+              z = self.Z
+              z_fuzzy = self.Z_fuzzy
               
         self.random_state = random_state
         
@@ -108,6 +113,9 @@ class SphericalKmeans:
         self.criterion = criterion
         self.criterions = criterions
         self.row_labels_ = labels_
+        self.Z = z
+        self.Z_fuzzy = z_fuzzy
+       
 
         
                 
@@ -127,14 +135,17 @@ class SphericalKmeans:
             Z = np.matrix(self.init, dtype=float)
 
         X = sp.lil_matrix(X)
+
         Z=sp.lil_matrix(Z) # random_init function returns a nd_array
         
         change = True
 
         c_init=-np.inf
         c_list=[]
+        n_iter=0
 
-        while change:
+        while change and n_iter < self.max_iter :
+          print("iteration:", n_iter)
           change=False
 
           # compute centroids (in fact only summation along cols)
@@ -161,11 +172,15 @@ class SphericalKmeans:
            c_init=c
            change=True
            c_list.append(c)
+           print(c)
+          n_iter+=1
 
         
         self.criterion=c
         self.criterions=c_list
         part=Z.todense().argmax(axis=1).tolist()
         self.labels_ = [item for sublist in part for item in sublist]
-       
-
+        self.Z = Z
+        self.Z_fuzzy = Z1
+    
+        
