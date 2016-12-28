@@ -1,40 +1,7 @@
-# -*- coding: utf-8 -*-
-
-"""
-Initialization and sanity checking routines
-"""
-
-# Author: Francois Role <francois.role@gmail.com>
-#         Stanislas Morbieu <stanislas.morbieu@gmail.com>
-
-# License: BSD 3 clause
-
 import numpy as np
 import scipy.sparse as sp
-from sklearn.utils import check_random_state
 
-
-def random_init(n_clusters, n_cols, random_state=None):
-    """ Random Initialization
-    """
-    random_state = check_random_state(random_state)
-    W_a = random_state.randint(n_clusters, size=n_cols)
-    W = np.zeros((n_cols, n_clusters))
-    W[np.arange(n_cols), W_a] = 1
-    return W
-
-def random_init_clustering(n_clusters, n_rows, random_state=None):
-    """ Random Initialization
-    """
-    random_state = check_random_state(random_state)
-    Z_a = random_state.randint(n_clusters, size=n_rows)
-    Z = np.zeros((n_rows, n_clusters))
-    Z[np.arange(n_rows), Z_a] = 1
-    return Z
-
-
-
-def check_array(a):
+def check_array(a,pos=True):
     if not (type(a) == np.ndarray or type(a) == np.matrix or sp.issparse(a)):
         raise TypeError("Input data must be a Numpy/SciPy array or matrix")
 
@@ -49,8 +16,9 @@ def check_array(a):
             raise ValueError("Zero-valued columns in data")
         if len(np.where(~a.any(axis=1))[1]) > 0:
             raise ValueError("Zero-valued rows in data")
-        if (a < 0).any():
-            raise ValueError("Negative values in data")
+        if pos :
+            if (a < 0).any():
+                raise ValueError("Negative values in data")
         if np.isnan(a).any():
             raise ValueError("NaN in data")
 
@@ -67,6 +35,3 @@ def check_numbers_non_diago(a, n_row_clusters, n_col_clusters):
 def check_numbers_clustering(a, n_clusters):
     if a.shape[0] < n_clusters :
         raise ValueError("data matrix has not enough rows")
-
-
-
