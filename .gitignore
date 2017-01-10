@@ -3,6 +3,9 @@
 
 *~
 
+# Generated documentation
+docs/_build/*
+
 # Setuptools distribution folder.
 /dist/
 
