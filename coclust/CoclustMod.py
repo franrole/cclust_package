@@ -10,8 +10,9 @@ CoclustMod
 # License: BSD 3 clause
 
 import numpy as np
-from .utils.initialization import random_init, check_array, check_numbers
 from sklearn.utils import check_random_state
+
+from .utils.initialization import random_init, check_array, check_numbers
 from .BaseDiagonalCoclust import BaseDiagonalCoclust
 
 

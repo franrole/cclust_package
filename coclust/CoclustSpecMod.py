@@ -12,6 +12,7 @@ CoclustSpecMod
 import numpy as np
 from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
+
 from .utils.initialization import check_array, check_numbers
 from .BaseDiagonalCoclust import BaseDiagonalCoclust
 

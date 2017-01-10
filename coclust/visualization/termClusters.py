@@ -6,8 +6,8 @@ Visualize cluster of terms
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from sklearn.preprocessing import normalize
+
 
 def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
     """Plot the top terms for each cluster
@@ -22,14 +22,14 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
         print("# -- Warning -- Term labels cannot be found.")
         print("# ----> Use input argument 'term_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
         return
-        
-    x_label="number of occurences"
+
+    x_label = "number of occurences"
     plt.subplots(figsize=(8, 8))
     plt.subplots_adjust(hspace=0.200)
     plt.suptitle("      Top %d terms" % nb_top_terms, size=15)
     number_of_subplots = model.n_clusters
 
-    for i,v in enumerate(range(number_of_subplots)):
+    for i, v in enumerate(range(number_of_subplots)):
         # Get the row/col indices corresponding to the given cluster
         row_indices, col_indices = model.get_indices(v)
         # Get the submatrix corresponding to the given cluster
@@ -43,14 +43,14 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
         max_indices = t.argsort()[::-1][:nb_top_terms]
 
         pos = np.arange(nb_top_terms)
-        
+
         v = v+1
-        ax1 = plt.subplot(number_of_subplots,1,v)
+        ax1 = plt.subplot(number_of_subplots, 1, v)
         ax1.barh(pos, t[max_indices][::-1])
-        ax1.set_title("Cluster %d (%d terms)" % (v,len(col_indices)), size=11)
+        ax1.set_title("Cluster %d (%d terms)" % (v, len(col_indices)), size=11)
 
         plt.yticks(.4 + pos, tmp_terms[max_indices][::-1], size=9.5)
-        plt.xlabel(x_label, size = 9)
+        plt.xlabel(x_label, size=9)
         plt.margins(y=0.05)
         #_remove_ticks()
         plt.tick_params(axis='both', which='both', bottom='on', top='off',
@@ -63,9 +63,10 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
 
     plt.show()
 
+
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
                    stopwords=[]):
-    
+
     # The dictionary to be returned
     graph = {"nodes": [], "links": []}
 
@@ -143,6 +144,7 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
                                "value": sim[a[1], b[1]]})
     return graph
 
+
 def plot_cluster_sizes(model):
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111)
@@ -177,4 +179,3 @@ def plot_cluster_sizes(model):
     plt.tick_params(axis='both', which='both', bottom='on', top='off',
                     right='off', left='off')
     plt.show()
-

@@ -10,11 +10,13 @@ coclusts script
 # License: BSD 3 clause
 
 from __future__ import print_function
+
 import argparse
+import logging
+import sys
+
 import numpy as np
 import scipy.sparse as sp
-import sys
-import logging
 
 
 def get_parsers():

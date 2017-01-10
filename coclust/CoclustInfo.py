@@ -12,6 +12,7 @@ CoclustInfo
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import check_random_state
+
 from .utils.initialization import (random_init, check_numbers_non_diago,
                                    check_array)
 from .BaseNonDiagonalCoclust import BaseNonDiagonalCoclust
@@ -126,6 +127,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+
         K = self.n_row_clusters
         L = self.n_col_clusters
 
@@ -251,8 +253,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
         self.delta_kl_ = delta_kl
-        self.Z=Z
-        self.W=W
+        self.Z = Z
+        self.W = W
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
