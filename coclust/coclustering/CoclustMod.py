@@ -12,7 +12,7 @@ CoclustMod
 import numpy as np
 from sklearn.utils import check_random_state
 
-from .utils.initialization import random_init, check_array, check_numbers
+from ..utils.initialization import random_init, check_array, check_numbers
 from .BaseDiagonalCoclust import BaseDiagonalCoclust
 
 
