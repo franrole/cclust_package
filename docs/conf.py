@@ -37,6 +37,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinxarg.ext',
     'matplotlib.sphinxext.plot_directive',
+    'sphinx.ext.doctest'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
