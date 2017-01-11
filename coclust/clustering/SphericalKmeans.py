@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-SphericalKmeans
+:mod:`coclust.SphericalKmeans` provides an implementation of the spherical
+k-means algorithm.
 """
 
 # Author: Melissa Ailem <melissa.ailem@parisdescartes.fr>
@@ -22,7 +23,7 @@ from coclust.utils.initialization import (random_init_clustering)
 
 
 class SphericalKmeans:
-    """Clustering.
+    """Spherical k-means clustering.
 
     Parameters
     ----------

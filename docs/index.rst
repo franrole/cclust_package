@@ -1,5 +1,5 @@
 Welcome to Coclust's documentation!
-==========================================
+===================================
 
 **Coclust** provides both a Python package, and a ready to use script to perform co-clustering.
 
@@ -16,5 +16,5 @@ The Python package provides an API for Python programmers.  This API allows to u
 
    install
    scripts
-   api
+   api/index
    examples

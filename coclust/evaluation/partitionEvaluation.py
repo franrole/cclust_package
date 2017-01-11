@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Evaluating the partition quality
+:mod:`coclust.evaluation.partitionEvaluation` provides a function to evaluate
+the partition quality.
 """
 
 import numpy as np
@@ -10,21 +11,24 @@ from coclust.CoclustMod import CoclustMod
 
 
 def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):
-    """Evaluation the best partition over a range of number of cluster
+    """Evaluate the best partition over a range of number of cluster
     using co-clustering by direct maximization of graph modularity.
 
     Parameters
     ----------
     in_data : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
         Matrix to be analyzed
-    nbr_clusters_range : number of clusters to be evaluated
-    n_rand_init: Number of time the algorithm will be run with different
-                 initializations
+    nbr_clusters_range :
+        Number of clusters to be evaluated
+    n_rand_init:
+        Number of time the algorithm will be run with different initializations
 
-    Values
-    ----------
-    tmp_best_model: model with highest final modularity
-    tmp_max_modularities: final modularities for all evaluated partitions
+    Returns
+    -------
+    tmp_best_model: :class:`coclust.CoclustMod.CoclustMod`
+        model with highest final modularity
+    tmp_max_modularities: list
+        final modularities for all evaluated partitions
     """
 
     tmp_best_model = None
@@ -34,9 +38,9 @@ def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):
     # Set best final modularity to -inf
     modularity_begin = float("-inf")
 
-    print("Computing coclust modularity for a range of cluster numbers =", end=' ')
+    print("Computing coclust modularity for a range of cluster numbers =")
     for tmp_n_clusters in nbr_clusters_range:
-        print(" %d ..." % (tmp_n_clusters), end = ' ')
+        print(" %d ..." % (tmp_n_clusters))
         # Create and fit a model with tmp_n_clusters co-clusters
         tmp_model = CoclustMod(n_clusters=tmp_n_clusters, n_init=n_rand_init,
                                random_state=0)
@@ -51,4 +55,4 @@ def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):
         tmp_max_modularities[(tmp_n_clusters)-min(nbr_clusters_range)] = tmp_model.modularity
 
     print(" All done !")
-    return [tmp_best_model, tmp_max_modularities,]
+    return (tmp_best_model, tmp_max_modularities)
