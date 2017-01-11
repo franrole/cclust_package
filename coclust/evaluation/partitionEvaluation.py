@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-:mod:`coclust.evaluation.partitionEvaluation` provides a function to evaluate
-the partition quality.
+The :mod:`coclust.evaluation.partitionEvaluation` module provides a function
+to evaluate the partition quality.
 """
 
 import numpy as np

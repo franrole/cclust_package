@@ -1,26 +1,67 @@
 # -*- coding: utf-8 -*-
 
 """
-Visualize cluster of terms
+The :mod:`coclust.visualization.termClusters` module provides functions to
+visualize cluster of terms.
 """
+
+
+import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.preprocessing import normalize
 
 
+logger = logging.getLogger(__name__)
+
+
 def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
-    """Plot the top terms for each cluster
+    """Plot the top terms for each cluster.
 
     Parameters
     ----------
     in_data : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
-    all_terms: list of all terms from the original data set
-    nb_top_terms, model: number of top terms to be displayed per cluster
+    all_terms: list of string
+        list of all terms from the original data set
+    nb_top_terms: int
+        number of top terms to be displayed per cluster
+    model: :class:`coclust.coclustering.BaseDiagonalCoclust`
+        a co-clustering model
+
+
+    Example
+    -------
+    >>> plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model)
+
+    .. plot::
+
+        from coclust.visualization.termClusters import plot_cluster_top_terms
+        from coclust.io.io import load_doc_term_data
+        from coclust.evaluation.partitionEvaluation import best_modularity_partition
+
+        path = '../../datasets/classic3_coclustFormat.mat'
+        doc_term_data = load_doc_term_data(path)
+
+        min_cluster_nbr = 2
+        max_cluster_nbr = 9
+        range_n_clusters = range(min_cluster_nbr, (max_cluster_nbr + 1))
+
+        best_coclustMod_model, _ = \
+            best_modularity_partition(doc_term_data['doc_term_matrix'],
+                                      range_n_clusters, 1)
+        n_terms = 10
+        plot_cluster_top_terms(doc_term_data['doc_term_matrix'],
+                               doc_term_data['term_labels'],
+                               n_terms,
+                               best_coclustMod_model)
+
     """
+
     if all_terms is None:
-        print("# -- Warning -- Term labels cannot be found.")
-        print("# ----> Use input argument 'term_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        logger.warning("Term labels cannot be found. Use input argument "
+                       "'term_labels_filepath' in function "
+                       "'load_doc_term_data' if term labels are available.")
         return
 
     x_label = "number of occurences"
@@ -44,7 +85,7 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
 
         pos = np.arange(nb_top_terms)
 
-        v = v+1
+        v = v + 1
         ax1 = plt.subplot(number_of_subplots, 1, v)
         ax1.barh(pos, t[max_indices][::-1])
         ax1.set_title("Cluster %d (%d terms)" % (v, len(col_indices)), size=11)
@@ -66,13 +107,34 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
 
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
                    stopwords=[]):
+    """Get a graph of terms.
+
+    Parameters
+    ----------
+    X:
+        input matrix
+    model: :class:`coclust.coclustering.BaseDiagonalCoclust`
+        a co-clustering model
+    terms: list of string
+        list of terms
+    n_cluster: int
+        Id of the cluster
+    n_top_terms: int, optional, default: 10
+        Number of terms
+    n_neighbors: int, optional, default: 2
+        Number of neighbors
+    stopwords: list of string, optional, default: []
+        Words to remove
+
+    """
 
     # The dictionary to be returned
     graph = {"nodes": [], "links": []}
 
     if terms is None:
-        print("# -- Warning -- Term labels cannot be found.")
-        print("# ----> Use input argument 'term_labels_filepath' in function 'load_doc_term_data' if term labels are available.\n")
+        logger.warning("Term labels cannot be found. Use input argument "
+                       "'term_labels_filepath' in function "
+                       "'load_doc_term_data' if term labels are available.")
         return graph
 
     # get submatrix and local kist of terms
@@ -146,6 +208,29 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
 
 
 def plot_cluster_sizes(model):
+    """Plot the sizes of the clusters.
+
+    Parameters
+    ----------
+    model: :class:`coclust.coclustering.BaseDiagonalCoclust`
+        a co-clustering model
+
+    Example
+    -------
+    >>> plot_cluster_sizes(model)
+
+    .. plot::
+
+        from coclust.visualization.termClusters import plot_cluster_sizes
+        from coclust.io.io import load_doc_term_data
+        from coclust.coclustering.CoclustMod import CoclustMod
+        model = CoclustMod(n_clusters=3)
+        matrix = load_doc_term_data('../../datasets/classic3.csv')['doc_term_matrix']
+        model.fit(matrix)
+        plot_cluster_sizes(model)
+
+    """
+
     fig = plt.figure(figsize=(10, 8))
     ax = fig.add_subplot(111)
     prop_list = list(plt.rcParams['axes.prop_cycle'])

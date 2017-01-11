@@ -1,11 +1,28 @@
 # -*- coding: utf-8 -*-
 
 """
-Managing input/output in the evaluation notebook
+The :mod:`coclust.io.ioNotebook` module provides functions to manage input and
+output in the evaluation notebook.
 """
 
 
 def input_with_default_int(prompt, prefill):
+    """Prompt an int.
+
+    Parameters
+    ----------
+    prompt: string
+        The value entered by the user
+
+    prefill: string
+        The default value
+
+    Returns
+    -------
+    int
+        The value entered by the user or the default value.
+    """
+
     retint = input('%s: [default: %s] ' % (prompt, prefill))
 
     if len(retint) > 0:
@@ -17,6 +34,22 @@ def input_with_default_int(prompt, prefill):
 
 
 def input_with_default_str(prompt, prefill):
+    """Prompt a string.
+
+    Parameters
+    ----------
+    prompt: string
+        The value entered by the user
+
+    prefill: string
+        The default value
+
+    Returns
+    -------
+    string
+        The value entered by the user or the default value.
+    """
+
     retstr = input('%s: [default: %s] ' % (prompt, prefill))
 
     if len(retstr) == 0:

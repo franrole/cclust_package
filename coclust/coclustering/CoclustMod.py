@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-CoclustMod
+The :mod:`coclust.coclustering.CoclustMod` module provides an implementation
+of a co-clustering algorithm by direct maximization of graph modularity.
 """
 
 # Author: Francois Role <francois.role@gmail.com>

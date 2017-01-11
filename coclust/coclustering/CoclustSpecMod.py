@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-CoclustSpecMod
+The :mod:`coclust.coclustering.CoclustSpecMod` module provides an
+implementation of a co-clustering algorithm by spectral approximation of the
+modularity matrix.
 """
 
 # Author: Francois Role <francois.role@gmail.com>

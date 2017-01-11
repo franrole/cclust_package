@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-CoclustInfo
+The :mod:`coclust.coclustering.CoclustInfo` module provides an implementation
+of a co-clustering algorithm by an information-theoretic approach.
 """
 
 # Author: Francois Role <francois.role@gmail.com>
@@ -19,7 +20,7 @@ from .BaseNonDiagonalCoclust import BaseNonDiagonalCoclust
 
 
 class CoclustInfo(BaseNonDiagonalCoclust):
-    """Co-clustering.
+    """Information-Theoretic Co-clustering.
 
     Parameters
     ----------
