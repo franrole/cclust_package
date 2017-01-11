@@ -7,7 +7,7 @@ to evaluate the partition quality.
 
 import numpy as np
 
-from coclust.CoclustMod import CoclustMod
+from ..coclustering.CoclustMod import CoclustMod
 
 
 def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):

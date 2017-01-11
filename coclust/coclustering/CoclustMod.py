@@ -13,7 +13,8 @@ of a co-clustering algorithm by direct maximization of graph modularity.
 import numpy as np
 from sklearn.utils import check_random_state
 
-from ..utils.initialization import random_init, check_array, check_numbers
+from ..io.check_input_matrix import check_array, check_numbers
+from ..utils.initialization import random_init
 from .BaseDiagonalCoclust import BaseDiagonalCoclust
 
 
