@@ -1,7 +1,7 @@
 numpy
 scipy
 scikit-learn
-matplotlib
+matplotlib>=1.5
 sphinx
 sphinx-argparse
 jupyter
