@@ -25,9 +25,14 @@ setup(name='coclust',
       author='Francois Role, Stanislas Morbieu, Mohamed Nadif',
       author_email='francois.role@gmail.com',
       license='BSD3',
-      packages=['coclust', 'coclust/utils',
-                'coclust/evaluation', 'coclust/visualization',
-                'coclust/clustering', 'coclust/io', 'coclust/coclustering'],
+      packages=['coclust',
+                'coclust/clustering',
+                'coclust/coclustering',
+                'coclust/evaluation',
+                'coclust/io'
+                'coclust/utils',
+                'coclust/visualization'
+                ],
       setup_requires=["numpy"],
       install_requires=[
           'numpy', "scipy", "scikit-learn"

@@ -9,3 +9,4 @@ Python API
    io
    evaluation
    visualization
+   initialization

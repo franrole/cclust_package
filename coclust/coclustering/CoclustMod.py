@@ -14,7 +14,7 @@ import numpy as np
 from sklearn.utils import check_random_state
 
 from ..io.check_input_matrix import check_array, check_numbers
-from ..utils.initialization import random_init
+from ..initialization import random_init
 from .BaseDiagonalCoclust import BaseDiagonalCoclust
 
 

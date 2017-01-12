@@ -17,9 +17,9 @@ from sklearn.utils import check_random_state
 from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfTransformer
 
-from coclust.io.check_input_matrix import (check_numbers_clustering,
-                                           check_array)
-from coclust.utils.initialization import (random_init_clustering)
+from ..io.check_input_matrix import (check_numbers_clustering,
+                                     check_array)
+from ..initialization import (random_init_clustering)
 
 
 class SphericalKmeans:

@@ -15,7 +15,7 @@ import scipy.sparse as sp
 from sklearn.utils import check_random_state
 
 from ..io.check_input_matrix import check_array, check_numbers_non_diago
-from ..utils.initialization import random_init
+from ..initialization import random_init
 from .BaseNonDiagonalCoclust import BaseNonDiagonalCoclust
 
 
