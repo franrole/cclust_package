@@ -18,3 +18,5 @@ The Python package provides an API for Python programmers.  This API allows to u
    scripts
    api/index
    examples
+
+.. image:: img/logo_lipade.png
