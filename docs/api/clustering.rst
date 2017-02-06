@@ -7,5 +7,5 @@ Clustering
 Spherical k-means
 -----------------
 
-.. automodule:: coclust.clustering.SphericalKmeans
+.. automodule:: coclust.clustering.spherical_kmeans
     :members:

@@ -6,22 +6,23 @@ Input and output
 
 .. testsetup:: *
 
-    from coclust.io.io import load_doc_term_data
+    from coclust.io.data_loading import load_doc_term_data
 
-Check input matrix
-------------------
 
-.. automodule:: coclust.io.check_input_matrix
+Data loading
+------------
+
+.. automodule:: coclust.io.data_loading
     :members:
 
-io
---
+Input checking
+--------------
 
-.. automodule:: coclust.io.io
+.. automodule:: coclust.io.input_checking
     :members:
 
-ioNotebook
-----------
+Jupyter and IPython Notebook utilities
+--------------------------------------
 
-.. automodule:: coclust.io.ioNotebook
+.. automodule:: coclust.io.notebook
     :members:

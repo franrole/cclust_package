@@ -2,27 +2,28 @@ Coclustering
 ============
 
 .. automodule:: coclust.coclustering
-    :members:
+..    :members:
+    :no-members:
+    :no-inherited-members:
 
-CoclustMod
+Classes
+-------
+
+Each of the following classes implements a co-clustering algorithm:
+
+.. autosummary::
+   :toctree: generated/
+   :template: class.rst
+
+   coclust.coclustering.CoclustMod
+   coclust.coclustering.CoclustSpecMod
+   coclust.coclustering.CoclustInfo
+
+
+User guide
 ----------
 
-.. automodule:: coclust.coclustering.CoclustMod
-    :inherited-members:
-    :members:
-..    :undoc-members:
-..    :show-inheritance:
-
-CoclustSpecMod
---------------
-
-.. automodule:: coclust.coclustering.CoclustSpecMod
-    :inherited-members:
-    :members:
-
-CoclustInfo
------------
-
-.. automodule:: coclust.coclustering.CoclustInfo
-    :inherited-members:
-    :members:
+:class:`coclust.coclustering.CoclustMod` and
+:class:`coclust.coclustering.CoclustSpecMod` are diagonal co-clustering
+algorithms whereas :class:`coclust.coclustering.CoclustInfo` is a non-diagonal
+co-clustering algorithm.

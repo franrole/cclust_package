@@ -4,14 +4,14 @@ Evaluation
 .. automodule:: coclust.evaluation
     :members:
 
-Partition evaluation
---------------------
+Internal measures
+-----------------
 
-.. automodule:: coclust.evaluation.partitionEvaluation
+.. automodule:: coclust.evaluation.internal
     :members:
 
 External measures
 -----------------
 
-.. automodule:: coclust.evaluation.external_measures
+.. automodule:: coclust.evaluation.external
     :members:

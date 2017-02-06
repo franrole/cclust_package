@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.coclustering.CoclustMod` module provides an implementation
+The :mod:`coclust.coclustering.coclust_mod` module provides an implementation
 of a co-clustering algorithm by direct maximization of graph modularity.
 """
 
@@ -13,9 +13,9 @@ of a co-clustering algorithm by direct maximization of graph modularity.
 import numpy as np
 from sklearn.utils import check_random_state
 
-from ..io.check_input_matrix import check_array, check_numbers
+from ..io.input_checking import check_array, check_numbers
 from ..initialization import random_init
-from .BaseDiagonalCoclust import BaseDiagonalCoclust
+from .base_diagonal_coclust import BaseDiagonalCoclust
 
 
 class CoclustMod(BaseDiagonalCoclust):
@@ -218,7 +218,7 @@ class CoclustMod(BaseDiagonalCoclust):
 
         Returns
         -------
-        CoclustMod.CoclustMod
+        CoclustMod
             self
         """
         for parameter, value in parameters.items():

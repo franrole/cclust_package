@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.io.ioNotebook` module provides functions to manage input and
+The :mod:`coclust.io.notebook` module provides functions to manage input and
 output in the evaluation notebook.
 """
 

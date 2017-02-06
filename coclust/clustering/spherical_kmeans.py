@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-:mod:`coclust.SphericalKmeans` provides an implementation of the spherical
-k-means algorithm.
+:mod:`coclust.clustering.spherical_kmeans` provides an implementation of the
+spherical k-means algorithm.
 """
 
 # Author: Melissa Ailem <melissa.ailem@parisdescartes.fr>
@@ -17,8 +17,8 @@ from sklearn.utils import check_random_state
 from sklearn.preprocessing import normalize
 from sklearn.feature_extraction.text import TfidfTransformer
 
-from ..io.check_input_matrix import (check_numbers_clustering,
-                                     check_array)
+from ..io.input_checking import (check_numbers_clustering,
+                                 check_array)
 from ..initialization import (random_init_clustering)
 
 

@@ -37,7 +37,9 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinxarg.ext',
     'matplotlib.sphinxext.plot_directive',
-    'sphinx.ext.doctest'
+    'sphinx.ext.doctest',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.mathjax'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -56,8 +58,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Coclust'
-copyright = u'2015-2016, Francois Role, Stanislas Morbieu'
-author = u'Francois Role, Stanislas Morbieu ; francois.role@parisdescartes.fr'
+copyright = u'2015-2017, Stanislas Morbieu, Francois Role'
+author = u'Stanislas Morbieu, Francois Role'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -244,7 +246,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, 'coclust.tex', u'Coclust Documentation',
-   u'Francois Role, Stanislas Morbieu', 'manual'),
+   author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.coclustering.CoclustInfo` module provides an implementation
+The :mod:`coclust.coclustering.coclust_info` module provides an implementation
 of a co-clustering algorithm by an information-theoretic approach.
 """
 
@@ -14,9 +14,9 @@ import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import check_random_state
 
-from ..io.check_input_matrix import check_array, check_numbers_non_diago
+from ..io.input_checking import check_array, check_numbers_non_diago
 from ..initialization import random_init
-from .BaseNonDiagonalCoclust import BaseNonDiagonalCoclust
+from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
 
 
 class CoclustInfo(BaseNonDiagonalCoclust):
@@ -59,7 +59,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         Bicluster label of each column
 
     delta_kl_ : array-like, shape (k,l)
-        Value p_kl / (p_k. * p_.l) for each row cluster k and column cluster l
+        Value :math:`\\frac{p_{kl}}{p_{k.} \\times p_{.l}}` for each row
+        cluster k and column cluster l
     """
 
     def __init__(self, n_row_clusters=2, n_col_clusters=2, init=None,
@@ -290,7 +291,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         Returns
         -------
-        CoclustInfo.CoclustInfo
+        CoclustInfo
             self
         """
         for parameter, value in parameters.items():

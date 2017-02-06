@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.evaluation.external_measures` module provides functions
+The :mod:`coclust.evaluation.external` module provides functions
 to evaluate clustering or co-clustering results with external information
 such as the true labeling of the clusters.
 """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.io.check_input_matrix` module provides functions to check
-input matrix.
+The :mod:`coclust.io.input_checking` module provides functions to check
+input matrices.
 """
 
 import numpy as np

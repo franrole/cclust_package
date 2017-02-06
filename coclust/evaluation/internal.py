@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 """
-The :mod:`coclust.evaluation.partitionEvaluation` module provides a function
-to evaluate the partition quality.
+The :mod:`coclust.evaluation.internal` module provides functions to evaluate
+clustering or co-clustering given internal criteria.
 """
 
 import numpy as np
 
-from ..coclustering.CoclustMod import CoclustMod
+from ..coclustering import CoclustMod
 
 
 def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):
@@ -25,7 +25,7 @@ def best_modularity_partition(in_data, nbr_clusters_range, n_rand_init=1):
 
     Returns
     -------
-    tmp_best_model: :class:`coclust.CoclustMod.CoclustMod`
+    tmp_best_model: :class:`coclust.coclustering.CoclustMod`
         model with highest final modularity
     tmp_max_modularities: list
         final modularities for all evaluated partitions
