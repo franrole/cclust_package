@@ -5,6 +5,7 @@
 
 # Generated documentation
 docs/_build/*
+docs/api/generated/*
 
 # Setuptools distribution folder.
 /dist/
