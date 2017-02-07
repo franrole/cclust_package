@@ -12,3 +12,4 @@ coverage
 flake8
 munkres
 tabulate
+sphinx-autorun
