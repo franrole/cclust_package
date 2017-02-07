@@ -29,8 +29,7 @@ setup(name='coclust',
                 'coclust/clustering',
                 'coclust/coclustering',
                 'coclust/evaluation',
-                'coclust/io'
-                'coclust/utils',
+                'coclust/io',
                 'coclust/visualization'
                 ],
       setup_requires=["numpy"],
