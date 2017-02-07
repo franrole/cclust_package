@@ -15,8 +15,8 @@ The Python package provides an :doc:`API<api/index>` for Python programmers.  Th
    :maxdepth: 1
 
    install
+   examples
    api/index
    scripts
-   examples
 
 .. image:: img/logo_lipade.png
