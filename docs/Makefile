@@ -53,7 +53,6 @@ clean:
 	rm -rf api/generated/*
 
 html:
-	sphinx-autogen api/*.rst -t _templates
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

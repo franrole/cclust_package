@@ -2,14 +2,13 @@ numpy
 scipy
 scikit-learn
 matplotlib>=1.5
+munkres
+tabulate
 sphinx
 sphinx-argparse
-jupyter
 sphinx_rtd_theme
+jupyter
 autopep8
 nose
 coverage
 flake8
-munkres
-tabulate
-sphinx-autorun
