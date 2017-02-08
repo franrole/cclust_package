@@ -41,12 +41,12 @@ Advanced usage overview
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. plot::
-   :include-source:
+    :include-source:
 
     from coclust.io.data_loading import load_doc_term_data
     from coclust.visualization import (plot_reorganized_matrix,
-                                       plot_cluster_top_terms,
-                                       plot_max_modularities)
+                                      plot_cluster_top_terms,
+                                      plot_max_modularities)
     from coclust.evaluation.internal import best_modularity_partition
     from coclust.coclustering import CoclustMod
 
@@ -57,7 +57,7 @@ Advanced usage overview
     labels = doc_term_data['term_labels']
 
     # get the best co-clustering over a range of cluster numbers
-    clusters_range = range(2, 10)
+    clusters_range = range(2, 7)
     model, modularities = best_modularity_partition(X, clusters_range, n_rand_init=1)
 
     # plot the reorganized matrix
@@ -68,7 +68,7 @@ Advanced usage overview
     plot_cluster_top_terms(X, labels, n_terms, model)
 
     # plot the modularities over the range of cluster numbers
-    plot_max_modularities(modularities, range(2, 10))
+    plot_max_modularities(modularities, range(2, 7))
 
 scikit-learn pipeline
 ~~~~~~~~~~~~~~~~~~~~~
