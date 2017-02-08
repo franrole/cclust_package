@@ -165,7 +165,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         p_kl = (Z.T * X) * W
         delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-        delta_kl = delta_kl.toarray()
 
         change = True
         news = []
@@ -206,7 +205,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl = delta_kl.toarray()
 
             # Update W
             p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
@@ -235,7 +233,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             p_kl = (Z.T * X) * W
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl = delta_kl.toarray()
             # to prevent log(0) when computing criterion
             delta_kl[delta_kl == 0.] = 0.0001
 
