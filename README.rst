@@ -24,9 +24,17 @@ See the available `documentation`_ for details and usage samples.
 Changelog
 ~~~~~~~~~
 
+0.2.0 - February, 2017
+::::::::::::::::::::::
+
+- Improved documentation
+- Restructuring
+- Evaluation, visualization and loading utilities
+- Easier installation of optional dependencies
+
 
 0.1.3 - April, 2016
-:::::::::::::::::::::::
+:::::::::::::::::::
 
 - New visualization methods in the utils module.
 - New demos.
