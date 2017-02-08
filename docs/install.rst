@@ -1,24 +1,48 @@
 Installation
 ============
 
-Required
-''''''''
+You can install **coclust** with all the dependencies with::
 
-The following libraries are required:
+    pip install coclust[alldeps]
 
-    - Numpy
-    - SciPy
+It will install the following libraries:
+
+    - numpy
+    - scipy
+    - scikit-learn
+    - matplotlib
+    - munkres
+
+If you only want to use co-clustering algorithms and don't want to install
+visualization or evaluation dependencies, you can install it with::
+
+    pip install coclust
+
+It will install the following required libraries:
+
+    - numpy
+    - scipy
     - scikit-learn
 
-Optional
-''''''''
+Windows users
+'''''''''''''
 
-Matplotlib is required for running examples involving visualizations.
+It is recommended to use a third party distribution to install the dependencies
+before installing coclust. For example, when using the Continuum distribution,
+go to the `download site`_ to get and double-click the graphical installer.
+Then, enter ``pip install coclust`` at the command line.
 
-If you are new to Python, we recommend using the Anaconda distribution since it will install everything for you.
+Linux users
+'''''''''''
 
-Performance Note (Debian, Ubuntu)
-'''''''''''''''''''''''''''''''''
+It is recommended to install the dependencies with your package manager.
+For example, on Ubuntu or Debian::
+
+   sudo apt-get install python-numpy python-scipy python-sklearn python-matplotlib
+   sudo pip install coclust
+
+Performance note
+~~~~~~~~~~~~~~~~
 
 OpenBLAS provides a fast multi-threaded implementation, you can install it with::
 
@@ -27,3 +51,6 @@ OpenBLAS provides a fast multi-threaded implementation, you can install it with:
 If other implementations are installed on your system, you can select OpenBLAS with::
 
     sudo update-alternatives --config libblas.so.3
+
+
+.. _`download site`: https://www.continuum.io/downloads

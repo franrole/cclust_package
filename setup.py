@@ -34,8 +34,17 @@ setup(name='coclust',
                 ],
       setup_requires=["numpy"],
       install_requires=[
-          'numpy', "scipy", "scikit-learn"
+          'numpy', 'scipy', 'scikit-learn'
       ],
+      extras_require={
+        'alldeps': (
+            'numpy',
+            'scipy',
+            'scikit-learn',
+            'matplotlib>=1.5',
+            'munkres'
+        )
+      },
       cmdclass={
           'build_ext': build_ext
       },
