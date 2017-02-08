@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-CoclustSpecMod
+The :mod:`coclust.coclustering.coclust_spec_mod` module provides an
+implementation of a co-clustering algorithm by spectral approximation of the
+modularity matrix.
 """
 
 # Author: Francois Role <francois.role@gmail.com>
@@ -12,8 +14,9 @@ CoclustSpecMod
 import numpy as np
 from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
-from .utils.initialization import check_array, check_numbers
-from .BaseDiagonalCoclust import BaseDiagonalCoclust
+
+from ..io.input_checking import check_array, check_numbers
+from .base_diagonal_coclust import BaseDiagonalCoclust
 
 
 class CoclustSpecMod(BaseDiagonalCoclust):
@@ -176,7 +179,7 @@ class CoclustSpecMod(BaseDiagonalCoclust):
 
         Returns
         -------
-        CoclustSpecMod.CoclustSpecMod
+        CoclustSpecMod
             self
         """
         for parameter, value in parameters.items():

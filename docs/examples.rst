@@ -1,8 +1,8 @@
-Basic Usage Examples
-====================
+Examples
+========
 
-CoclustMod
-~~~~~~~~~~
+Basic usage
+~~~~~~~~~~~
 
 In the following example, the CSTR dataset is loaded from a Matlab matrix using
 the SciPy library. The data is stored in X and a co-clustering model using
@@ -13,7 +13,7 @@ retrieved for further exploration or evaluation.
 .. code-block:: python
 
     from scipy.io import loadmat
-    from coclust.CoclustMod import CoclustMod
+    from coclust.coclustering import CoclustMod
 
     file_name = "../datasets/cstr.mat"
     matlab_dict = loadmat(file_name)
@@ -37,50 +37,45 @@ scikit-learn library:
 
     print(nmi(true_row_labels, predicted_row_labels))
 
-CoclustSpecMod
-~~~~~~~~~~~~~~
+Advanced usage overview
+~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, the Classic3 dataset is imported as a CSV. The first line of the file is
-the number of rows followed by the number of columns and the number of clusters
-the model is fitted with. The other lines are tuples of row number, column
-number and value of that entry. The spectral modularity based model is fitted
-and the predicted row labels retrieved. The shapes of the predicted clusters
-are printed.
+.. plot::
+    :include-source:
 
-.. code-block:: python
+    from coclust.io.data_loading import load_doc_term_data
+    from coclust.visualization import (plot_reorganized_matrix,
+                                      plot_cluster_top_terms,
+                                      plot_max_modularities)
+    from coclust.evaluation.internal import best_modularity_partition
+    from coclust.coclustering import CoclustMod
 
-    from __future__ import print_function
-    import scipy.sparse as sp
-    import csv
-    from coclust.CoclustSpecMod import CoclustSpecMod
+    # read data
+    path = '../datasets/classic3_coclustFormat.mat'
+    doc_term_data = load_doc_term_data(path)
+    X = doc_term_data['doc_term_matrix']
+    labels = doc_term_data['term_labels']
 
-    file_name = "../datasets/classic3.csv"
-    csv_file = open(file_name, 'rb')
-    csv_reader = csv.reader(csv_file, delimiter=",")
+    # get the best co-clustering over a range of cluster numbers
+    clusters_range = range(2, 6)
+    model, modularities = best_modularity_partition(X, clusters_range, n_rand_init=1)
 
-    nb_row, nb_col, nb_clusters = map(int, csv_reader.next())
-    X = sp.lil_matrix((nb_row, nb_col))
+    # plot the reorganized matrix
+    plot_reorganized_matrix(X, model)
 
-    for row in csv_reader:
-        i, j, v = map(int, row)
-        X[i, j] = v
+    # plot the top terms
+    n_terms = 10
+    plot_cluster_top_terms(X, labels, n_terms, model)
 
-    model = CoclustSpecMod(n_clusters=nb_clusters)
-    model.fit(X)
+    # plot the modularities over the range of cluster numbers
+    plot_max_modularities(modularities, range(2, 6))
 
-    predicted_row_labels = model.row_labels_
-
-    for i in range(nb_clusters):
-        number_of_rows, number_of_columns = model.get_shape(i)
-        print("Cluster", i, "has", number_of_rows, "rows and",
-              number_of_columns, "columns.")
-
-CoclustInfo
-~~~~~~~~~~~
+scikit-learn pipeline
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
-    from coclust.CoclustInfo import CoclustInfo
+    from coclust.coclustering import CoclustInfo
 
     from sklearn.datasets import fetch_20newsgroups
     from sklearn.pipeline import Pipeline
@@ -114,3 +109,9 @@ CoclustInfo
     nmi = normalized_mutual_info_score(true_labels, predicted_labels)
 
     print(nmi)
+
+More examples
+~~~~~~~~~~~~~
+More examples are available as notebooks:
+
+https://github.com/franrole/cclust_package/tree/master/demo

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-BaseNonDiagonalCoclust
+The :mod:`coclust.coclustering.base_non_diagonal_coclust` module provides a
+class with common methods for non diagonal co-clustering algorithms.
 """
 
 # Author: Francois Role <francois.role@gmail.com>

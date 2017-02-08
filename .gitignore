@@ -3,6 +3,12 @@
 
 *~
 
+# Generated documentation
+docs/_build/*
+docs/api/generated/*
+
+demo/.ipynb_checkpoints/*
+
 # Setuptools distribution folder.
 /dist/
 

@@ -17,7 +17,7 @@ def readme():
         return f.read()
 
 setup(name='coclust',
-      version='0.1.3',
+      version='0.2.0',
       description='coclustering algorithms for data mining',
       long_description=readme(),
       classifiers=['Topic :: Scientific/Engineering :: Information Analysis'],
@@ -25,11 +25,26 @@ setup(name='coclust',
       author='Francois Role, Stanislas Morbieu, Mohamed Nadif',
       author_email='francois.role@gmail.com',
       license='BSD3',
-      packages=['coclust', 'coclust/tests', 'coclust/utils'],
+      packages=['coclust',
+                'coclust/clustering',
+                'coclust/coclustering',
+                'coclust/evaluation',
+                'coclust/io',
+                'coclust/visualization'
+                ],
       setup_requires=["numpy"],
       install_requires=[
-          'numpy', "scipy", "scikit-learn"
+          'numpy', 'scipy', 'scikit-learn'
       ],
+      extras_require={
+        'alldeps': (
+            'numpy',
+            'scipy',
+            'scikit-learn',
+            'matplotlib>=1.5',
+            'munkres'
+        )
+      },
       cmdclass={
           'build_ext': build_ext
       },

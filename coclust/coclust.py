@@ -10,11 +10,13 @@ coclusts script
 # License: BSD 3 clause
 
 from __future__ import print_function
+
 import argparse
+import logging
+import sys
+
 import numpy as np
 import scipy.sparse as sp
-import sys
-import logging
 
 
 def get_parsers():
@@ -155,7 +157,7 @@ def main_coclust_nb():
     args = vars(parser.parse_args())
     X = get_data_matrix(args)
 
-    from .CoclustMod import CoclustMod
+    from .coclustering import CoclustMod
     modularity = -np.inf
     best_model = CoclustMod()
 
@@ -301,7 +303,7 @@ def process_evaluation(args, model):
 def spec_modularity(args):
     X = get_data_matrix(args)
 
-    from .CoclustSpecMod import CoclustSpecMod
+    from .coclustering import CoclustSpecMod
     model = CoclustSpecMod(n_clusters=args['n_coclusters'],
                            max_iter=args['max_iter'],
                            n_init=args['n_runs'],
@@ -325,7 +327,7 @@ def modularity(args):
 
     # 2) perform co-clustering
 
-    from .CoclustMod import CoclustMod
+    from .coclustering import CoclustMod
     model = CoclustMod(n_clusters=args['n_coclusters'], init=W,
                        max_iter=args['max_iter'], n_init=args['n_runs'],
                        tol=args['epsilon'],
@@ -352,7 +354,7 @@ def info(args):
 
     # 2) perform co-clustering
 
-    from .CoclustInfo import CoclustInfo
+    from .coclustering import CoclustInfo
     model = CoclustInfo(n_row_clusters=args['n_row_clusters'],
                         n_col_clusters=args['n_col_clusters'], init=W,
                         max_iter=args['max_iter'], n_init=args['n_runs'],

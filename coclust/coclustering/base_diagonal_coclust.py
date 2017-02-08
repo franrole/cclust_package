@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-BaseDiagonalCoclust
+The :mod:`coclust.coclustering.base_diagonal_coclust` module provides a class
+with common methods for diagonal co-clustering algorithms.
 """
 
 # Author: Francois Role <francois.role@gmail.com>

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-CoclustInfo
+The :mod:`coclust.coclustering.coclust_info` module provides an implementation
+of a co-clustering algorithm by an information-theoretic approach.
 """
 
 # Author: Francois Role <francois.role@gmail.com>
@@ -12,13 +13,14 @@ CoclustInfo
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import check_random_state
-from .utils.initialization import (random_init, check_numbers_non_diago,
-                                   check_array)
-from .BaseNonDiagonalCoclust import BaseNonDiagonalCoclust
+
+from ..io.input_checking import check_array, check_numbers_non_diago
+from ..initialization import random_init
+from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
 
 
 class CoclustInfo(BaseNonDiagonalCoclust):
-    """Co-clustering.
+    """Information-Theoretic Co-clustering.
 
     Parameters
     ----------
@@ -57,7 +59,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         Bicluster label of each column
 
     delta_kl_ : array-like, shape (k,l)
-        Value p_kl / (p_k. * p_.l) for each row cluster k and column cluster l
+        Value :math:`\\frac{p_{kl}}{p_{k.} \\times p_{.l}}` for each row
+        cluster k and column cluster l
     """
 
     def __init__(self, n_row_clusters=2, n_col_clusters=2, init=None,
@@ -126,6 +129,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+
         K = self.n_row_clusters
         L = self.n_col_clusters
 
@@ -161,7 +165,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         p_kl = (Z.T * X) * W
         delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-        delta_kl = delta_kl.toarray()
 
         change = True
         news = []
@@ -202,7 +205,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             p_kd_times_p_dl_inv = 1. / p_kd_times_p_dl
             p_kl = (Z.T * X) * W
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl = delta_kl.toarray()
 
             # Update W
             p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
@@ -231,7 +233,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             p_kl = (Z.T * X) * W
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
-            delta_kl = delta_kl.toarray()
             # to prevent log(0) when computing criterion
             delta_kl[delta_kl == 0.] = 0.0001
 
@@ -251,6 +252,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         self.row_labels_ = Z.toarray().argmax(axis=1).tolist()
         self.column_labels_ = W.toarray().argmax(axis=1).tolist()
         self.delta_kl_ = delta_kl
+        self.Z = Z
+        self.W = W
 
     def get_params(self, deep=True):
         """Get parameters for this estimator.
@@ -285,7 +288,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         Returns
         -------
-        CoclustInfo.CoclustInfo
+        CoclustInfo
             self
         """
         for parameter, value in parameters.items():
