@@ -24,8 +24,9 @@ def plot_max_modularities(max_modularities, range_n_clusters):
     Parameters
     ----------
     max_modularities: list of float
-        final modularities for all evaluated partitions
+        Final modularities for all evaluated partitions
     range_n_clusters: list
+        Number of clusters for which the algorithm is to be executed
 
     Example
     -------
@@ -90,7 +91,8 @@ def plot_intermediate_modularities(model):
 
     Parameters
     ----------
-    model: fitted model
+    model: :class:`coclust.coclustering.CoclustMod`
+        Fitted model
 
     Example
     -------
@@ -404,9 +406,10 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
         Data matrix
     model:
         Fitted co-clustering model
-    precision:
-    markersize:
-
+    precision: float, optional
+        values greater than `precision` will be plotted
+    markersize: float
+        marker size
     Example
     -------
     >>> plot_reorganized_matrix(X, model)
@@ -442,6 +445,7 @@ def plot_convergence(criteria, criterion_name, marker='o'):
     criterion_name: str
         Name of the criteria
     marker:
+        Marker
 
     Example
     -------
@@ -475,6 +479,7 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012'):
     colormap: :class:`matplotlib.colors.Colormap`
         Color map
     labels:
+        Labels
 
     Example
     -------
@@ -545,6 +550,7 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
     colormap: :class:`matplotlib.colors.Colormap`
         Color map
     labels:
+        Labels
 
     Example
     -------
