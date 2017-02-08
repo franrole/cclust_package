@@ -57,7 +57,7 @@ Advanced usage overview
     labels = doc_term_data['term_labels']
 
     # get the best co-clustering over a range of cluster numbers
-    clusters_range = range(2, 7)
+    clusters_range = range(2, 6)
     model, modularities = best_modularity_partition(X, clusters_range, n_rand_init=1)
 
     # plot the reorganized matrix
@@ -68,7 +68,7 @@ Advanced usage overview
     plot_cluster_top_terms(X, labels, n_terms, model)
 
     # plot the modularities over the range of cluster numbers
-    plot_max_modularities(modularities, range(2, 7))
+    plot_max_modularities(modularities, range(2, 6))
 
 scikit-learn pipeline
 ~~~~~~~~~~~~~~~~~~~~~
