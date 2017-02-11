@@ -12,7 +12,7 @@ from scipy.io import loadmat
 import sys
 
 
-from coclust.coclustering.CoclustInfo import CoclustInfo
+from coclust.coclustering import CoclustInfo
 
 
 class TestCstr(TestCase):
