@@ -4,7 +4,7 @@ import numpy as np
 from scipy.io import loadmat
 import sys
 
-from coclust.coclustering.CoclustMod import CoclustMod
+from coclust.coclustering import CoclustMod
 
 
 class TestDiagonal(TestCase):

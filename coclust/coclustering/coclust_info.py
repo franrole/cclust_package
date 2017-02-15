@@ -12,6 +12,7 @@ of a co-clustering algorithm by an information-theoretic approach.
 
 import numpy as np
 import scipy.sparse as sp
+from scipy.sparse.sputils import isdense
 from sklearn.utils import check_random_state
 
 from ..io.input_checking import check_array, check_numbers_non_diago
@@ -178,6 +179,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
             # Update Z
             p_il = X * W  # matrice m,l ; la colonne l' contient les p_il'
+            if not isdense(delta_kl):
+                delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl.T)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
@@ -208,6 +211,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
             # Update W
             p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
+            if not isdense(delta_kl):
+                delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
@@ -234,6 +239,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
             # to prevent log(0) when computing criterion
+            if not isdense(delta_kl):
+                delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001
 
             # Criterion
