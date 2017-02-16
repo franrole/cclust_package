@@ -12,25 +12,28 @@ def input_with_default_int(prompt, prefill):
     Parameters
     ----------
     prompt: string
-        The value entered by the user
+        The message printed before the field.
 
-    prefill: string
-        The default value
+    prefill: int
+        The default value.
 
     Returns
     -------
     int
         The value entered by the user or the default value.
     """
+    try:
+        # Python 2
+        value = raw_input('%s: [default: %s] ' % (prompt, prefill))
+    except NameError:
+        # Python 3
+        value = input('%s: [default: %s] ' % (prompt, prefill))
 
-    retint = input('%s: [default: %s] ' % (prompt, prefill))
-
-    if len(retint) > 0:
-        retint = int(retint)
+    # value is a string
+    if len(value) == 0:
+        return prefill
     else:
-        retint = prefill
-
-    return retint
+        return int(value)
 
 
 def input_with_default_str(prompt, prefill):
@@ -39,20 +42,25 @@ def input_with_default_str(prompt, prefill):
     Parameters
     ----------
     prompt: string
-        The value entered by the user
+        The message printed before the field.
 
     prefill: string
-        The default value
+        The default value.
 
     Returns
     -------
     string
         The value entered by the user or the default value.
     """
+    try:
+        # Python 2
+        value = raw_input('%s: [default: %s] ' % (prompt, prefill))
+    except NameError:
+        # Python 3
+        value = input('%s: [default: %s] ' % (prompt, prefill))
 
-    retstr = input('%s: [default: %s] ' % (prompt, prefill))
+    # value is a string
+    if len(value) == 0:
+        value = prefill
 
-    if len(retstr) == 0:
-        retstr = prefill
-
-    return retstr
+    return value
