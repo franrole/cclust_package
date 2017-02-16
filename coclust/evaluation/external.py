@@ -13,7 +13,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 
 
-def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+def accuracy(nb_clusters, true_row_labels, predicted_row_labels):
     """Get the best accuracy.
 
     Log an error message if the best accuracy cannot be computed due to missing
@@ -21,8 +21,6 @@ def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
 
     Parameters
     ----------
-    X:
-        The data matrix
     nb_clusters: int
         The number of clusters
     true_row_labels: array-like
@@ -38,18 +36,18 @@ def accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
     """
 
     try:
-        accuracy = _true_accuracy(X, nb_clusters, true_row_labels,
+        accuracy = _true_accuracy(nb_clusters, true_row_labels,
                                   predicted_row_labels)
         return accuracy
     except ImportError as e:
         logging.error(e)
         logging.error("Fallback to approximate accuracy, install Munkres for "
                       "true accuracy.")
-        return _approximate_accuracy(X, nb_clusters, true_row_labels,
+        return _approximate_accuracy(nb_clusters, true_row_labels,
                                      predicted_row_labels)
 
 
-def _true_accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
+def _true_accuracy(nb_clusters, true_row_labels, predicted_row_labels):
     from munkres import Munkres, make_cost_matrix
     m = Munkres()
     cm = confusion_matrix(true_row_labels, predicted_row_labels)
@@ -64,7 +62,7 @@ def _true_accuracy(X, nb_clusters, true_row_labels, predicted_row_labels):
     return(total * 1. / np.sum(cm))
 
 
-def _approximate_accuracy(X, nb_clusters, true_row_labels,
+def _approximate_accuracy(nb_clusters, true_row_labels,
                           predicted_row_labels):
     cm = confusion_matrix(true_row_labels, predicted_row_labels)
     n_rows = len(true_row_labels)
