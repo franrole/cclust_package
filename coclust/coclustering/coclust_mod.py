@@ -73,7 +73,7 @@ class CoclustMod(BaseDiagonalCoclust):
         self.max_iter = max_iter
         self.n_init = n_init
         self.tol = tol
-        self.random_state = check_random_state(random_state)
+        self.random_state = random_state
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -88,6 +88,8 @@ class CoclustMod(BaseDiagonalCoclust):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+
+        self.random_state = check_random_state(self.random_state)
 
         check_numbers(X, self.n_clusters)
 
