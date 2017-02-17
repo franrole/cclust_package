@@ -13,9 +13,8 @@ of a co-clustering algorithm by an information-theoretic approach.
 import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.sputils import isdense
-from sklearn.utils import check_random_state
+from sklearn.utils import check_random_state, check_array
 
-from ..io.input_checking import check_array, check_numbers_non_diago
 from ..initialization import random_init
 from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
 
@@ -72,7 +71,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         self.max_iter = max_iter
         self.n_init = n_init
         self.tol = tol
-        self.random_state = check_random_state(random_state)
+        self.random_state = random_state
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -88,20 +87,25 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+        random_state = check_random_state(self.random_state)
 
-        check_array(X)
-
-        check_numbers_non_diago(X, self.n_row_clusters, self.n_col_clusters)
+        check_array(X, accept_sparse=True, dtype="numeric", order=None,
+                    copy=False, force_all_finite=True, ensure_2d=True,
+                    allow_nd=False, ensure_min_samples=self.n_row_clusters,
+                    ensure_min_features=self.n_col_clusters,
+                    warn_on_dtype=False, estimator=None)
 
         X = X.astype(float)
 
         criterion = self.criterion
+        criterions = self.criterions
+        row_labels_ = self.row_labels_
+        column_labels_ = self.column_labels_
+        delta_kl_ = self.delta_kl_
 
-        random_state = check_random_state(self.random_state)
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
-            self.random_state = seed
-            self._fit_single(X, y)
+            self._fit_single(X, seed, y)
             if np.isnan(self.criterion):
                 raise ValueError("matrix may contain negative or "
                                  "unexpected NaN values")
@@ -113,8 +117,6 @@ class CoclustInfo(BaseNonDiagonalCoclust):
                 column_labels_ = self.column_labels_
                 delta_kl_ = self.delta_kl_
 
-        self.random_state = random_state
-
         # update attributes
         self.criterion = criterion
         self.criterions = criterions
@@ -122,7 +124,9 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         self.column_labels_ = column_labels_
         self.delta_kl_ = delta_kl_
 
-    def _fit_single(self, X, y=None):
+        return self
+
+    def _fit_single(self, X, random_state, y=None):
         """Perform one run of co-clustering.
 
         Parameters
@@ -135,7 +139,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
         L = self.n_col_clusters
 
         if self.init is None:
-            W = random_init(L, X.shape[1], self.random_state)
+            W = random_init(L, X.shape[1], random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
