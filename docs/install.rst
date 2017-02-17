@@ -11,7 +11,6 @@ It will install the following libraries:
     - scipy
     - scikit-learn
     - matplotlib
-    - munkres
 
 If you only want to use co-clustering algorithms and don't want to install
 visualization or evaluation dependencies, you can install it with::
