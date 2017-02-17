@@ -11,9 +11,10 @@ class with common methods for non diagonal co-clustering algorithms.
 # License: BSD 3 clause
 
 import numpy as np
+from sklearn.base import BaseEstimator
 
 
-class BaseNonDiagonalCoclust(object):
+class BaseNonDiagonalCoclust(BaseEstimator):
     def get_row_indices(self, i):
         """Give the row indices of the i’th co-cluster.
 

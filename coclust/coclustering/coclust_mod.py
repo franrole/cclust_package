@@ -189,45 +189,6 @@ class CoclustMod(BaseDiagonalCoclust):
         self.modularity = m_end / N
         self.nb_iterations = iteration
 
-    def get_params(self, deep=True):
-        """Get parameters for this estimator.
-
-        Parameters
-        ----------
-        deep: boolean, optional
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators
-
-        Returns
-        -------
-        dict
-            Mapping of string to any parameter names mapped to their values
-        """
-        return {"init": self.init,
-                "n_clusters": self.n_clusters,
-                "max_iter": self.max_iter,
-                "n_init": self.n_init,
-                "tol": self.tol,
-                "random_state": self.random_state
-                }
-
-    def set_params(self, **parameters):
-        """Set the parameters of this estimator.
-
-        The method works on simple estimators as well as on nested objects
-        (such as pipelines). The former have parameters of the form
-        ``<component>__<parameter>`` so that it's possible to update each
-        component of a nested object.
-
-        Returns
-        -------
-        CoclustMod
-            self
-        """
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
-
     def get_assignment_matrix(self, kind, i):
         """Returns the indices of 'best' i cols of an assignment matrix
         (row or column).
