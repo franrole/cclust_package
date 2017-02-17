@@ -2,5 +2,4 @@ numpy
 scipy
 scikit-learn
 matplotlib>=1.5
-munkres
 tabulate
