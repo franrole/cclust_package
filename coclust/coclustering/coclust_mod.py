@@ -88,7 +88,7 @@ class CoclustMod(BaseDiagonalCoclust):
             Matrix to be analyzed
         """
 
-        self.random_state = check_random_state(self.random_state)
+        random_state = check_random_state(self.random_state)
 
         check_array(X, accept_sparse=True, dtype="numeric", order=None,
                     copy=False, force_all_finite=True, ensure_2d=True,
@@ -106,11 +106,9 @@ class CoclustMod(BaseDiagonalCoclust):
         row_labels_ = None
         column_labels_ = None
 
-        random_state = self.random_state
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
-            self.random_state = seed
-            self._fit_single(X, y)
+            self._fit_single(X, seed, y)
             if np.isnan(self.modularity):
                 raise ValueError("matrix may contain unexpected NaN values")
             # remember attributes corresponding to the best modularity
@@ -120,7 +118,6 @@ class CoclustMod(BaseDiagonalCoclust):
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
 
-        self.random_state = random_state
         # update attributes
         self.modularity = modularity
         self.modularities = modularities
@@ -129,7 +126,7 @@ class CoclustMod(BaseDiagonalCoclust):
 
         return self
 
-    def _fit_single(self, X, y=None):
+    def _fit_single(self, X, random_state, y=None):
         """Perform one run of co-clustering by direct maximization of graph
         modularity.
 
@@ -140,7 +137,7 @@ class CoclustMod(BaseDiagonalCoclust):
         """
 
         if self.init is None:
-            W = random_init(self.n_clusters, X.shape[1], self.random_state)
+            W = random_init(self.n_clusters, X.shape[1], random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
