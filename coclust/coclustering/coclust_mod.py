@@ -11,9 +11,8 @@ of a co-clustering algorithm by direct maximization of graph modularity.
 # License: BSD 3 clause
 
 import numpy as np
-from sklearn.utils import check_random_state
+from sklearn.utils import check_random_state, check_array
 
-from ..io.input_checking import check_array, check_numbers
 from ..initialization import random_init
 from .base_diagonal_coclust import BaseDiagonalCoclust
 
@@ -91,11 +90,11 @@ class CoclustMod(BaseDiagonalCoclust):
 
         self.random_state = check_random_state(self.random_state)
 
-        check_numbers(X, self.n_clusters)
-
-        check_array(X)
-
-        check_numbers(X, self.n_clusters)
+        check_array(X, accept_sparse=True, dtype="numeric", order=None,
+                    copy=False, force_all_finite=True, ensure_2d=True,
+                    allow_nd=False, ensure_min_samples=self.n_clusters,
+                    ensure_min_features=self.n_clusters,
+                    warn_on_dtype=False, estimator=None)
 
         if type(X) == np.ndarray:
             X = np.matrix(X)
@@ -103,8 +102,11 @@ class CoclustMod(BaseDiagonalCoclust):
         X = X.astype(float)
 
         modularity = self.modularity
+        modularities = []
+        row_labels_ = None
+        column_labels_ = None
 
-        random_state = check_random_state(self.random_state)
+        random_state = self.random_state
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self.random_state = seed
