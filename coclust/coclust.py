@@ -141,8 +141,12 @@ def modularity_by_number_of_clusters(args, modularities):
     if args['visu']:
         try:
             import matplotlib.pyplot as plt
-            plt.plot(modularities, marker='o',
-                     xdata=range(args['from'], args['to'] + 1))
+            plt.style.use('ggplot')
+
+            my_xticks = [str(e) for e in range(args['from'], args['to'] + 1)]
+            x = np.array(range(args['from'], args['to'] + 1))
+            plt.xticks(x, my_xticks)
+            plt.plot(x, modularities, marker='o')
             plt.title("Evolution of modularity")
             plt.ylabel('Lc')
             plt.xlabel('Number of clusters')
@@ -257,6 +261,7 @@ def process_visualization(args, model, X):
     if args['visu']:
         try:
             import matplotlib.pyplot as plt
+            plt.style.use('ggplot')
             if (args['subparser_name'] == "info"):
                 plt.plot(model.criterions, marker='o')
                 plt.title("Evolution of criterion")
