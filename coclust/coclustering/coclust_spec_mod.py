@@ -17,6 +17,7 @@ from sklearn.cluster import KMeans
 
 from ..io.input_checking import check_array, check_numbers
 from .base_diagonal_coclust import BaseDiagonalCoclust
+from ..io.input_checking import check_positive
 
 
 class CoclustSpecMod(BaseDiagonalCoclust):
@@ -81,6 +82,8 @@ class CoclustSpecMod(BaseDiagonalCoclust):
         check_array(X)
 
         check_numbers(X, self.n_clusters)
+
+        check_positive(X)
 
         X = X.astype(float)
 

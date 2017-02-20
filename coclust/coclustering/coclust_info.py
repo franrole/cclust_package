@@ -17,6 +17,7 @@ from sklearn.utils import check_random_state, check_array
 
 from ..initialization import random_init
 from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
+from ..io.input_checking import check_positive
 
 
 class CoclustInfo(BaseNonDiagonalCoclust):
@@ -94,6 +95,8 @@ class CoclustInfo(BaseNonDiagonalCoclust):
                     allow_nd=False, ensure_min_samples=self.n_row_clusters,
                     ensure_min_features=self.n_col_clusters,
                     warn_on_dtype=False, estimator=None)
+
+        check_positive(X)
 
         X = X.astype(float)
 
