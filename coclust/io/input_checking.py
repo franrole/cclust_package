@@ -7,6 +7,8 @@ input matrices.
 
 import numpy as np
 import scipy.sparse as sp
+from scipy.sparse.sputils import isdense
+from scipy.sparse.dok import dok_matrix
 
 
 def check_array(a, pos=True):
@@ -50,6 +52,38 @@ def check_array(a, pos=True):
                 raise ValueError("Negative values in data")
         if np.isnan(a).any():
             raise ValueError("NaN in data")
+
+
+def check_positive(X):
+    """Check if all values are positives.
+
+    Parameters
+    ----------
+    X: numpy array or scipy sparse matrix
+        Matrix to be analyzed
+
+    Raises
+    ------
+    ValueError
+        If the matrix contains negative values.
+
+    Returns
+    -------
+    numpy array or scipy sparse matrix
+        X
+    """
+
+    if isinstance(X, dok_matrix):
+        values = np.array(X.values())
+    elif isdense(X):
+        values = X
+    else:
+        values = X.data
+
+    if (values < 0).any():
+        raise ValueError("The matrix contains negative values.")
+
+    return X
 
 
 def check_numbers(matrix, n_clusters):

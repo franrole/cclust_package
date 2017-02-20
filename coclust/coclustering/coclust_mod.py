@@ -11,9 +11,8 @@ of a co-clustering algorithm by direct maximization of graph modularity.
 # License: BSD 3 clause
 
 import numpy as np
-from sklearn.utils import check_random_state
+from sklearn.utils import check_random_state, check_array
 
-from ..io.input_checking import check_array, check_numbers
 from ..initialization import random_init
 from .base_diagonal_coclust import BaseDiagonalCoclust
 
@@ -73,7 +72,7 @@ class CoclustMod(BaseDiagonalCoclust):
         self.max_iter = max_iter
         self.n_init = n_init
         self.tol = tol
-        self.random_state = check_random_state(random_state)
+        self.random_state = random_state
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -89,11 +88,13 @@ class CoclustMod(BaseDiagonalCoclust):
             Matrix to be analyzed
         """
 
-        check_numbers(X, self.n_clusters)
+        random_state = check_random_state(self.random_state)
 
-        check_array(X)
-
-        check_numbers(X, self.n_clusters)
+        check_array(X, accept_sparse=True, dtype="numeric", order=None,
+                    copy=False, force_all_finite=True, ensure_2d=True,
+                    allow_nd=False, ensure_min_samples=self.n_clusters,
+                    ensure_min_features=self.n_clusters,
+                    warn_on_dtype=False, estimator=None)
 
         if type(X) == np.ndarray:
             X = np.matrix(X)
@@ -101,12 +102,13 @@ class CoclustMod(BaseDiagonalCoclust):
         X = X.astype(float)
 
         modularity = self.modularity
+        modularities = []
+        row_labels_ = None
+        column_labels_ = None
 
-        random_state = check_random_state(self.random_state)
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
-            self.random_state = seed
-            self._fit_single(X, y)
+            self._fit_single(X, seed, y)
             if np.isnan(self.modularity):
                 raise ValueError("matrix may contain unexpected NaN values")
             # remember attributes corresponding to the best modularity
@@ -116,14 +118,15 @@ class CoclustMod(BaseDiagonalCoclust):
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
 
-        self.random_state = random_state
         # update attributes
         self.modularity = modularity
         self.modularities = modularities
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
 
-    def _fit_single(self, X, y=None):
+        return self
+
+    def _fit_single(self, X, random_state, y=None):
         """Perform one run of co-clustering by direct maximization of graph
         modularity.
 
@@ -134,7 +137,7 @@ class CoclustMod(BaseDiagonalCoclust):
         """
 
         if self.init is None:
-            W = random_init(self.n_clusters, X.shape[1], self.random_state)
+            W = random_init(self.n_clusters, X.shape[1], random_state)
         else:
             W = np.matrix(self.init, dtype=float)
 
@@ -185,45 +188,6 @@ class CoclustMod(BaseDiagonalCoclust):
         self.bw = BW
         self.modularity = m_end / N
         self.nb_iterations = iteration
-
-    def get_params(self, deep=True):
-        """Get parameters for this estimator.
-
-        Parameters
-        ----------
-        deep: boolean, optional
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators
-
-        Returns
-        -------
-        dict
-            Mapping of string to any parameter names mapped to their values
-        """
-        return {"init": self.init,
-                "n_clusters": self.n_clusters,
-                "max_iter": self.max_iter,
-                "n_init": self.n_init,
-                "tol": self.tol,
-                "random_state": self.random_state
-                }
-
-    def set_params(self, **parameters):
-        """Set the parameters of this estimator.
-
-        The method works on simple estimators as well as on nested objects
-        (such as pipelines). The former have parameters of the form
-        ``<component>__<parameter>`` so that it's possible to update each
-        component of a nested object.
-
-        Returns
-        -------
-        CoclustMod
-            self
-        """
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
 
     def get_assignment_matrix(self, kind, i):
         """Returns the indices of 'best' i cols of an assignment matrix

@@ -11,9 +11,10 @@ with common methods for diagonal co-clustering algorithms.
 # License: BSD 3 clause
 
 import numpy as np
+from sklearn.base import BaseEstimator
 
 
-class BaseDiagonalCoclust(object):
+class BaseDiagonalCoclust(BaseEstimator):
     def get_indices(self, i):
         """Give the row and column indices of the i’th co-cluster.
 

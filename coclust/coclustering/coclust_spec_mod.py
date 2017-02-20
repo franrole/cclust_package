@@ -14,9 +14,10 @@ modularity matrix.
 import numpy as np
 from scipy.sparse.linalg import svds
 from sklearn.cluster import KMeans
+from sklearn.utils import check_random_state, check_array
 
-from ..io.input_checking import check_array, check_numbers
 from .base_diagonal_coclust import BaseDiagonalCoclust
+from ..io.input_checking import check_positive
 
 
 class CoclustSpecMod(BaseDiagonalCoclust):
@@ -77,10 +78,15 @@ class CoclustSpecMod(BaseDiagonalCoclust):
         X : numpy array or scipy sparse matrix, shape=(n_samples, n_features)
             Matrix to be analyzed
         """
+        random_state = check_random_state(self.random_state)
 
-        check_array(X)
+        check_array(X, accept_sparse=True, dtype="numeric", order=None,
+                    copy=False, force_all_finite=True, ensure_2d=True,
+                    allow_nd=False, ensure_min_samples=self.n_clusters + 1,
+                    ensure_min_features=self.n_clusters + 1,
+                    warn_on_dtype=False, estimator=None)
 
-        check_numbers(X, self.n_clusters)
+        check_positive(X)
 
         X = X.astype(float)
 
@@ -89,99 +95,56 @@ class CoclustSpecMod(BaseDiagonalCoclust):
         D_r = np.diag(np.asarray(X.sum(axis=1)).flatten())
         D_c = np.diag(np.asarray(X.sum(axis=0)).flatten())
 
-        try:
+        # Compute weighted X
+        with np.errstate(divide='ignore'):
+            D_r **= (-1./2)
+            D_r[D_r == np.inf] = 0
 
-            # Compute weighted X
-            with np.errstate(divide='ignore'):
-                D_r **= (-1./2)
-                D_r[D_r == np.inf] = 0
+            D_c = D_c**(-1./2)
+            D_c[D_c == np.inf] = 0
 
-                D_c = D_c**(-1./2)
-                D_c[D_c == np.inf] = 0
+        D_r = np.matrix(D_r)
+        D_c = np.matrix(D_c)
 
-            D_r = np.matrix(D_r)
-            D_c = np.matrix(D_c)
+        X_tilde = D_r * X * D_c
 
-            X_tilde = D_r * X * D_c
+        # Compute the g-1 largest eigenvectors of X_tilde
 
-            # Compute the g-1 largest eigenvectors of X_tilde
+        U, s, V = svds(X_tilde, k=self.n_clusters)
+        V = V.transpose()
 
-            U, s, V = svds(X_tilde, k=self.n_clusters)
-            V = V.transpose()
+        # Form matrices U-tilde and V_tilde and stack them to form Q
 
-            # Form matrices U-tilde and V_tilde and stack them to form Q
+        U = D_r * U
+        # TODO:
+        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
+        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2 ???
 
-            U = D_r * U
-            # TODO:
-            # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-            # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2 ???
+        norm = np.linalg.norm(U, axis=0)
+        U_tilde = U/norm
 
-            norm = np.linalg.norm(U, axis=0)
-            U_tilde = U/norm
+        V = D_c * V
+        # TODO:
+        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
+        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2
 
-            V = D_c * V
-            # TODO:
-            # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-            # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2
+        norm = np.linalg.norm(V, axis=0)
+        V_tilde = V/norm
 
-            norm = np.linalg.norm(V, axis=0)
-            V_tilde = V/norm
+        Q = np.concatenate((U_tilde, V_tilde), axis=0)
 
-            Q = np.concatenate((U_tilde, V_tilde), axis=0)
+        # kmeans
 
-            # kmeans
+        k_means = KMeans(init='k-means++',
+                         n_clusters=self.n_clusters,
+                         n_init=self.n_init,
+                         max_iter=self.max_iter,
+                         tol=self.tol,
+                         random_state=random_state)
+        k_means.fit(Q)
+        k_means_labels = k_means.labels_
 
-            k_means = KMeans(init='k-means++',
-                             n_clusters=self.n_clusters,
-                             n_init=self.n_init,
-                             max_iter=self.max_iter,
-                             tol=self.tol,
-                             random_state=self.random_state)
-            k_means.fit(Q)
-            k_means_labels = k_means.labels_
+        nb_rows = X.shape[0]
 
-            nb_rows = X.shape[0]
-
-            self.row_labels_ = k_means_labels[0:nb_rows].tolist()
-            self.column_labels_ = k_means_labels[nb_rows:].tolist()
-
-        except:
-            raise ValueError("matrix may contain unexpected NaN values")
-
-    def get_params(self, deep=True):
-        """Get parameters for this estimator.
-
-        Parameters
-        ----------
-        deep: boolean, optional
-            If True, will return the parameters for this estimator and
-            contained subobjects that are estimators
-
-        Returns
-        -------
-        dict
-            Mapping of string to any parameter names mapped to their values
-        """
-        return {"n_clusters": self.n_clusters,
-                "max_iter": self.max_iter,
-                "tol": self.tol,
-                "n_init": self.n_init,
-                "random_state": self.random_state
-                }
-
-    def set_params(self, **parameters):
-        """Set the parameters of this estimator.
-
-        The method works on simple estimators as well as on nested objects
-        (such as pipelines). The former have parameters of the form
-        ``<component>__<parameter>`` so that it's possible to update each
-        component of a nested object.
-
-        Returns
-        -------
-        CoclustSpecMod
-            self
-        """
-        for parameter, value in parameters.items():
-            setattr(self, parameter, value)
-        return self
+        self.row_labels_ = k_means_labels[0:nb_rows].tolist()
+        self.column_labels_ = k_means_labels[nb_rows:].tolist()
