@@ -3,7 +3,7 @@ Installation
 
 You can install **coclust** with all the dependencies with::
 
-    pip install coclust[alldeps]
+    pip install "coclust[alldeps]"
 
 It will install the following libraries:
 
