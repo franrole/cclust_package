@@ -125,7 +125,7 @@ def load_doc_term_data(data_filepath,
         if term_labels_filepath is not None:
             tmp_term_labels = np.loadtxt(term_labels_filepath, dtype='str')\
                               .tolist()
-            if len(tmp_term_labels) is not n_term:
+            if len(tmp_term_labels) != n_term:
                 raise ValueError("Number of term labels (%d) not compatible "
                                  "with co-occurence matrix shape (%d, %d)"
                                  % (n_term, n_doc, len(tmp_term_labels)))
@@ -136,7 +136,7 @@ def load_doc_term_data(data_filepath,
         if doc_labels_filepath is not None:
             tmp_doc_labels = np.loadtxt(doc_labels_filepath, dtype='int')\
                              .tolist()
-            if len(tmp_doc_labels) is not n_term:
+            if len(tmp_doc_labels) != n_term:
                 raise ValueError("Number of doc labels (%d) not compatible "
                                  "with the number of terms (%d)"
                                  % (len(tmp_doc_labels), n_term))
