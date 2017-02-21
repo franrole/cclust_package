@@ -117,16 +117,16 @@ class CoclustSpecMod(BaseDiagonalCoclust):
 
         U = D_r * U
         # TODO:
-        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2 ???
+        # check type U  nd-array or matrix ??? Convert to  csr ?
+        # D_c is D_r_initial **-1/2 while it must be D_r**1/2
 
         norm = np.linalg.norm(U, axis=0)
         U_tilde = U/norm
 
         V = D_c * V
         # TODO:
-        # verifier type U  nd-array ou matrice ??? Convertir en csr ?
-        # D_r vaut ici D_r_initial **-1/2 alors que doit etre D_r**1/2
+        # chack type U  nd-array or matrix ??? Convert to csr ?
+        # D_c is D_r_initial **-1/2 while it must be D_r**1/2
 
         norm = np.linalg.norm(V, axis=0)
         V_tilde = V/norm

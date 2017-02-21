@@ -157,11 +157,11 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         # Initial delta
         p_il = X * W
-        # p_il = p_il     # matrice m,l ; la colonne l' contient les p_il'
-        p_kj = X.T * Z  # matrice j,k
+        # p_il = p_il     # matrix m,l ; column l' contains the p_il'
+        p_kj = X.T * Z  # matrix j,k
 
-        p_kd = p_kj.sum(axis=0)  # array contenant les p_k.
-        p_dl = p_il.sum(axis=0)  # array contenant les p_.l
+        p_kd = p_kj.sum(axis=0)  # array containing the p_k.
+        p_dl = p_il.sum(axis=0)  # array containing the p_.l
 
         # p_k. p_.l ; transpose because p_kd is "horizontal"
         p_kd_times_p_dl = p_kd.T * p_dl
@@ -185,13 +185,13 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             change = False
 
             # Update Z
-            p_il = X * W  # matrice m,l ; la colonne l' contient les p_il'
+            p_il = X * W  # matrix m,l ; column l' contains the p_il'
             if not isdense(delta_kl):
                 delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl.T)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
-            # p_il * (d_kl)T ; on examine chaque cluster
+            # p_il * (d_kl)T ; we examine each cluster
             Z1 = p_il * log_delta_kl
             Z1 = Z1.toarray()
             Z = np.zeros_like(Z1)
@@ -200,11 +200,11 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             Z = sp.lil_matrix(Z)
 
             # Update delta
-            # matrice d, k ; la colonne k' contient les p_jk'
+            # matrice d, k ; column k' contains the p_jk'
             p_kj = X.T * Z
             # p_il unchanged
-            p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
-            p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
+            p_dl = p_il.sum(axis=0)  # array l containing the  p_.l
+            p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
             p_kd_times_p_dl = p_kd.T * p_dl
@@ -217,23 +217,23 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
 
             # Update W
-            p_kj = X.T * Z  # matrice m,l ; la colonne l' contient les p_il'
+            p_kj = X.T * Z  # matrice m,l ; column l' contains the p_il'
             if not isdense(delta_kl):
                 delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
-            W1 = p_kj * log_delta_kl  # p_kj * d_kl ; on examine chaque cluster
+            W1 = p_kj * log_delta_kl  # p_kj * d_kl ; we examine each cluster
             W1 = W1.toarray()
             W = np.zeros_like(W1)
             W[np.arange(len(W1)), W1.argmax(1)] = 1
             W = sp.lil_matrix(W)
 
             # Update delta
-            p_il = X * W     # matrice d,k ; la colonne k' contient les p_jk'
+            p_il = X * W     # matrix d,k ; column k' contains the p_jk'
             # p_kj unchanged
-            p_dl = p_il.sum(axis=0)  # array l contenant les p_.l
-            p_kd = p_kj.sum(axis=0)  # array k contenant les p_k.
+            p_dl = p_il.sum(axis=0)  # array l containing the p_.l
+            p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
             p_kd_times_p_dl = p_kd.T * p_dl
