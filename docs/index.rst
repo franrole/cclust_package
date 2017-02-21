@@ -16,7 +16,8 @@ The Python package provides an :doc:`API<api/index>` for Python developers.
 This API allows to use the algorithms in a pipeline with scikit-learn library
 for example.
 
-**coclust** is distributed under the 3-Clause BSD license.
+**coclust** is distributed under the 3-Clause BSD license. It works with both
+Python 2.7 and Python 3.5.
 
 
 .. toctree::
