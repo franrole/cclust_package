@@ -9,6 +9,7 @@ import numpy as np
 import scipy.sparse as sp
 from scipy.sparse.sputils import isdense
 from scipy.sparse.dok import dok_matrix
+from scipy.sparse.lil import lil_matrix
 
 
 def check_array(a, pos=True):
@@ -72,9 +73,10 @@ def check_positive(X):
     numpy array or scipy sparse matrix
         X
     """
-
     if isinstance(X, dok_matrix):
-        values = np.array(X.values())
+        values = np.array(list(X.values()))
+    elif isinstance(X, lil_matrix):
+        values = np.array([v for e in X.data for v in e])
     elif isdense(X):
         values = X
     else:
