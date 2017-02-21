@@ -41,8 +41,7 @@ setup(name='coclust',
             'numpy',
             'scipy',
             'scikit-learn',
-            'matplotlib>=1.5',
-            'munkres'
+            'matplotlib>=1.5'
         )
       },
       cmdclass={
