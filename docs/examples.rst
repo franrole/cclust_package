@@ -1,6 +1,10 @@
 Examples
 ========
 
+The datasets used here are available at:
+
+https://github.com/franrole/cclust_package/tree/master/datasets
+
 Basic usage
 ~~~~~~~~~~~
 
