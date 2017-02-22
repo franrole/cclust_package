@@ -68,4 +68,4 @@ You also have to get the datasets used for the tests::
 And then, run the tests::
 
   cd cclust_package
-  nosetests --with-coverage --cover-package=coclust
+  nosetests --with-coverage --cover-inclusive --cover-package=coclust
