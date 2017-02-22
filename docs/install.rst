@@ -53,3 +53,19 @@ If other implementations are installed on your system, you can select OpenBLAS w
 
 
 .. _`download site`: https://www.continuum.io/downloads
+
+Running the tests
+'''''''''''''''''
+
+In order to run the tests, you have to install nose, for example with::
+
+  pip install nose
+
+You also have to get the datasets used for the tests::
+
+  git clone https://github.com/franrole/cclust_package.git
+
+And then, run the tests::
+
+  cd cclust_package
+  nosetests --with-coverage --cover-package=coclust
