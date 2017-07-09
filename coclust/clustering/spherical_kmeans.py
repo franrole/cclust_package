@@ -159,6 +159,7 @@ class SphericalKmeans:
 
             # hard assignment
             #Z=centers*X.T
+            # Prepare to migrate to scipy 0.19 so as to use argmax with csr matrix
             Z1 = X * centers.T
             Z1 = Z1.todense()
             Z1 = np.array(Z1)
