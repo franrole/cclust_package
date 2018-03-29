@@ -17,15 +17,7 @@ logger = logging.getLogger(__name__)
 plt.style.use('ggplot')
 
 
-def _write_plot(plot_file=None):
-    """Private function. Writes the plot to the specified file. None displays the plot."""
-    if plot_file is None:
-        plt.show()
-    else:
-        plt.savefig(plot_file, bbox_inches='tight')
-
-
-def plot_max_modularities(max_modularities, range_n_clusters, plot_file=None):
+def plot_max_modularities(max_modularities, range_n_clusters, do_plot=True):
     """Plot all max modularities obtained after a series of evaluations. The
     best partition is indicated in the graph and main title.
 
@@ -35,8 +27,8 @@ def plot_max_modularities(max_modularities, range_n_clusters, plot_file=None):
         Final modularities for all evaluated partitions
     range_n_clusters: list
         Number of clusters for which the algorithm is to be executed
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -94,18 +86,19 @@ def plot_max_modularities(max_modularities, range_n_clusters, plot_file=None):
     # Plot a dashed vertical line at best partition
     plt.axvline(np.argmax(max_modularities), linestyle="dashed")
 
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
-def plot_intermediate_modularities(model, plot_file=None):
+def plot_intermediate_modularities(model, do_plot=True):
     """Plot all intermediate modularities for a model.
 
     Parameters
     ----------
     model: :class:`coclust.coclustering.CoclustMod`
         Fitted model
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -152,10 +145,11 @@ def plot_intermediate_modularities(model, plot_file=None):
     # Plot a dashed horizontal line around max modularity
     plt.axhline(max(model.modularities), linestyle="dashed")
     plt.axhline((max(model.modularities) - model.tol), linestyle="dashed")
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
-def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, plot_file=None):
+def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, do_plot=True):
     """Plot the top terms for each cluster.
 
     Parameters
@@ -167,8 +161,8 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, plot_file=No
         number of top terms to be displayed per cluster
     model: :class:`coclust.coclustering.BaseDiagonalCoclust`
         a co-clustering model
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
 
     Example
@@ -243,11 +237,12 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, plot_file=No
     plt.tight_layout()
     plt.subplots_adjust(top=0.88)
 
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
-                   stopwords=[], plot_file=None):
+                   stopwords=[]):
     """Get a graph of terms.
 
     Parameters
@@ -266,8 +261,6 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
         Number of neighbors
     stopwords: list of string, optional, default: []
         Words to remove
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
 
     """
 
@@ -350,15 +343,15 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
     return graph
 
 
-def plot_cluster_sizes(model, plot_file=None):
+def plot_cluster_sizes(model, do_plot=True):
     """Plot the sizes of the clusters.
 
     Parameters
     ----------
     model: :class:`coclust.coclustering.BaseDiagonalCoclust`
         a co-clustering model
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -408,7 +401,8 @@ def plot_cluster_sizes(model, plot_file=None):
     # _remove_ticks()
     plt.tick_params(axis='both', which='both', bottom='on', top='off',
                     right='off', left='off')
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
 def _remove_ticks():
@@ -416,7 +410,7 @@ def _remove_ticks():
                     right='off', left='off')
 
 
-def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, plot_file=None):
+def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, do_plot=True):
     """Plot the reorganized matrix.
 
     Parameters
@@ -429,8 +423,8 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, plot_file=N
         values greater than `precision` will be plotted
     markersize: float
         marker size
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
     Example
     -------
     >>> plot_reorganized_matrix(X, model)
@@ -453,10 +447,11 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, plot_file=N
     X_reorg = X_reorg[:, col_indices]
     plt.spy(X_reorg, precision=precision, markersize=markersize)
     _remove_ticks()
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
-def plot_convergence(criteria, criterion_name, marker='o', plot_file=None):
+def plot_convergence(criteria, criterion_name, marker='o', do_plot=True):
     """ Plot the convergence of a given criteria.
 
     Parameters
@@ -467,8 +462,8 @@ def plot_convergence(criteria, criterion_name, marker='o', plot_file=None):
         Name of the criteria
     marker:
         Marker
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -489,10 +484,11 @@ def plot_convergence(criteria, criterion_name, marker='o', plot_file=None):
     plt.ylabel(criterion_name)
     plt.xlabel('Iterations')
     _remove_ticks()
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
-def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', plot_file=None):
+def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', do_plot=True):
     """Plot a confusion matrix.
 
     Parameters
@@ -503,8 +499,8 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', plot_file=N
         Color map
     labels:
         Labels
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -561,11 +557,12 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', plot_file=N
     plt.xticks(range(width), labels[:width])
     plt.yticks(range(height), labels[:height])
     _remove_ticks()
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
 
 
 def plot_delta_kl(model, colormap=plt.get_cmap(),
-                  labels='012', plot_file=None):
+                  labels='012', do_plot=True):
     """Plot the delta values of the Information-Theoretic Co-clustering.
 
     Parameters
@@ -576,8 +573,8 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
         Color map
     labels:
         Labels
-    plot_file: string
-        Name of the file to which the plot should be written. Format is handled by the file extension. plot_file=None displays the plot.
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -628,4 +625,5 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
     ax.grid(False)
 
     _remove_ticks()
-    _write_plot(plot_file)
+    if do_plot:
+        plt.show()
