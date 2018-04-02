@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 plt.style.use('ggplot')
 
 
-def plot_max_modularities(max_modularities, range_n_clusters):
+def plot_max_modularities(max_modularities, range_n_clusters, do_plot=True):
     """Plot all max modularities obtained after a series of evaluations. The
     best partition is indicated in the graph and main title.
 
@@ -27,6 +27,8 @@ def plot_max_modularities(max_modularities, range_n_clusters):
         Final modularities for all evaluated partitions
     range_n_clusters: list
         Number of clusters for which the algorithm is to be executed
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -83,16 +85,20 @@ def plot_max_modularities(max_modularities, range_n_clusters):
 
     # Plot a dashed vertical line at best partition
     plt.axvline(np.argmax(max_modularities), linestyle="dashed")
-    plt.show()
+
+    if do_plot:
+        plt.show()
 
 
-def plot_intermediate_modularities(model):
+def plot_intermediate_modularities(model, do_plot=True):
     """Plot all intermediate modularities for a model.
 
     Parameters
     ----------
     model: :class:`coclust.coclustering.CoclustMod`
         Fitted model
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -124,7 +130,7 @@ def plot_intermediate_modularities(model):
     plt.xlabel("Iterations", size=10)
 
     # Set the axis limits
-    plt.xlim(-0.5, (len(model.modularities)-0.5))
+    plt.xlim(-0.5, (len(model.modularities) - 0.5))
     plt.ylim((min(model.modularities) - 0.05 * min(model.modularities)),
              (max(model.modularities) + 0.05 * max(model.modularities)))
 
@@ -138,11 +144,12 @@ def plot_intermediate_modularities(model):
 
     # Plot a dashed horizontal line around max modularity
     plt.axhline(max(model.modularities), linestyle="dashed")
-    plt.axhline((max(model.modularities)-model.tol), linestyle="dashed")
-    plt.show()
+    plt.axhline((max(model.modularities) - model.tol), linestyle="dashed")
+    if do_plot:
+        plt.show()
 
 
-def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
+def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, do_plot=True):
     """Plot the top terms for each cluster.
 
     Parameters
@@ -154,6 +161,8 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
         number of top terms to be displayed per cluster
     model: :class:`coclust.coclustering.BaseDiagonalCoclust`
         a co-clustering model
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
 
     Example
@@ -219,7 +228,7 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
         plt.yticks(.4 + pos, tmp_terms[max_indices][::-1], size=9.5)
         plt.xlabel(x_label, size=9)
         plt.margins(y=0.05)
-        #_remove_ticks()
+        # _remove_ticks()
         plt.tick_params(axis='both', which='both', bottom='on', top='off',
                         right='off', left='off')
 
@@ -228,7 +237,8 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model):
     plt.tight_layout()
     plt.subplots_adjust(top=0.88)
 
-    plt.show()
+    if do_plot:
+        plt.show()
 
 
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
@@ -333,13 +343,15 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
     return graph
 
 
-def plot_cluster_sizes(model):
+def plot_cluster_sizes(model, do_plot=True):
     """Plot the sizes of the clusters.
 
     Parameters
     ----------
     model: :class:`coclust.coclustering.BaseDiagonalCoclust`
         a co-clustering model
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -386,10 +398,11 @@ def plot_cluster_sizes(model):
     plt.tight_layout()
     ax.legend(legend_rects, ('Rows', 'Columns'))
 
-    #_remove_ticks()
+    # _remove_ticks()
     plt.tick_params(axis='both', which='both', bottom='on', top='off',
                     right='off', left='off')
-    plt.show()
+    if do_plot:
+        plt.show()
 
 
 def _remove_ticks():
@@ -397,7 +410,7 @@ def _remove_ticks():
                     right='off', left='off')
 
 
-def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
+def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, do_plot=True):
     """Plot the reorganized matrix.
 
     Parameters
@@ -410,6 +423,8 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
         values greater than `precision` will be plotted
     markersize: float
         marker size
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
     Example
     -------
     >>> plot_reorganized_matrix(X, model)
@@ -432,10 +447,11 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9):
     X_reorg = X_reorg[:, col_indices]
     plt.spy(X_reorg, precision=precision, markersize=markersize)
     _remove_ticks()
-    plt.show()
+    if do_plot:
+        plt.show()
 
 
-def plot_convergence(criteria, criterion_name, marker='o'):
+def plot_convergence(criteria, criterion_name, marker='o', do_plot=True):
     """ Plot the convergence of a given criteria.
 
     Parameters
@@ -446,6 +462,8 @@ def plot_convergence(criteria, criterion_name, marker='o'):
         Name of the criteria
     marker:
         Marker
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -466,10 +484,11 @@ def plot_convergence(criteria, criterion_name, marker='o'):
     plt.ylabel(criterion_name)
     plt.xlabel('Iterations')
     _remove_ticks()
-    plt.show()
+    if do_plot:
+        plt.show()
 
 
-def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012'):
+def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', do_plot=True):
     """Plot a confusion matrix.
 
     Parameters
@@ -480,6 +499,8 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012'):
         Color map
     labels:
         Labels
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -536,11 +557,12 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012'):
     plt.xticks(range(width), labels[:width])
     plt.yticks(range(height), labels[:height])
     _remove_ticks()
-    plt.show()
+    if do_plot:
+        plt.show()
 
 
 def plot_delta_kl(model, colormap=plt.get_cmap(),
-                  labels='012'):
+                  labels='012', do_plot=True):
     """Plot the delta values of the Information-Theoretic Co-clustering.
 
     Parameters
@@ -551,6 +573,8 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
         Color map
     labels:
         Labels
+    do_plot: boolean
+        Whether the plot should be displayed. True by default. Disabling this allows users to handle displaying the plot themselves.
 
     Example
     -------
@@ -601,4 +625,5 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
     ax.grid(False)
 
     _remove_ticks()
-    plt.show()
+    if do_plot:
+        plt.show()
