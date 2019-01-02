@@ -57,13 +57,15 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
     """
 
     def __init__(self, n_clusters=2, init=None, max_iter=20, n_init=1,
-                 tol=1e-9, random_state=None):
+                 tol=1e-9, random_state=None, Tu = 1, Tv = 1):
         self.n_clusters = n_clusters
         self.init = init
         self.max_iter = max_iter
         self.n_init = n_init
         self.tol = tol
         self.random_state = random_state
+        self.Tu = Tu
+        self.Tv = Tv
 
         self.row_labels_ = None
         self.column_labels_ = None
