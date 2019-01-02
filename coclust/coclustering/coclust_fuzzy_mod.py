@@ -56,16 +56,19 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
     Journal: Mathematical Problems in Engineering - Year: 2018 - Pages 1-11. 
     """
 
-    def __init__(self, n_clusters=2, max_iter=20, tol=1e-9, n_init=1,
-                 random_state=None):
+    def __init__(self, n_clusters=2, init=None, max_iter=20, n_init=1,
+                 tol=1e-9, random_state=None):
         self.n_clusters = n_clusters
+        self.init = init
         self.max_iter = max_iter
-        self.tol = tol
         self.n_init = n_init
+        self.tol = tol
         self.random_state = random_state
 
         self.row_labels_ = None
         self.column_labels_ = None
+        self.modularity = -np.inf
+        self.modularities = []
 
     def fit(self, X, y=None):
         """Perform fuzzy co-clustering based on modularity maximization.
