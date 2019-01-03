@@ -177,8 +177,8 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
 
         self.row_labels_ = np.argmax(U, axis=1).tolist()
         self.column_labels_ = np.argmax(V, axis=1).tolist()
-        self.BtU = BtU
-        self.BV = BV
+        self.btu = BtU
+        self.bv = BV
         self.modularity = obj_end
         self.nb_iterations = iteration
         self.U = U
@@ -200,9 +200,8 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             assignment matrix
         """
         if kind == "rows":
-            s_BV = np.argsort(self.BV)
-            return s_BV[:, -1:-(i+1):-1]
+            s_bw = np.argsort(self.bw)
+            return s_bw[:, -1:-(i+1):-1]
         if kind == "cols":
-            s_BtU = np.argsort(self.BtU)
-            return s_BtU[:, -1:-(i+1):-1]  
-
+            s_btz = np.argsort(self.btz)
+            return s_btz[:, -1:-(i+1):-1]
