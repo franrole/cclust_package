@@ -101,8 +101,8 @@ def random_init_fuzzy_parameters(n_clusters, n_rows, n_cols):
         Matrix of shape (``n_cols``, ``n_clusters``)
 
     """
-    U = np.random.dirichlet(np.ones(n_clusters),size=n_cols)
-    V = np.random.dirichlet(np.ones(n_clusters),size=n_rows)
+    U = np.random.dirichlet(np.ones(n_clusters),size=n_rows)
+    V = np.random.dirichlet(np.ones(n_clusters),size=n_cols)
     return U, V
 
 
