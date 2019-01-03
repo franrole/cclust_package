@@ -131,11 +131,11 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         """
 
         # randomized initialization of U and V
-        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1], random_state)
+        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1])
 
         # Compute the modularity matrix
-        row_sums = np.matrix(X.sum(axis=1, keepdims=True))
-        col_sums = np.matrix(X.sum(axis=0, keepdims=True))
+        row_sums = np.matrix(X.sum(axis=1))
+        col_sums = np.matrix(X.sum(axis=0))
         N = float(X.sum())
         indep = (row_sums.dot(col_sums)) / N
 
@@ -163,8 +163,8 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
 
             Q = np.trace((U.T).dot(BV)) / N
 
-            entropy_u = Tu * np.trace(np.dot(U.T, np.log(U))) 
-            entropy_v = Tv * np.trace(np.dot(V.T, np.log(V))) 
+            entropy_u = self.Tu * np.trace(np.dot(U.T, np.log(U))) 
+            entropy_v = self.Tv * np.trace(np.dot(V.T, np.log(V))) 
 
             obj_end = Q - entropy_u - entropy_v
             iteration += 1 
