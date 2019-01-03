@@ -16,6 +16,7 @@ from sklearn.utils import check_random_state, check_array
 
 from .base_diagonal_coclust import BaseDiagonalCoclust
 from ..io.input_checking import check_positive
+from ..initialization import random_init_fuzzy_parameters
 
 
 class CoclustFuzzyMod(BaseDiagonalCoclust):
@@ -66,9 +67,6 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         self.random_state = random_state
         self.Tu = Tu
         self.Tv = Tv
-
-        self.U=None
-        self.V=None
 
         self.row_labels_ = None
         self.column_labels_ = None
@@ -132,11 +130,12 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             Matrix to be analyzed
         """
 
-        # (3) init U and V 
+        # randomized initialization of U and V
+        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1], random_state)
 
         # Compute the modularity matrix
-        row_sums = np.matrix(X.sum(axis=1))
-        col_sums = np.matrix(X.sum(axis=0))
+        row_sums = np.matrix(X.sum(axis=1, keepdims=True))
+        col_sums = np.matrix(X.sum(axis=0, keepdims=True))
         N = float(X.sum())
         indep = (row_sums.dot(col_sums)) / N
 
@@ -149,17 +148,17 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         obj_begin = float("-inf")
         change = True
         iteration = 0
-        # (4)
         while change:
             change = False
 
-            # Reassign rows 
-            # (5)
+            # Reassign rows
+            U=np.exp(np.dot(B,V)/self.Tu)
+            U/=U.sum(axis=1)
 
             # Reassign columns
-            # (6)
+            V=np.exp(np.dot((B.T),U)/self.Tv)
+            V/=V.sum(axis=1)
 
-            #(7)
             Q = np.trace((U.T).dot(BV)) / N
 
             entropy_u = Tu * np.trace(np.dot(U.T, np.log(U))) 
@@ -168,7 +167,6 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             obj_end = Q - entropy_u - entropy_v
             iteration += 1 
             
-            # (8)
             if (np.abs(obj_end - obj_begin) > self.tol and
                     iteration < self.max_iter):
                 self.modularities.append(obj_end)
@@ -180,7 +178,9 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         self.btu = BtU
         self.bv = BV
         self.modularity = obj_end
-        self.nb_iterations = iteration 
+        self.nb_iterations = iteration
+        self.U = U
+        self.V = V
         
     def get_assignment_matrix(self, kind, i):
         """Returns the indices of 'best' i cols of an assignment matrix
