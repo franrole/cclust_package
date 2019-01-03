@@ -152,11 +152,13 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             change = False
 
             # Reassign rows
-            U=np.exp(np.dot(B,V)/self.Tu)
+            BV=np.dot(B,V)
+            U=np.exp(BV/self.Tu)
             U/=U.sum(axis=1)
 
             # Reassign columns
-            V=np.exp(np.dot((B.T),U)/self.Tv)
+            BtU=np.dot((B.T),U)
+            V=np.exp(BtU/self.Tv)
             V/=V.sum(axis=1)
 
             Q = np.trace((U.T).dot(BV)) / N
