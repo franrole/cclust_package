@@ -67,6 +67,9 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         self.Tu = Tu
         self.Tv = Tv
 
+        self.U=None
+        self.V=None
+
         self.row_labels_ = None
         self.column_labels_ = None
         self.modularity = -np.inf
