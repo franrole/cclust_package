@@ -184,8 +184,8 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
                 obj_begin = obj_end 
                 change = True
 
-        self.row_labels_ = np.argmax(U, axis=1).tolist() 
-        self.column_labels_ = np.argmax(V, axis=1).tolist() 
+        self.row_labels_ = list(np.argmax(U, axis=1).flat)
+        self.column_labels_ = list(np.argmax(V, axis=1).flat)
         self.btu = BtU
         self.bv = BV
         self.modularity = Q
