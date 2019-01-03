@@ -95,7 +95,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         if type(X) == np.ndarray:
             X = np.matrix(X)
 
-        X = X.astype(float)
+        X = X.astype(float) + np.finfo(float).eps
 
         modularity = self.modularity
         objective = self.objective
