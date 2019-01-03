@@ -6,7 +6,7 @@ implementation of a fuzzy co-clustering algorithm by approximation of the
 modularity matrix.
 """
 
-# Author: Mira Ait Saada <>
+# Author: Mira Ait Saada <aitsaadamira@gmail.com>
 #         Alexandra Benamar <benamar.alexandra@gmail.com>
 
 # License: BSD 3 clause
@@ -65,13 +65,15 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         self.n_init = n_init
         self.tol = tol
         self.random_state = random_state
-        self.Tu = Tu
+        self.Tu = Tu 
         self.Tv = Tv
 
         self.row_labels_ = None
         self.column_labels_ = None
         self.modularity = -np.inf
+        self.objective = -np.inf
         self.modularities = []
+        self.objectives = []
 
     def fit(self, X, y=None):
         """Perform fuzzy co-clustering based on modularity maximization.
@@ -96,25 +98,31 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         X = X.astype(float)
 
         modularity = self.modularity
+        objective = self.objective
         modularities = []
+        objectives = []
         row_labels_ = None
         column_labels_ = None
 
         seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
         for seed in seeds:
             self._fit_single(X, seed, y)
-            if np.isnan(self.modularity):
+            if np.isnan(self.objective):
                 raise ValueError("matrix may contain unexpected NaN values")
-            # remember attributes corresponding to the best modularity
-            if (self.modularity > modularity):
+            # remember attributes corresponding to the best value of the objective function
+            if (self.objective > objective):
                 modularity = self.modularity
+                objective = self.objective
                 modularities = self.modularities
+                objectives = self.objectives
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
 
         # update attributes
         self.modularity = modularity
         self.modularities = modularities
+        self.objective = objective
+        self.objectives = objectives
         self.row_labels_ = row_labels_
         self.column_labels_ = column_labels_
 
@@ -171,15 +179,17 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             
             if (np.abs(obj_end - obj_begin) > self.tol and
                     iteration < self.max_iter):
-                self.modularities.append(obj_end)
+                self.modularities.append(Q)
+                self.objectives.append(obj_end)
                 obj_begin = obj_end 
                 change = True
 
-        self.row_labels_ = np.argmax(U, axis=1).tolist()
-        self.column_labels_ = np.argmax(V, axis=1).tolist()
+        self.row_labels_ = np.argmax(U, axis=1).tolist() 
+        self.column_labels_ = np.argmax(V, axis=1).tolist() 
         self.btu = BtU
         self.bv = BV
-        self.modularity = obj_end
+        self.modularity = Q
+        self.objective = obj_end
         self.nb_iterations = iteration
         self.U = U
         self.V = V
@@ -199,9 +209,11 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             Matrix containing the i 'best' columns of a row or column
             assignment matrix
         """
+
         if kind == "rows":
-            s_bw = np.argsort(self.bw)
-            return s_bw[:, -1:-(i+1):-1]
+            s_BV = np.argsort(self.BV)
+            return s_BV[:, -1:-(i+1):-1]
         if kind == "cols":
-            s_btz = np.argsort(self.btz)
-            return s_btz[:, -1:-(i+1):-1]
+            s_BtU = np.argsort(self.BtU)
+            return s_BtU[:, -1:-(i+1):-1]
+        
