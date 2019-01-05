@@ -129,8 +129,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         return self
 
     def _fit_single(self, X, random_state, y=None):
-        """Perform one run of co-clustering by direct maximization of graph
-        modularity.
+        """Perform one run of fuzzy co-clustering via modularity maximization.
 
         Parameters
         ----------
@@ -151,6 +150,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         B = X - indep
 
         self.modularities = []
+        self.objectives = [] 
 
         # Loop
         obj_begin = float("-inf")
@@ -169,11 +169,14 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             V=np.exp(BtU/self.Tv)
             V/=V.sum(axis=1)
 
+            # Modularity 
             Q = np.trace((U.T).dot(BV)) / N
 
+            # Entropy 
             entropy_u = self.Tu * np.trace(np.dot(U.T, np.log(U))) 
             entropy_v = self.Tv * np.trace(np.dot(V.T, np.log(V))) 
 
+            # Objective function 
             obj_end = Q - entropy_u - entropy_v
             iteration += 1 
             
