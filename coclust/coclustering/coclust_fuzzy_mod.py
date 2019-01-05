@@ -128,7 +128,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
 
         return self
 
-    def _fit_single(self, X, random_state, y=None):
+    def _fit_single(self, X, seed, y=None):
         """Perform one run of fuzzy co-clustering via modularity maximization.
 
         Parameters
@@ -138,7 +138,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         """
 
         # randomized initialization of U and V
-        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1])
+        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1], seed) 
 
         # Compute the modularity matrix
         row_sums = np.matrix(X.sum(axis=1))
