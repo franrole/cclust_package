@@ -8,6 +8,7 @@ clustering or co-clustering algorithms.
 # Author: Francois Role <francois.role@gmail.com>
 #         Stanislas Morbieu <stanislas.morbieu@gmail.com>
 #         Alexandra Benamar <benamar.alexandra@gmail.com>
+#         Mira Ait Saada <aitsaadamira@gmail.com>
 
 # License: BSD 3 clause
 
