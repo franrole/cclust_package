@@ -7,6 +7,8 @@ clustering or co-clustering algorithms.
 
 # Author: Francois Role <francois.role@gmail.com>
 #         Stanislas Morbieu <stanislas.morbieu@gmail.com>
+#         Alexandra Benamar <benamar.alexandra@gmail.com>
+#         Mira Ait Saada <aitsaadamira@gmail.com>
 
 # License: BSD 3 clause
 
@@ -72,3 +74,38 @@ def random_init_clustering(n_clusters, n_rows, random_state=None):
     Z = np.zeros((n_rows, n_clusters))
     Z[np.arange(n_rows), Z_a] = 1
     return Z
+
+def random_init_fuzzy_parameters(n_clusters, n_rows, n_cols, seed=None):
+    """Create a random fuzzy row and column cluster assignment matrix.
+
+    Each row contains a probability for each column corresponding to the cluster
+    where the processed data matrix row probably belongs.
+
+    Parameters
+    ----------
+    n_clusters: int
+        Number of clusters
+    n_rows: int
+        Number of rows of the data matrix (i.e. also the number of rows of the
+        matrix returned by this function)
+    n_cols: int
+        Number of columns of the data matrix (i.e. number of rows of the
+        matrix returned by this function)
+    seed : int, optional
+        Seed used to initialize the assignment matrices.
+
+    Returns
+    -------
+    matrix U
+        Matrix of shape (``n_rows``, ``n_clusters``)
+
+    matrix V
+        Matrix of shape (``n_cols``, ``n_clusters``)
+
+    """
+    U = np.random.RandomState(random_state).dirichlet(np.ones(n_clusters),size=n_rows).astype(np.float128)
+    V = np.random.RandomState(random_state).dirichlet(np.ones(n_clusters),size=n_cols).astype(np.float128)
+    return U, V
+
+
+
