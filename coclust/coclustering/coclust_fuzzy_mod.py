@@ -12,6 +12,7 @@ modularity matrix.
 # License: BSD 3 clause
 
 import numpy as np
+from scipy.sparse import issparse
 from sklearn.utils import check_random_state, check_array
 
 from .base_diagonal_coclust import BaseDiagonalCoclust
@@ -31,12 +32,12 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
         Maximum number of iterations
 
     n_init : int, optional, default: 10
-        Number of time the k-means algorithm will be run with different
-        centroid seeds. The final results will be the best output of `n_init`
-        consecutive runs in terms of inertia.
+        Number of time the algorithm will be run with different
+        seeds. The final results will be the best output of `n_init`
+        consecutive runs in terms of value of the objective function.
 
     random_state : integer or numpy.RandomState, optional
-        The generator used to initialize the centers. If an integer is
+        The generator used to initialize the partitions. If an integer is
         given, it fixes the seed. Defaults to the global numpy random
         number generator.
 
@@ -57,7 +58,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
     Journal: Mathematical Problems in Engineering - Year: 2018 - Pages 1-11. 
     """
 
-    def __init__(self, n_clusters=2, Tu = 1, Tv = 1, init=None, max_iter=20, n_init=1,
+    def __init__(self, n_clusters=2, Tu=1, Tv=1, init=None, max_iter=20, n_init=1,
                  tol=1e-9, random_state=None):
         self.n_clusters = n_clusters
         self.init = init
@@ -92,6 +93,9 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
                     ensure_min_features=self.n_clusters,
                     warn_on_dtype=False, estimator=None)
         
+        if issparse(X):
+            X = X.A
+
         if type(X) == np.ndarray:
             X = np.matrix(X)
 
@@ -109,7 +113,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             self._fit_single(X, seed, y)
             if np.isnan(self.objective):
                 raise ValueError("matrix may contain unexpected NaN values")
-            # remember attributes corresponding to the best value of the objective function
+            # Remember attributes corresponding to the best value of the objective function
             if (self.objective > objective):
                 modularity = self.modularity
                 objective = self.objective
@@ -118,7 +122,7 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
                 row_labels_ = self.row_labels_
                 column_labels_ = self.column_labels_
 
-        # update attributes
+        # Update attributes
         self.modularity = modularity
         self.modularities = modularities
         self.objective = objective
@@ -137,8 +141,11 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             Matrix to be analyzed
         """
 
-        # randomized initialization of U and V
-        U, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1], seed) 
+        # randomized initialization of V
+        if self.init is None:
+            _, V = random_init_fuzzy_parameters(self.n_clusters, X.shape[0], X.shape[1], seed)
+        else:
+            V = self.init
 
         # Compute the modularity matrix
         row_sums = np.matrix(X.sum(axis=1))
@@ -160,21 +167,21 @@ class CoclustFuzzyMod(BaseDiagonalCoclust):
             change = False
 
             # Reassign rows
-            BV=np.dot(B,V)
-            U=np.exp(BV/self.Tu)
-            U/=U.sum(axis=1)
+            BV = np.dot(B, V)
+            U = np.exp(BV / self.Tu)
+            U /= U.sum(axis=1)
 
             # Reassign columns
-            BtU=np.dot((B.T),U)
-            V=np.exp(BtU/self.Tv)
-            V/=V.sum(axis=1)
+            BtU = np.dot((B.T), U)
+            V = np.exp(BtU / self.Tv)
+            V /= V.sum(axis=1)
 
             # Modularity 
             Q = np.trace((U.T).dot(BV)) / N
 
             # Entropy 
-            entropy_u = self.Tu * np.trace(np.dot(U.T, np.log(U))) 
-            entropy_v = self.Tv * np.trace(np.dot(V.T, np.log(V))) 
+            entropy_u = self.Tu * np.trace(np.dot(U.T, np.log(U)))
+            entropy_v = self.Tv * np.trace(np.dot(V.T, np.log(V)))
 
             # Objective function 
             obj_end = Q - entropy_u - entropy_v
