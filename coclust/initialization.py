@@ -75,7 +75,7 @@ def random_init_clustering(n_clusters, n_rows, random_state=None):
     Z[np.arange(n_rows), Z_a] = 1
     return Z
 
-def random_init_fuzzy_parameters(n_clusters, n_rows, n_cols, seed=None):
+def random_init_fuzzy_parameters(n_clusters, n_rows, n_cols, random_state=None):
     """Create a random fuzzy row and column cluster assignment matrix.
 
     Each row contains a probability for each column corresponding to the cluster
@@ -103,9 +103,8 @@ def random_init_fuzzy_parameters(n_clusters, n_rows, n_cols, seed=None):
         Matrix of shape (``n_cols``, ``n_clusters``)
 
     """
-    U = np.random.RandomState(random_state).dirichlet(np.ones(n_clusters),size=n_rows).astype(np.float128)
-    V = np.random.RandomState(random_state).dirichlet(np.ones(n_clusters),size=n_cols).astype(np.float128)
+
+    random_state = check_random_state(random_state)
+    U = random_state.dirichlet(np.ones(n_clusters),size=n_rows).astype(np.float128)
+    V = random_state.dirichlet(np.ones(n_clusters),size=n_cols).astype(np.float128)
     return U, V
-
-
-
