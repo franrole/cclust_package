@@ -24,19 +24,8 @@ If you use this package, please cite:
 
 ::
 
-@article{JSSv088i07,
-   author = {François Role and Stanislas Morbieu and Mohamed Nadif},
-   title = {CoClust: A Python Package for Co-Clustering},
-   journal = {Journal of Statistical Software, Articles},
-   volume = {88},
-   number = {7},
-   year = {2019},
-   keywords = {data mining; co-clustering; Python},
-   issn = {1548-7660},
-   pages = {1--29},
-   doi = {10.18637/jss.v088.i07},
-   url = {https://www.jstatsoft.org/v088/i07}
-}
+   François Role, Stanislas Morbieu, Mohamed Nadif. CoClust: A Python Package for Co-clustering. Journal of Statistical Software 88 (7): 1-29 (2019)
+
 
 
 
