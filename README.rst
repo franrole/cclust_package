@@ -24,7 +24,8 @@ If you use this package, please cite:
 
 ::
 
-   François Role, Stanislas Morbieu, Mohamed Nadif. CoClust: A Python Package for Co-clustering. Journal of Statistical Software 88 (7): 1-29 (2019)
+   François Role, Stanislas Morbieu, Mohamed Nadif. CoClust: A Python Package for Co-clustering.
+   Journal of Statistical Software 88 (7): 1-29 (2019)
 
 
 
