@@ -197,7 +197,7 @@ class CoclustMod(BaseDiagonalCoclust):
 
          
 
-        # update attributes
+        # update instance variables
         self.modularity = modularity
         self.modularities = modularities
         self.row_labels_ = row_labels
