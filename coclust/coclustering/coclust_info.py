@@ -19,7 +19,6 @@ from ..initialization import random_init
 from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
 from ..io.input_checking import check_positive
 
-
 class CoclustInfo(BaseNonDiagonalCoclust):
     """Information-Theoretic Co-clustering.
 
@@ -157,7 +156,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         # Initial delta
         p_il = X * W
-        # p_il = p_il     # matrix m,l ; column l' contains the p_il'
+        # p_il = p_il     # matrix i,l ; column l' contains the p_il'
         p_kj = X.T * Z  # matrix j,k
 
         p_kd = p_kj.sum(axis=0)  # array containing the p_k.
@@ -202,8 +201,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             # Update delta
             # matrice d, k ; column k' contains the p_jk'
             p_kj = X.T * Z
-            # p_il unchanged
-            p_dl = p_il.sum(axis=0)  # array l containing the  p_.l
+            # p_il unchanged so no need for p_dl = p_il.sum(axis=0) 
             p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
@@ -231,9 +229,9 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
             # Update delta
             p_il = X * W     # matrix d,k ; column k' contains the p_jk'
-            # p_kj unchanged
+            # p_kj unchanged so no need for p_kd = p_kj.sum(axis=0) 
             p_dl = p_il.sum(axis=0)  # array l containing the p_.l
-            p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
+            
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
             p_kd_times_p_dl = p_kd.T * p_dl
