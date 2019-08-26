@@ -137,7 +137,7 @@ class CoclustMod(BaseDiagonalCoclust):
         self.tol = tol
         self.random_state = random_state
         self.n_jobs = n_jobs
-
+        # to remove except for self.modularity = -np.inf!!!
         self.row_labels_ = None
         self.column_labels_ = None
         self.modularity = -np.inf
@@ -188,7 +188,7 @@ class CoclustMod(BaseDiagonalCoclust):
             delayed(_fit_single)(X, self.n_clusters, seed, self.init, self.max_iter, self.tol, y)
             for seed in seeds)
          list_of_row_labels,  list_of_column_labels, list_of_modularity, list_of_modularities, list_of_nb_iterations = zip(*results)
-         best = np.argmin(list_of_modularity)
+         best = np.argmax(list_of_modularity)
          row_labels = list_of_row_labels[best]
          column_labels = list_of_column_labels[best]
          modularity = list_of_modularity[best]
