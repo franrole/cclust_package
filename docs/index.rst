@@ -19,6 +19,10 @@ for example.
 **coclust** is distributed under the 3-Clause BSD license. It works with both
 Python 2.7 and Python 3.5.
 
+.. note::  If you use this software as part of your research, please cite: `François Role, Stanislas Morbieu, Mohamed Nadif. CoClust: A Python Package for Co-clustering. Journal of Statistical Software 88 (7): 1-29 (2019) <https://www.jstatsoft.org/article/view/v088i07>`_
+
+
+
 
 .. toctree::
    :maxdepth: 1

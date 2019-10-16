@@ -19,7 +19,6 @@ from ..initialization import random_init
 from .base_non_diagonal_coclust import BaseNonDiagonalCoclust
 from ..io.input_checking import check_positive
 
-
 class CoclustInfo(BaseNonDiagonalCoclust):
     """Information-Theoretic Co-clustering.
 
@@ -157,7 +156,7 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
         # Initial delta
         p_il = X * W
-        # p_il = p_il     # matrix m,l ; column l' contains the p_il'
+        # p_il = p_il     # matrix i,l ; column l' contains the p_il'
         p_kj = X.T * Z  # matrix j,k
 
         p_kd = p_kj.sum(axis=0)  # array containing the p_k.
@@ -185,25 +184,26 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             change = False
 
             # Update Z
-            p_il = X * W  # matrix m,l ; column l' contains the p_il'
+            p_il = X * W  # CSR matrix i,l 
             if not isdense(delta_kl):
                 delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl.T)
-            log_delta_kl = sp.lil_matrix(log_delta_kl)
-            # p_il * (d_kl)T ; we examine each cluster
-            Z1 = p_il * log_delta_kl
+            log_delta_kl = sp.csr_matrix(log_delta_kl)
+
+            # p_il matmul (log d_kl)T ; we examine each cluster
+            Z1 = p_il @ log_delta_kl
+            # Z1 is CSR which is bad for support item assignment. So convert Z1
             Z1 = Z1.toarray()
             Z = np.zeros_like(Z1)
             # Z[(line index 1...), (max col index for 1...)]
             Z[np.arange(len(Z1)), Z1.argmax(1)] = 1
-            Z = sp.lil_matrix(Z)
+            Z = sp.csr_matrix(Z)
 
             # Update delta
             # matrice d, k ; column k' contains the p_jk'
             p_kj = X.T * Z
-            # p_il unchanged
-            p_dl = p_il.sum(axis=0)  # array l containing the  p_.l
+            # p_il unchanged so no need for p_dl = p_il.sum(axis=0) 
             p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
@@ -217,23 +217,24 @@ class CoclustInfo(BaseNonDiagonalCoclust):
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
 
             # Update W
-            p_kj = X.T * Z  # matrice m,l ; column l' contains the p_il'
-            if not isdense(delta_kl):
+            p_kj = X.T * Z  # CSR matrice j,k
+            if not isdense(delta_kl): # delta_kl should be a sparse coo here
                 delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001  # to prevent log(0)
             log_delta_kl = np.log(delta_kl)
             log_delta_kl = sp.lil_matrix(log_delta_kl)
             W1 = p_kj * log_delta_kl  # p_kj * d_kl ; we examine each cluster
+            # W1 is CSR which is bad for support item assignment. So convert W1
             W1 = W1.toarray()
             W = np.zeros_like(W1)
             W[np.arange(len(W1)), W1.argmax(1)] = 1
-            W = sp.lil_matrix(W)
+            W = sp.csr_matrix(W)
 
             # Update delta
             p_il = X * W     # matrix d,k ; column k' contains the p_jk'
-            # p_kj unchanged
+            # p_kj unchanged so no need for p_kd = p_kj.sum(axis=0) 
             p_dl = p_il.sum(axis=0)  # array l containing the p_.l
-            p_kd = p_kj.sum(axis=0)  # array k containing the p_k.
+            
 
             # p_k. p_.l ; transpose because p_kd is "horizontal"
             p_kd_times_p_dl = p_kd.T * p_dl
@@ -246,13 +247,17 @@ class CoclustInfo(BaseNonDiagonalCoclust):
 
             delta_kl = p_kl.multiply(p_kd_times_p_dl_inv)
             # to prevent log(0) when computing criterion
+            # but note that delta_kl = csr eletwise-mult array is a coo
+            # which does not support item assignment
+
             if not isdense(delta_kl):
                 delta_kl = delta_kl.todense()
             delta_kl[delta_kl == 0.] = 0.0001
 
             # Criterion
-            pkl_mi = sp.lil_matrix(p_kl).multiply(
-                sp.lil_matrix(np.log(delta_kl)))
+            # p_kl is csr_matrix; delta_kl is np.matrix
+            # just in case, note that their matmul results in a COO matrix !
+            pkl_mi = p_kl.multiply(np.log(delta_kl) )
             pkl_mi = pkl_mi.sum()
 
             if np.abs(pkl_mi - pkl_mi_previous) > self.tol:

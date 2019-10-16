@@ -44,6 +44,8 @@ scikit-learn library:
 Advanced usage overview
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+The following example example illustrates the use of some functions from the ``coclust.visualization`` and the ``coclust.io.data_loading`` modules. The latter module provides a standard way of accessing document-term matrices as well as document and term label when available.
+
 .. plot::
     :include-source:
 
