@@ -86,8 +86,7 @@ class CoclustPLBcem:
         check_array(X, accept_sparse=True, dtype="numeric", order=None,
                     copy=False, force_all_finite=True, ensure_2d=True,
                     allow_nd=False, ensure_min_samples=self.n_row_clusters,
-                    ensure_min_features=self.n_col_clusters,
-                    warn_on_dtype=False, estimator=None)
+                    ensure_min_features=self.n_col_clusters, estimator=None)
 
         check_positive(X)
 

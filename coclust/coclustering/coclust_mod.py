@@ -159,8 +159,7 @@ class CoclustMod(BaseDiagonalCoclust):
         check_array(X, accept_sparse=True, dtype="numeric", order=None,
                     copy=False, force_all_finite=True, ensure_2d=True,
                     allow_nd=False, ensure_min_samples=self.n_clusters,
-                    ensure_min_features=self.n_clusters,
-                    warn_on_dtype=False, estimator=None)
+                    ensure_min_features=self.n_clusters, estimator=None)
 
         if type(X) == np.ndarray:
             X = np.matrix(X)

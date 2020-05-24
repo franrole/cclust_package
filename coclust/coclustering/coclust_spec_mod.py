@@ -83,8 +83,7 @@ class CoclustSpecMod(BaseDiagonalCoclust):
         check_array(X, accept_sparse=True, dtype="numeric", order=None,
                     copy=False, force_all_finite=True, ensure_2d=True,
                     allow_nd=False, ensure_min_samples=self.n_clusters + 1,
-                    ensure_min_features=self.n_clusters + 1,
-                    warn_on_dtype=False, estimator=None)
+                    ensure_min_features=self.n_clusters + 1, estimator=None)
 
         check_positive(X)
 
