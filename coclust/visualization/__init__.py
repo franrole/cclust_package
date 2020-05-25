@@ -54,6 +54,7 @@ def plot_max_modularities(max_modularities, range_n_clusters, do_plot=True):
         plot_max_modularities(all_max_modularities, range_n_clusters)
     """
 
+    plt.figure()
     # Prepare a subplot and set the axis tick values and labels
     fig, ax = plt.subplots()
     fig.canvas.draw()
@@ -88,6 +89,7 @@ def plot_max_modularities(max_modularities, range_n_clusters, do_plot=True):
 
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def plot_intermediate_modularities(model, do_plot=True):
@@ -115,6 +117,7 @@ def plot_intermediate_modularities(model, do_plot=True):
         plot_intermediate_modularities(model)
     """
 
+    plt.figure()
     # Prepare a subplot and set the axis tick values and labels
     fig, ax = plt.subplots()
     fig.canvas.draw()
@@ -147,6 +150,7 @@ def plot_intermediate_modularities(model, do_plot=True):
     plt.axhline((max(model.modularities) - model.tol), linestyle="dashed")
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, do_plot=True):
@@ -193,6 +197,7 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, do_plot=True
 
     """
 
+    plt.figure()
     if all_terms is None:
         logger.warning("Term labels cannot be found. Use input argument "
                        "'term_labels_filepath' in function "
@@ -239,6 +244,7 @@ def plot_cluster_top_terms(in_data, all_terms, nb_top_terms, model, do_plot=True
 
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
@@ -264,6 +270,7 @@ def get_term_graph(X, model, terms, n_cluster, n_top_terms=10, n_neighbors=2,
 
     """
 
+    plt.figure()
     # The dictionary to be returned
     graph = {"nodes": [], "links": []}
 
@@ -403,6 +410,7 @@ def plot_cluster_sizes(model, do_plot=True):
                     right='off', left='off')
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def _remove_ticks():
@@ -441,6 +449,7 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, do_plot=Tru
         plot_reorganized_matrix(X, model)
     """
 
+    plt.figure()
     row_indices = np.argsort(model.row_labels_)
     col_indices = np.argsort(model.column_labels_)
     X_reorg = X[row_indices, :]
@@ -449,6 +458,7 @@ def plot_reorganized_matrix(X, model, precision=0.8, markersize=0.9, do_plot=Tru
     _remove_ticks()
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def plot_convergence(criteria, criterion_name, marker='o', do_plot=True):
@@ -480,12 +490,15 @@ def plot_convergence(criteria, criterion_name, marker='o', do_plot=True):
         model.fit(X)
         plot_convergence(model.modularities, "Modularity")
     """
+
+    plt.figure()
     plt.plot(criteria, marker=marker)
     plt.ylabel(criterion_name)
     plt.xlabel('Iterations')
     _remove_ticks()
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', do_plot=True):
@@ -559,6 +572,7 @@ def plot_confusion_matrix(cm, colormap=plt.get_cmap(), labels='012', do_plot=Tru
     _remove_ticks()
     if do_plot:
         plt.show()
+    return plt.gcf()
 
 
 def plot_delta_kl(model, colormap=plt.get_cmap(),
@@ -627,3 +641,4 @@ def plot_delta_kl(model, colormap=plt.get_cmap(),
     _remove_ticks()
     if do_plot:
         plt.show()
+    return plt.gcf()
