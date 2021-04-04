@@ -13,7 +13,7 @@ The :doc:`script<scripts>` enables the user to process a dataset with
 co-clustering algorithms without writing Python code.
 
 The Python package provides an :doc:`API<api/index>` for Python developers.
-This API allows to use the algorithms in a pipeline with scikit-learn library
+This API allows to use the algorithms in a pipeline with the scikit-learn library
 for example.
 
 **coclust** is distributed under the 3-Clause BSD license. It works with both
